@@ -32,7 +32,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-15",
@@ -132,7 +132,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-16",
@@ -236,7 +236,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-17",
@@ -346,7 +346,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-18",
@@ -452,7 +452,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-19",
@@ -566,7 +566,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-20",
@@ -676,7 +676,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-21",
@@ -790,7 +790,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-22",
@@ -906,7 +906,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-23",
@@ -1024,7 +1024,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-24",
@@ -1140,7 +1140,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-25",
@@ -1256,7 +1256,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-26",
@@ -1362,7 +1362,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-27",
@@ -1470,7 +1470,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-28",
@@ -1584,7 +1584,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-29",
@@ -1700,7 +1700,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-30",
@@ -1816,7 +1816,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-31",
@@ -1928,7 +1928,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-01",
@@ -2044,7 +2044,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-02",
@@ -2154,7 +2154,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-03",
@@ -2262,7 +2262,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-04",
@@ -2376,7 +2376,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-05",
@@ -2488,7 +2488,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-06",
@@ -2602,7 +2602,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-07",
@@ -2714,7 +2714,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-08",
@@ -2828,7 +2828,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-09",
@@ -2932,7 +2932,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-10",
@@ -3040,7 +3040,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-11",
@@ -3152,7 +3152,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-12",
@@ -3268,7 +3268,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-13",
@@ -3384,7 +3384,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-14",
@@ -3502,7 +3502,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-15",
@@ -3618,7 +3618,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-16",
@@ -3730,7 +3730,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-17",
@@ -3848,7 +3848,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-18",
@@ -3964,7 +3964,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-19",
@@ -4080,7 +4080,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-20",
@@ -4198,7 +4198,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-21",
@@ -4310,7 +4310,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-22",
@@ -4424,7 +4424,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-23",
@@ -4540,7 +4540,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-24",
@@ -4656,7 +4656,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-25",
@@ -4772,7 +4772,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-26",
@@ -4884,7 +4884,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-27",
@@ -5000,7 +5000,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-28",
@@ -5112,7 +5112,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-01",
@@ -5220,7 +5220,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-02",
@@ -5338,7 +5338,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-03",
@@ -5456,7 +5456,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-04",
@@ -5572,7 +5572,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-05",
@@ -5682,7 +5682,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-06",
@@ -5796,7 +5796,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-07",
@@ -5914,7 +5914,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-08",
@@ -6030,7 +6030,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-09",
@@ -6144,7 +6144,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-10",
@@ -6256,7 +6256,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-11",
@@ -6374,7 +6374,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-12",
@@ -6480,7 +6480,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-13",
@@ -6580,7 +6580,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-14",
@@ -6688,7 +6688,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-15",
@@ -6802,7 +6802,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-15",
@@ -6918,7 +6918,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-16",
@@ -7036,7 +7036,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-17",
@@ -7152,7 +7152,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-18",
@@ -7266,7 +7266,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-19",
@@ -7372,7 +7372,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-20",
@@ -7480,7 +7480,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-21",
@@ -7598,7 +7598,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-22",
@@ -7714,7 +7714,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-23",
@@ -7828,7 +7828,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-24",
@@ -7936,7 +7936,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-25",
@@ -8036,7 +8036,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-26",
@@ -8144,7 +8144,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-27",
@@ -8260,7 +8260,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-28",
@@ -8376,7 +8376,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-29",
@@ -8492,7 +8492,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-30",
@@ -8606,7 +8606,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-01-31",
@@ -8710,7 +8710,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-01",
@@ -8818,7 +8818,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-02",
@@ -8930,7 +8930,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-03",
@@ -9042,7 +9042,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-04",
@@ -9152,7 +9152,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-05",
@@ -9270,7 +9270,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-06",
@@ -9384,7 +9384,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-07",
@@ -9502,7 +9502,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-08",
@@ -9620,7 +9620,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-09",
@@ -9734,7 +9734,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-10",
@@ -9850,7 +9850,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-11",
@@ -9968,7 +9968,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-12",
@@ -10086,7 +10086,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-13",
@@ -10202,7 +10202,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-14",
@@ -10320,7 +10320,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-15",
@@ -10438,7 +10438,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-16",
@@ -10552,7 +10552,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-17",
@@ -10664,7 +10664,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-18",
@@ -10782,7 +10782,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-19",
@@ -10898,7 +10898,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-20",
@@ -11012,7 +11012,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-21",
@@ -11128,7 +11128,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-22",
@@ -11244,7 +11244,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-23",
@@ -11354,7 +11354,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-24",
@@ -11470,7 +11470,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-25",
@@ -11586,7 +11586,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-26",
@@ -11700,7 +11700,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-27",
@@ -11816,7 +11816,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-02-28",
@@ -11928,7 +11928,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-01",
@@ -12042,7 +12042,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-02",
@@ -12158,7 +12158,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-03",
@@ -12270,7 +12270,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-04",
@@ -12386,7 +12386,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-05",
@@ -12500,7 +12500,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-06",
@@ -12612,7 +12612,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-07",
@@ -12730,7 +12730,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-08",
@@ -12842,7 +12842,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-09",
@@ -12952,7 +12952,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-10",
@@ -13064,7 +13064,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-11",
@@ -13182,7 +13182,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-12",
@@ -13298,7 +13298,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-13",
@@ -13410,7 +13410,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-14",
@@ -13520,7 +13520,7 @@
       "seed": 20260820,
       "config_version": "1.0.0",
       "clinical_validation": "none",
-      "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review"
+      "precachexia_rule_status": "provisional_option_b_pending_clinical_review"
     },
     "baseline_predictors": {
       "baseline_weight_date": "2026-03-15",

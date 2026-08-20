@@ -23,7 +23,7 @@ independently documented evidence and is never inferred from BMI, ECOG, cancer,
 stage, appetite, or weight. The schema does not specify CT muscle index,
 sex-specific thresholds, or another assessment method. For synthetic horizon
 labels, the baseline sarcopenia value is carried forward as a provisional
-operational assumption; clinical-reviewer and clinical-reviewer must confirm whether a dated
+operational assumption; clinical reviewers must confirm whether a dated
 horizon-specific assessment is required.
 
 | Situation | Cachexia result |
@@ -39,7 +39,7 @@ horizon-specific assessment is required.
 
 ## Provisional pre-cachexia candidate
 
-**Working assumption: Option B, requiring review by clinical-reviewer and clinical-reviewer.** It
+**Working assumption: Option B, requiring review by clinical reviewers.** It
 remains separate from the Fearon label. The provisional rule is:
 
 - cachexia has been evaluated as `no`;
@@ -53,7 +53,7 @@ candidate pre-cachexia is unknown. No/unknown is never collapsed.
 
 ## Clinical decisions still required
 
-- Confirm clinical-reviewer's intended age, height, BMI, weight, stage, and ECOG
+- Confirm the supplied age, height, BMI, weight, stage, and ECOG
   distributions beyond the provisional workbook suggestions.
 - Confirm whether outcome loss should use baseline-to-horizon weight or another
   assessment window/measurement-selection rule.

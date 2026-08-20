@@ -320,7 +320,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         "It is never inferred and has no simulated risk coefficient.\n"
         "Provisional early-risk pattern: cachexia criteria not met, >1% and "
         "<=5% weight loss, and reduced appetite=yes. This project proposal "
-        "requires clinical-reviewer and clinical-reviewer's review.",
+        "requires clinical review.",
         formats["definition"],
     )
 
@@ -539,7 +539,7 @@ def build_clinical_review(workbook, formats: dict) -> None:
     sheet.set_column("D:D", 22)
     sheet.set_column("E:F", 40)
     sheet.set_column("G:G", 18)
-    sheet.merge_range("A1:G1", "clinical-reviewer and clinical-reviewer review decisions", formats["title"])
+    sheet.merge_range("A1:G1", "Clinical review decisions", formats["title"])
     sheet.merge_range(
         "A2:G2",
         "No approval has been received. Record decisions explicitly; blank is not approval.",
@@ -566,7 +566,7 @@ def build_clinical_review(workbook, formats: dict) -> None:
     for row, (identifier, question) in enumerate(questions, 7):
         sheet.write(row, 0, identifier)
         sheet.write(row, 1, question)
-        sheet.write(row, 2, "clinical-reviewer; clinical-reviewer")
+        sheet.write(row, 2, "Clinical review")
         sheet.write(row, 3, "pending", formats["review_input"])
         sheet.write_blank(row, 4, None, formats["review_input"])
         sheet.write_blank(row, 5, None, formats["review_input"])

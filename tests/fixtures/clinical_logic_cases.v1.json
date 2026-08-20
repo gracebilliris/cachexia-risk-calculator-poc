@@ -1,14 +1,14 @@
 {
   "metadata": {
     "version": "1.0.0",
-    "purpose": "Software-conformance cases derived from clinical-reviewer's supplied notes and recorded project decisions.",
+    "purpose": "Software-conformance cases derived from the supplied clinical notes and recorded project decisions.",
     "warning": "Passing these cases does not establish clinical validity, accuracy, calibration, or fitness for patient care.",
-    "clinical_approval": "pending clinical-reviewer and clinical-reviewer review"
+    "clinical_approval": "pending clinical review"
   },
   "classification_cases": [
     {
       "id": "fearon-primary-over-five",
-      "source": "Fearon rule supplied in clinical-reviewer handoff",
+      "source": "Fearon rule supplied in the clinical handoff",
       "status": "documented_requirement",
       "baseline_weight_kg": 80.0,
       "outcome_weight_kg": 75.9,
@@ -44,7 +44,7 @@
     },
     {
       "id": "exact-five-documented-sarcopenia",
-      "source": "Fearon sarcopenia branch supplied in clinical-reviewer handoff",
+      "source": "Fearon sarcopenia branch supplied in the clinical handoff",
       "status": "subsequent_project_decision_pending_review",
       "baseline_weight_kg": 80.0,
       "outcome_weight_kg": 76.0,
@@ -116,7 +116,7 @@
     }
   ],
   "risk_case": {
-    "id": "clinical-reviewer-illustrative-risk-terms",
+    "id": "supplied-illustrative-risk-terms",
     "source": "Illustrative multipliers and centralized simulation coefficients",
     "status": "simulation_assumption_not_clinically_validated",
     "patient": {

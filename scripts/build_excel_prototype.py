@@ -330,7 +330,7 @@ def build_input(workbook: Workbook, config: dict) -> None:
         "It is never inferred and has no simulated risk coefficient.\n"
         "Provisional early-risk pattern: cachexia criteria not met, >1% and "
         "<=5% weight loss, and reduced appetite=yes. This project proposal "
-        "requires clinical-reviewer and clinical-reviewer's review."
+        "requires clinical review."
     )
     sheet["G20"].alignment = Alignment(wrap_text=True, vertical="top")
     sheet["G20"].fill = PatternFill("solid", fgColor=PALE_ORANGE)
@@ -564,7 +564,7 @@ def build_review(workbook: Workbook) -> None:
     sheet = workbook.create_sheet("Clinical Review")
     title(
         sheet,
-        "clinical-reviewer and clinical-reviewer review decisions",
+        "Clinical review decisions",
         "No approval has been received. Record decisions explicitly; blank is not approval.",
     )
     warning(sheet, 4)
@@ -583,7 +583,7 @@ def build_review(workbook: Workbook) -> None:
     for row, (identifier, question) in enumerate(questions, 8):
         sheet.cell(row, 1, identifier)
         sheet.cell(row, 2, question)
-        sheet.cell(row, 3, "clinical-reviewer; clinical-reviewer")
+        sheet.cell(row, 3, "Clinical review")
         sheet.cell(row, 4, "pending")
     status = DataValidation(
         type="list",
@@ -612,7 +612,7 @@ def build_readme(workbook: Workbook) -> None:
         ("2", "Enter an explicit prediction date and dated weight history."),
         ("3", "Open Results to inspect derived variables, transparent labels, and separate simulated horizons."),
         ("4", "Review Assumptions before interpreting any output; every relationship is provisional."),
-        ("5", "Use Clinical Review to record clinical-reviewer and clinical-reviewer's decisions."),
+        ("5", "Use Clinical Review to record decisions and requested changes."),
     ]
     sheet["A8"], sheet["B8"] = "Step", "Action"
     for row, values in enumerate(instructions, 9):
@@ -635,7 +635,7 @@ def build_readme(workbook: Workbook) -> None:
     sheet["A23"] = "Provisional early-risk pattern"
     sheet["B23"] = (
         "After cachexia is excluded: weight loss >1% and <=5% plus reduced "
-        "appetite=yes. Pending clinical-reviewer and clinical-reviewer review."
+        "appetite=yes. Pending clinical review."
     )
     sheet.column_dimensions["A"].width = 20
     sheet.column_dimensions["B"].width = 95

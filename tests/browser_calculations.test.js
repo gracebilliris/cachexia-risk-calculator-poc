@@ -149,7 +149,7 @@ test("month-end calendar arithmetic is deterministic", () => {
   );
 });
 
-test("browser classifications match the clinical-reviewer decision table", () => {
+test("browser classifications match the supplied decision table", () => {
   for (const clinicalCase of clinicalCases.classification_cases) {
     const caseInput = input({
       predictionDate: "2026-04-30",

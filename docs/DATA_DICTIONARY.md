@@ -46,7 +46,7 @@ testing values. They are not treated as confirmed clinical requirements.
 `config/simulation_assumptions.v1.json` records the operational values,
 including provisional additions needed to generate a complete cohort.
 
-The current configuration also records clinical-reviewer's illustrative, non-validated
+The current configuration also records the supplied illustrative, non-validated
 cancer multipliers (1.0–2.0) and stage multipliers (1.0–2.0). Their product
 creates the synthetic tumour-stage interaction; it is not a clinical relative
 risk.

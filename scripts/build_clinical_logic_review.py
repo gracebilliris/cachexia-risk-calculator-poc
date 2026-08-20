@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from openpyxl import Workbook
+from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -45,7 +46,29 @@ PALE_TEAL = "DDEFEF"
 PALE_ORANGE = "FFF1E9"
 WHITE = "FFFFFF"
 GREY = "E7ECEE"
+PALE_GREEN = "E2F0D9"
+PALE_RED = "FCE4D6"
+PALE_YELLOW = "FFF2CC"
 THIN = Side(style="thin", color="B7C4C8")
+
+LOSS_LABELS = {
+    "unavailable": "Not available",
+    "gain_minus_2": "2% weight gain",
+    "stable_0": "No weight change",
+    "pre_lower_exact_1": "Exactly 1% loss",
+    "limited_1_5": "1.5% loss",
+    "fearon_conditional_exact_2": "Exactly 2% loss",
+    "conditional_3": "3% loss",
+    "primary_exact_5": "Exactly 5% loss",
+    "primary_over_5": "5.1% loss",
+}
+
+BMI_LABELS = {
+    "unavailable": "Not available",
+    "below_20": "19.9 (below 20)",
+    "exact_20": "20.0 (exact boundary)",
+    "above_20": "25.0 (above 20)",
+}
 
 
 def reference_cachexia(
@@ -167,7 +190,7 @@ def write_json(config: dict[str, Any], cases: list[dict[str, Any]]) -> None:
                 "Synthetic rule combinations only. Agreement does not establish "
                 "clinical validity or approval."
             ),
-            "clinical_approval": "pending clinical-reviewer and clinical-reviewer review",
+            "clinical_approval": "pending clinical review",
             "combination_scope": (
                 "9 weight-loss states x 4 BMI states x 3 sarcopenia states "
                 "x 3 appetite states"
@@ -220,34 +243,35 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     add_title(
         sheet,
         "Clinical logic review matrix",
-        "For clinical-reviewer and clinical-reviewer to confirm, reject, or question current prototype logic.",
+        "A plain-language review of the prototype's current classification rules.",
     )
     add_warning(sheet)
     counts = Counter(
         (case["expected_cachexia"], case["expected_early_risk"]) for case in cases
     )
     instructions = [
-        ("Scope", "324 combinations: 9 weight-loss states × 4 BMI states × 3 sarcopenia states × 3 appetite states."),
-        ("How to review", "Filter Classification Matrix, then record agree/disagree/question, reviewer, and comments."),
-        ("Cachexia", ">5% loss; or >2% with BMI <20; or >2% with documented sarcopenia."),
-        ("Provisional early-risk", "Cachexia excluded, loss >1% and <=5%, and appetite=yes."),
-        ("Unknown", "Unknown is never treated as no. Unavailable branches can keep classification unknown."),
-        ("Sarcopenia", "yes=documented; no=assessed and absent; unknown=not assessed/documented. Never inferred."),
-        ("Weight-loss assumption", "Matrix cases assume loss is involuntary for rule testing; the dataset has no separate involuntary-loss field."),
-        ("Risk outputs", "Risk Terms lists simulation coefficients separately. No clinical performance claim is tested."),
-        ("Clinical approval", "Pending. Completing this workbook records review; it does not itself validate the tool."),
+        ("1. Start with Key Scenarios", "Review 12 representative examples in plain language. Use the dropdown in each row to agree, disagree, or ask a question."),
+        ("2. Review the rule questions", "Use Review Decisions to approve, reject, or request a change to each major rule."),
+        ("3. Use Full Logic Matrix if needed", "The complete 324-case table is included for boundary and unknown-value checking. It is not necessary to read every row."),
+        ("Cachexia rule", "Yes when loss is >5%; or loss is >2% with BMI <20; or loss is >2% with explicitly documented sarcopenia."),
+        ("Provisional early-risk rule", "Yes only when cachexia is excluded, loss is >1% and <=5%, and reduced appetite is yes."),
+        ("Meaning of unknown", "Unknown is not treated as no. A result remains unknown when the available information cannot confirm or exclude the rule."),
+        ("Meaning of sarcopenia", "Yes = independently documented; no = assessed and absent; unknown = not assessed or not documented. It is never inferred."),
+        ("Important assumption", "These test cases treat measured weight loss as involuntary because there is no separate involuntary-loss field."),
+        ("Risk percentages", "Risk Assumptions contains illustrative simulation terms only. They are not calibrated probabilities or validated clinical effects."),
+        ("Review status", "All rules are pending clinical review. Completing this workbook documents feedback; it does not validate the prototype."),
     ]
     sheet["A8"], sheet["B8"] = "Topic", "Current interpretation"
     for row, (topic, text) in enumerate(instructions, 9):
         sheet.cell(row, 1, topic)
         sheet.cell(row, 2, text)
-    sheet["A20"] = "Current output-count summary"
-    sheet["A21"], sheet["B21"], sheet["C21"] = (
+    sheet["A21"] = "Full-matrix output summary"
+    sheet["A22"], sheet["B22"], sheet["C22"] = (
         "Cachexia",
         "Early-risk pattern",
         "Case count",
     )
-    for row, ((cachexia, early_risk), count) in enumerate(sorted(counts.items()), 22):
+    for row, ((cachexia, early_risk), count) in enumerate(sorted(counts.items()), 23):
         sheet.cell(row, 1, cachexia)
         sheet.cell(row, 2, early_risk)
         sheet.cell(row, 3, count)
@@ -258,30 +282,153 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
         sheet.cell(row, 2).alignment = Alignment(wrap_text=True, vertical="top")
 
 
-def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
-    sheet = workbook.create_sheet("Classification Matrix")
+def add_result_formatting(sheet, ranges: tuple[str, ...]) -> None:
+    for cell_range in ranges:
+        sheet.conditional_formatting.add(
+            cell_range,
+            CellIsRule(
+                operator="equal",
+                formula=['"yes"'],
+                fill=PatternFill("solid", fgColor=PALE_GREEN),
+            ),
+        )
+        sheet.conditional_formatting.add(
+            cell_range,
+            CellIsRule(
+                operator="equal",
+                formula=['"no"'],
+                fill=PatternFill("solid", fgColor=PALE_RED),
+            ),
+        )
+        sheet.conditional_formatting.add(
+            cell_range,
+            CellIsRule(
+                operator="equal",
+                formula=['"unknown"'],
+                fill=PatternFill("solid", fgColor=PALE_YELLOW),
+            ),
+        )
+
+
+def add_review_validation(sheet, cell_range: str) -> None:
+    decision = DataValidation(
+        type="list",
+        formula1='"pending,agree,disagree,question"',
+        allow_blank=False,
+    )
+    decision.errorStyle = "stop"
+    decision.error = "Choose pending, agree, disagree, or question."
+    decision.showErrorMessage = True
+    decision.promptTitle = "Record your review"
+    decision.prompt = "Choose agree, disagree, question, or leave as pending."
+    decision.showInputMessage = True
+    sheet.add_data_validation(decision)
+    decision.add(cell_range)
+
+
+def build_key_scenarios_sheet(
+    workbook: Workbook, cases: list[dict[str, Any]]
+) -> None:
+    sheet = workbook.create_sheet("Key Scenarios")
     add_title(
         sheet,
-        "All classification combinations",
-        "Expected outputs come from the documented reference decision table.",
+        "Key scenarios to review first",
+        "Representative examples covering normal cases, thresholds, and missing information.",
+    )
+    add_warning(sheet)
+    scenario_specs = [
+        ("No weight loss", "stable_0", "above_20", "no", "no"),
+        ("Limited loss with reduced appetite", "limited_1_5", "above_20", "no", "yes"),
+        ("Limited loss without reduced appetite", "limited_1_5", "above_20", "no", "no"),
+        ("Exactly 1% loss", "pre_lower_exact_1", "above_20", "no", "yes"),
+        ("Exactly 2% loss", "fearon_conditional_exact_2", "below_20", "yes", "yes"),
+        ("Loss over 2% with low BMI", "conditional_3", "below_20", "no", "no"),
+        ("Loss over 2% with sarcopenia", "conditional_3", "above_20", "yes", "no"),
+        ("Loss over 2%; sarcopenia unknown", "conditional_3", "above_20", "unknown", "no"),
+        ("Exactly 5% loss with reduced appetite", "primary_exact_5", "above_20", "no", "yes"),
+        ("Loss over 5%", "primary_over_5", "above_20", "no", "no"),
+        ("Weight loss unavailable", "unavailable", "above_20", "no", "yes"),
+        ("BMI unavailable; sarcopenia absent", "conditional_3", "unavailable", "no", "yes"),
+    ]
+    case_lookup = {
+        (
+            case["weight_loss_state"],
+            case["bmi_state"],
+            case["sarcopenia"],
+            case["reduced_appetite"],
+        ): case
+        for case in cases
+    }
+    headers = [
+        "Scenario",
+        "Weight change",
+        "BMI",
+        "Sarcopenia",
+        "Reduced appetite",
+        "Cachexia result",
+        "Why?",
+        "Early-risk result",
+        "Why?",
+        "Your review",
+        "Comments / requested change",
+    ]
+    for column, header in enumerate(headers, 1):
+        cell = sheet.cell(7, column, header)
+        cell.font = Font(bold=True, color=WHITE)
+        cell.fill = PatternFill("solid", fgColor=TEAL)
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
+    for row, spec in enumerate(scenario_specs, 8):
+        title, loss_state, bmi_state, sarcopenia, appetite = spec
+        case = case_lookup[(loss_state, bmi_state, sarcopenia, appetite)]
+        values = [
+            title,
+            LOSS_LABELS[loss_state],
+            BMI_LABELS[bmi_state],
+            sarcopenia,
+            appetite,
+            case["expected_cachexia"],
+            case["cachexia_rationale"],
+            case["expected_early_risk"],
+            case["early_risk_rationale"],
+            "pending",
+            None,
+        ]
+        for column, value in enumerate(values, 1):
+            sheet.cell(row, column, value)
+        sheet.cell(row, 10).fill = PatternFill("solid", fgColor=PALE_TEAL)
+        sheet.cell(row, 11).fill = PatternFill("solid", fgColor=PALE_TEAL)
+        sheet.row_dimensions[row].height = 48
+    last_row = 7 + len(scenario_specs)
+    add_review_validation(sheet, f"J8:J{last_row}")
+    add_result_formatting(sheet, (f"F8:F{last_row}", f"H8:H{last_row}"))
+    sheet.auto_filter.ref = f"A7:K{last_row}"
+    sheet.freeze_panes = "A8"
+    widths = (34, 24, 24, 18, 20, 18, 48, 22, 48, 18, 48)
+    for column, width in enumerate(widths, 1):
+        sheet.column_dimensions[get_column_letter(column)].width = width
+
+
+def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
+    sheet = workbook.create_sheet("Full Logic Matrix")
+    add_title(
+        sheet,
+        "Complete logic matrix",
+        "All 324 combinations. Use filters to inspect a threshold or missing-value pattern.",
     )
     add_warning(sheet)
     headers = [
         "Case ID",
-        "Weight-loss state",
+        "Weight change",
         "Loss %",
-        "BMI state",
         "BMI",
         "Sarcopenia",
         "Reduced appetite",
-        "Expected cachexia",
-        "Cachexia rationale",
-        "Expected early-risk pattern",
-        "Early-risk rationale",
+        "Cachexia result",
+        "Why?",
+        "Early-risk result",
+        "Why?",
         "Boundary/missing?",
-        "Rule status",
-        "Reviewer decision",
-        "Reviewer",
+        "Your review",
         "Comments / requested change",
     ]
     for column, header in enumerate(headers, 1):
@@ -292,10 +439,9 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     for row, case in enumerate(cases, 8):
         values = [
             case["case_id"],
-            case["weight_loss_state"],
+            LOSS_LABELS[case["weight_loss_state"]],
             case["weight_loss_percent"],
-            case["bmi_state"],
-            case["bmi"],
+            BMI_LABELS[case["bmi_state"]],
             case["sarcopenia"],
             case["reduced_appetite"],
             case["expected_cachexia"],
@@ -303,40 +449,30 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
             case["expected_early_risk"],
             case["early_risk_rationale"],
             "yes" if case["boundary_or_missing_case"] else "no",
-            "provisional / review pending",
             "pending",
-            None,
             None,
         ]
         for column, value in enumerate(values, 1):
             sheet.cell(row, column, value)
-        for column in (14, 15, 16):
+        for column in (12, 13):
             sheet.cell(row, column).fill = PatternFill("solid", fgColor=PALE_TEAL)
     last_row = 7 + len(cases)
-    decision = DataValidation(
-        type="list",
-        formula1='"pending,agree,disagree,question"',
-        allow_blank=False,
-    )
-    decision.errorStyle = "stop"
-    decision.error = "Choose pending, agree, disagree, or question."
-    decision.showErrorMessage = True
-    sheet.add_data_validation(decision)
-    decision.add(f"N8:N{last_row}")
-    sheet.auto_filter.ref = f"A7:P{last_row}"
+    add_review_validation(sheet, f"L8:L{last_row}")
+    add_result_formatting(sheet, (f"G8:G{last_row}", f"I8:I{last_row}"))
+    sheet.auto_filter.ref = f"A7:M{last_row}"
     sheet.freeze_panes = "A8"
-    widths = (14, 29, 12, 18, 12, 16, 18, 20, 55, 25, 55, 18, 25, 20, 20, 55)
+    widths = (14, 25, 12, 24, 16, 18, 18, 52, 22, 52, 18, 18, 55)
     for column, width in enumerate(widths, 1):
         sheet.column_dimensions[get_column_letter(column)].width = width
     for row in range(8, last_row + 1):
-        for column in (9, 11, 16):
+        for column in (8, 10, 13):
             sheet.cell(row, column).alignment = Alignment(
                 wrap_text=True, vertical="top"
             )
 
 
 def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
-    sheet = workbook.create_sheet("Risk Terms")
+    sheet = workbook.create_sheet("Risk Assumptions")
     add_title(
         sheet,
         "Illustrative risk-score terms",
@@ -345,7 +481,9 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
     add_warning(sheet)
     headers = ["Horizon", "Term", "Category", "Value", "Status"]
     for column, header in enumerate(headers, 1):
-        sheet.cell(7, column, header)
+        cell = sheet.cell(7, column, header)
+        cell.font = Font(bold=True, color=WHITE)
+        cell.fill = PatternFill("solid", fgColor=TEAL)
     row = 8
     for horizon in ("three_month", "six_month"):
         terms = config["risk_outputs"][horizon]
@@ -394,7 +532,7 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
                 "cancer risk multiplier",
                 cancer_type,
                 value,
-                "clinical-reviewer illustrative assumption; not a relative risk",
+                "supplied illustrative assumption; not a relative risk",
             ]
         )
     sheet.freeze_panes = "A8"
@@ -418,11 +556,14 @@ def build_decisions_sheet(workbook: Workbook) -> None:
         "Decision",
         "Replacement rule / requested change",
         "Rationale",
-        "Reviewer",
+        "Reviewed by / role",
         "Date",
     ]
     for column, header in enumerate(headers, 1):
-        sheet.cell(7, column, header)
+        cell = sheet.cell(7, column, header)
+        cell.font = Font(bold=True, color=WHITE)
+        cell.fill = PatternFill("solid", fgColor=TEAL)
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
     topics = [
         ("MATRIX-001", "Fearon primary boundary", "loss >5%"),
         ("MATRIX-002", "Fearon BMI branch", "loss >2% and BMI <20"),
@@ -439,11 +580,20 @@ def build_decisions_sheet(workbook: Workbook) -> None:
         sheet.cell(row, 2, values[1])
         sheet.cell(row, 3, values[2])
         sheet.cell(row, 4, "pending")
+        for column in range(4, 9):
+            sheet.cell(row, column).fill = PatternFill("solid", fgColor=PALE_TEAL)
+        sheet.row_dimensions[row].height = 44
     decision = DataValidation(
         type="list",
         formula1='"pending,approved,rejected,revision_requested"',
         allow_blank=False,
     )
+    decision.errorStyle = "stop"
+    decision.error = "Choose pending, approved, rejected, or revision_requested."
+    decision.showErrorMessage = True
+    decision.promptTitle = "Record the decision"
+    decision.prompt = "Choose a decision and add rationale for any completed review."
+    decision.showInputMessage = True
     sheet.add_data_validation(decision)
     decision.add(f"D8:D{7 + len(topics)}")
     widths = (16, 30, 55, 22, 60, 50, 24, 18)
@@ -458,6 +608,17 @@ def build_decisions_sheet(workbook: Workbook) -> None:
 
 def style_workbook(workbook: Workbook) -> None:
     for sheet in workbook.worksheets:
+        sheet.sheet_view.showGridLines = False
+        sheet.sheet_view.zoomScale = 90
+        sheet.sheet_properties.pageSetUpPr.fitToPage = True
+        sheet.page_setup.fitToWidth = 1
+        sheet.page_setup.fitToHeight = 0
+        sheet.page_margins.left = 0.25
+        sheet.page_margins.right = 0.25
+        sheet.page_margins.top = 0.5
+        sheet.page_margins.bottom = 0.5
+        if sheet.title in {"Key Scenarios", "Full Logic Matrix", "Review Decisions"}:
+            sheet.page_setup.orientation = "landscape"
         for row in sheet.iter_rows():
             for cell in row:
                 if cell.value is not None and cell.row >= 7:
@@ -483,9 +644,10 @@ def main() -> None:
     write_json(config, cases)
     workbook = Workbook()
     build_start_sheet(workbook, cases)
+    build_key_scenarios_sheet(workbook, cases)
+    build_decisions_sheet(workbook)
     build_matrix_sheet(workbook, cases)
     build_risk_terms_sheet(workbook, config)
-    build_decisions_sheet(workbook)
     style_workbook(workbook)
     workbook.active = 0
     workbook.save(WORKBOOK_OUTPUT)

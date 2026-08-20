@@ -7,7 +7,7 @@
     "review_status": {"enum": ["pending", "in_progress", "completed"]},
     "reviewers": {
       "type": "array",
-      "items": {"type": "string", "enum": ["clinical-reviewer", "clinical-reviewer"]}
+      "items": {"type": "string", "minLength": 1}
     },
     "decisions": {
       "type": "array",
@@ -19,7 +19,7 @@
           "question": {"type": "string"},
           "owner": {
             "type": "array",
-            "items": {"type": "string", "enum": ["clinical-reviewer", "clinical-reviewer"]},
+            "items": {"type": "string", "minLength": 1},
             "minItems": 1
           },
           "status": {"enum": ["pending", "approved", "rejected", "revision_requested"]},

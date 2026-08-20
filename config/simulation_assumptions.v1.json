@@ -5,7 +5,7 @@
     "warning": "Every distribution, coefficient, probability, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect.",
     "source_workbook": "Data Extraction_literature review_20260728.xlsx",
     "source_sheet": "Prototype 1_agreed predictors",
-    "clinical-reviewer_confirmation_status": "pending"
+    "clinical_review_status": "pending"
   },
   "cohort": {
     "prediction_date_start": "2026-01-15",
@@ -112,7 +112,7 @@
     "fearon_bmi_exclusive": 20.0,
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
-    "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
+    "precachexia_rule_status": "provisional_option_b_pending_clinical_review",
     "fearon_sarcopenia_branch_enabled": true,
     "risk_missing_predictor_policy": "withhold",
     "horizon_boundary": "inclusive calendar date"

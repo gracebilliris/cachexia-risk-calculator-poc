@@ -1,4 +1,4 @@
-# Clinical review package: clinical-reviewer and clinical-reviewer
+# Clinical review package
 
 **Review status: pending — no clinical feedback or approval has been received
 or recorded.**
@@ -18,7 +18,7 @@ Please assess:
 1. Whether the synthetic profiles and aggregate distributions are plausible
    enough for POC demonstrations, not whether they represent validated
    population prevalence.
-2. Whether clinical-reviewer's illustrative cancer and stage multipliers, their
+2. Whether the supplied illustrative cancer and stage multipliers, their
    multiplicative interaction, and provisional ECOG/appetite associations
    introduce misleading or implausible combinations.
 3. **Provisional early-risk pattern** (internal configuration name:
@@ -59,13 +59,13 @@ are in `data/distribution_summary.v1.json`.
 
 | ID | Decision requested | Owner(s) | Current status |
 |---|---|---|---|
-| CLIN-001 | Confirm or revise predictor ranges/distributions | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-002 | Confirm stage/ECOG/appetite simulation relationships | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-003 | Confirm/reject/revise the provisional early-risk pattern (cachexia criteria not met, >1% and <=5% loss, appetite=yes) and its missing behavior | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-004 | Confirm Fearon operationalisation and negative/unknown truth table | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-005 | Confirm outcome measurement-selection and inclusive boundaries | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-006 | Define acceptable documented sarcopenia evidence and confirm whether baseline evidence may be carried into horizon labels or dated muscle measures are required | clinical-reviewer, clinical-reviewer | pending |
-| UX-001 | Identify clinically misleading language or presentation | clinical-reviewer, clinical-reviewer | pending |
+| CLIN-001 | Confirm or revise predictor ranges/distributions | Clinical review | pending |
+| CLIN-002 | Confirm stage/ECOG/appetite simulation relationships | Clinical review | pending |
+| CLIN-003 | Confirm/reject/revise the provisional early-risk pattern (cachexia criteria not met, >1% and <=5% loss, appetite=yes) and its missing behavior | Clinical review | pending |
+| CLIN-004 | Confirm Fearon operationalisation and negative/unknown truth table | Clinical review | pending |
+| CLIN-005 | Confirm outcome measurement-selection and inclusive boundaries | Clinical review | pending |
+| CLIN-006 | Define acceptable documented sarcopenia evidence and confirm whether baseline evidence may be carried into horizon labels or dated muscle measures are required | Clinical review | pending |
+| UX-001 | Identify clinically misleading language or presentation | Clinical review | pending |
 
 Record decisions using `review_decisions.schema.json`; include rationale,
 effective date, reviewer, and exact config/code changes requested. Absence of a

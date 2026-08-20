@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "purpose": "Exhaustive software-conformance and clinician-review matrix",
     "warning": "Synthetic rule combinations only. Agreement does not establish clinical validity or approval.",
-    "clinical_approval": "pending clinical-reviewer and clinical-reviewer review",
+    "clinical_approval": "pending clinical review",
     "combination_scope": "9 weight-loss states x 4 BMI states x 3 sarcopenia states x 3 appetite states",
     "case_count": 324,
     "config_version": "1.0.0"

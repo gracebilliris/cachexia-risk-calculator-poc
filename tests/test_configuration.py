@@ -56,7 +56,7 @@ class ConfigurationTests(unittest.TestCase):
         )
         self.assertEqual(
             config["definitions"]["precachexia_rule_status"],
-            "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
+            "provisional_option_b_pending_clinical_review",
         )
         self.assertTrue(
             config["definitions"]["fearon_sarcopenia_branch_enabled"]

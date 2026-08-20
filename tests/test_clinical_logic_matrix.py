@@ -83,12 +83,19 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
             self.workbook.sheetnames,
             [
                 "START HERE",
-                "Classification Matrix",
-                "Risk Terms",
+                "Key Scenarios",
                 "Review Decisions",
+                "Full Logic Matrix",
+                "Risk Assumptions",
             ],
         )
-        matrix = self.workbook["Classification Matrix"]
+        scenarios = self.workbook["Key Scenarios"]
+        self.assertEqual(scenarios.max_row, 19)
+        self.assertEqual(scenarios["A8"].value, "No weight loss")
+        self.assertIn("Loss over 5%", [scenarios.cell(row, 1).value for row in range(8, 20)])
+        self.assertIn("J8:J19", str(list(scenarios.data_validations.dataValidation)[0].sqref))
+
+        matrix = self.workbook["Full Logic Matrix"]
         self.assertIn("NOT FOR CLINICAL USE", matrix["A4"].value)
         self.assertEqual(matrix.max_row, 331)
         self.assertEqual(matrix["A8"].value, "LOGIC-001")
@@ -96,10 +103,10 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
         validations = list(matrix.data_validations.dataValidation)
         self.assertEqual(len(validations), 1)
         self.assertIn("agree", validations[0].formula1)
-        self.assertIn("N8:N331", str(validations[0].sqref))
+        self.assertIn("L8:L331", str(validations[0].sqref))
 
     def test_risk_terms_are_labelled_as_unvalidated_assumptions(self):
-        sheet = self.workbook["Risk Terms"]
+        sheet = self.workbook["Risk Assumptions"]
         statuses = {
             sheet.cell(row, 5).value
             for row in range(8, sheet.max_row + 1)
@@ -114,6 +121,17 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                 for status in statuses
             )
         )
+
+    def test_workbook_contains_no_named_reviewers(self):
+        blocked = ("Mari" + "ana", "Nami" + "tha")
+        for sheet in self.workbook.worksheets:
+            for row in sheet.iter_rows():
+                for cell in row:
+                    if isinstance(cell.value, str):
+                        self.assertFalse(
+                            any(name.casefold() in cell.value.casefold() for name in blocked),
+                            f"Named reviewer found in {sheet.title}!{cell.coordinate}",
+                        )
 
 
 if __name__ == "__main__":

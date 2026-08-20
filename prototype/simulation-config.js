@@ -103,7 +103,7 @@ window.SIMULATION_CONFIG = Object.freeze({
     "fearon_weight_loss_primary_exclusive": 5.0,
     "horizon_boundary": "inclusive calendar date",
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
-    "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
+    "precachexia_rule_status": "provisional_option_b_pending_clinical_review",
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
     "risk_missing_predictor_policy": "withhold",
     "trajectory_epsilon_percent": 0.5
@@ -118,8 +118,8 @@ window.SIMULATION_CONFIG = Object.freeze({
     "weight_loss_upper_boundary_percent": 5.0
   },
   "metadata": {
+    "clinical_review_status": "pending",
     "config_version": "1.0.0",
-    "clinical-reviewer_confirmation_status": "pending",
     "purpose": "Synthetic research-only proof of concept",
     "source_sheet": "Prototype 1_agreed predictors",
     "source_workbook": "Data Extraction_literature review_20260728.xlsx",

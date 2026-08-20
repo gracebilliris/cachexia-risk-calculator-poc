@@ -80,6 +80,11 @@ tests both Excel editions and publishes them as downloads with the static site.
 | Tests | `tests/` |
 | Final report | `docs/IMPLEMENTATION_REPORT.md` |
 
+The clinical review workbook opens on **START HERE**, followed by 12
+plain-language **Key Scenarios** and a short **Review Decisions** sheet. The
+complete 324-case matrix and detailed risk assumptions remain available as
+reference sheets rather than being the primary review workflow.
+
 ## Temporal and missing-data guarantees
 
 Baseline predictors use only measurements dated on or before each patient's
@@ -106,8 +111,8 @@ This is an explainable simulation, not a trained or evaluated prediction
 model. It has no calibration, discrimination, causal, treatment, diagnostic,
 or prognostic claims. Workbook proposals remain adjustable and the provisional
 pre-cachexia definition, Fearon operationalisation, distributions,
-relationships, horizon rules, and presentation await clinical-reviewer and clinical-reviewer's
-documented clinical review.
+relationships, horizon rules, and presentation await documented clinical
+review.
 
 The automated suite tests arithmetic, temporal leakage, horizon boundaries,
 unknown handling, reproducibility, configuration parity, browser calculations,

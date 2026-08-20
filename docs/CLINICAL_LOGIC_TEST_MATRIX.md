@@ -13,11 +13,19 @@ executed independently against the Python and browser implementations.
 The exhaustive generated matrix is available as:
 
 - `data/clinical_logic_matrix.v1.json` for automated tests; and
-- `excel/clinical_logic_review_matrix.v1.xlsx` for clinical-reviewer and clinical-reviewer.
+- `excel/clinical_logic_review_matrix.v1.xlsx` for clinical review.
 
 It contains all 324 combinations of nine weight-loss states, four BMI states,
 three sarcopenia states, and three appetite states. Reviewer decisions and
 comments can be recorded directly in the workbook.
+
+The workbook is arranged for progressive review:
+
+1. `START HERE` explains the rules, unknown handling, and review process.
+2. `Key Scenarios` presents 12 representative examples in plain language.
+3. `Review Decisions` captures decisions on each major clinical assumption.
+4. `Full Logic Matrix` retains all 324 combinations for detailed filtering.
+5. `Risk Assumptions` separates unvalidated score terms from classifications.
 
 ## Requirement traceability
 
@@ -28,15 +36,15 @@ comments can be recorded directly in the workbook.
 | Three- and six-month horizons are separate | Confirmed project requirement | Python horizon-isolation tests and workbook formula tests |
 | Exact horizon dates are included | Project operationalisation pending review | Calendar-boundary tests |
 | BMI is weight kg / height m² | Confirmed project requirement | Python and browser arithmetic tests |
-| Positive percentage means weight loss | clinical-reviewer handoff formula | Python and browser arithmetic tests |
-| Fearon primary branch uses loss >5% | clinical-reviewer handoff | Shared decision-table cases and strict-boundary tests |
-| Fearon BMI branch uses loss >2% and BMI <20 | clinical-reviewer handoff | Shared decision-table cases, exact-2 and exact-BMI-20 tests |
+| Positive percentage means weight loss | Supplied clinical handoff formula | Python and browser arithmetic tests |
+| Fearon primary branch uses loss >5% | Supplied clinical handoff | Shared decision-table cases and strict-boundary tests |
+| Fearon BMI branch uses loss >2% and BMI <20 | Supplied clinical handoff | Shared decision-table cases, exact-2 and exact-BMI-20 tests |
 | Fearon sarcopenia branch uses loss >2% with documented evidence | Subsequent project decision; clinical review pending | Shared yes/no/unknown decision-table cases |
 | Sarcopenia is never inferred | Confirmed modelling constraint | Code path and workbook-reference tests |
 | Unknown is not treated as no | Confirmed modelling constraint | Shared unknown sarcopenia/appetite cases and missing-data tests |
-| Provisional early-risk pattern uses cachexia excluded, loss >1% and <=5%, appetite=yes | Project operationalisation pending clinical-reviewer and clinical-reviewer review | Shared lower/upper/appetite decision-table cases |
-| clinical-reviewer's ECOG distribution is retained with a declared 5% unknown allocation | clinical-reviewer proposal plus provisional missingness assumption | Configuration acceptance test |
-| clinical-reviewer's illustrative cancer and stage multipliers remain centralized | Simulation assumptions, not validated effects | Configuration acceptance test |
+| Provisional early-risk pattern uses cachexia excluded, loss >1% and <=5%, appetite=yes | Project operationalisation pending clinical review | Shared lower/upper/appetite decision-table cases |
+| The supplied ECOG distribution is retained with a declared 5% unknown allocation | Supplied proposal plus provisional missingness assumption | Configuration acceptance test |
+| The supplied illustrative cancer and stage multipliers remain centralized | Simulation assumptions, not validated effects | Configuration acceptance test |
 | Illustrative three-/six-month score arithmetic matches configured coefficients | Simulation assumptions, not a performance claim | Python and browser risk-arithmetic acceptance tests |
 | Synthetic generation is reproducible | Technical requirement | Fixed-seed generator tests |
 | Excel workbooks encode the same thresholds and input references | Technical requirement | OOXML/formula structure tests for both workbook editions |
@@ -59,7 +67,7 @@ The decision table includes representative cases for:
 - Clinical sensitivity, specificity, discrimination, calibration, utility,
   fairness, or transportability cannot be tested with rule-generated
   synthetic data.
-- clinical-reviewer and clinical-reviewer have not approved the provisional early-risk rule,
+- Clinical review has not approved the provisional early-risk rule,
   sarcopenia evidence definition, baseline sarcopenia carry-forward, or all
   simulation coefficients.
 - Workbook tests inspect formulas and package structure in CI. Direct

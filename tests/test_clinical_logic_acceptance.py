@@ -95,7 +95,7 @@ class ClinicalLogicAcceptanceTests(unittest.TestCase):
                 self.assertEqual(result["band"], expected["band"])
                 self.assertIn("not clinically validated", result["warning"])
 
-    def test_configuration_matches_recorded_clinical-reviewer_assumptions(self):
+    def test_configuration_matches_recorded_supplied_assumptions(self):
         expected = self.fixture["configuration_expectations"]
         self.assertEqual(self.config["cohort"]["age"], expected["age"])
         self.assertEqual(

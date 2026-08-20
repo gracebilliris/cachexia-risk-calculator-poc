@@ -73,13 +73,15 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 58 Python unit tests covering calculations, validation, missing values,
+- 60 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
   sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
   sheets, formulas, validation, safety notice, config parity, VBA package
   structure, Form Control wiring, and version-controlled macro source.
+- Repository and workbook privacy checks that prevent named reviewers from
+  appearing in current text files or generated workbook contents.
 - 11 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
   missing history, classification boundaries, separate risk behavior, factor
   explanations, and calendar-month arithmetic.
@@ -125,8 +127,8 @@ decisions for:
   carry-forward assumption; or
 - whether the interface and explanations could be clinically misleading.
 
-No unavailable input has been represented as approved. clinical-reviewer and clinical-reviewer's
-decisions remain `pending` in `CLINICAL_REVIEW_PACKAGE.md` and should be
+No unavailable input has been represented as approved. Clinical decisions
+remain `pending` in `CLINICAL_REVIEW_PACKAGE.md` and should be
 recorded using `review_decisions.schema.json` before any clinically informed
 revision.
 
