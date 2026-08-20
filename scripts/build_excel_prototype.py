@@ -171,7 +171,7 @@ def build_input(workbook: Workbook, config: dict) -> None:
         ("Height (cm; blank = unknown)", 170),
         ("ECOG", "2"),
         ("Reduced appetite", "no"),
-        ("Sarcopenia (future field; not used in v1)", "unknown"),
+        ("Documented sarcopenia evidence", "unknown"),
     ]
     for row, (label, value) in enumerate(labels, 4):
         target_row = row + 4
@@ -324,8 +324,9 @@ def build_input(workbook: Workbook, config: dict) -> None:
     sheet.merge_cells("G20:L23")
     sheet["G20"] = (
         "Rules shown in plain language\n"
-        "Implemented cachexia criteria: >5% weight loss, or >2% weight loss "
-        "with BMI <20 kg/m². The sarcopenia branch is not evaluated.\n"
+        "Implemented cachexia criteria: >5% weight loss, >2% weight loss "
+        "with BMI <20 kg/m², or >2% loss with documented sarcopenia. "
+        "Sarcopenia is never inferred and has no simulated risk coefficient.\n"
         "Provisional early-risk pattern: cachexia criteria not met, >1% and "
         "<=5% weight loss, and reduced appetite=yes. This project proposal "
         "requires clinical-reviewer and clinical-reviewer's review."
@@ -338,7 +339,7 @@ def build_input(workbook: Workbook, config: dict) -> None:
     sheet.freeze_panes = "A8"
 
 
-def build_results(workbook: Workbook) -> None:
+def build_results(workbook: Workbook, config: dict) -> None:
     sheet = workbook.create_sheet("Results")
     title(
         sheet,
@@ -391,11 +392,21 @@ def build_results(workbook: Workbook) -> None:
     sheet["B15"] = '=IF(OR(B9="",B11="",B14<=0),"",(B11-B9)/(B14/\'Assumptions\'!$B$8))'
     sheet["B16"] = '=IF(OR(B13="",B14<=0),"",B13/(B14/\'Assumptions\'!$B$8))'
     sheet["B17"] = '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$9,"loss",IF(B13<-\'Assumptions\'!$B$9,"gain","stable")))'
-    sheet["B19"] = (
-        '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
-        'IF(B13<=\'Assumptions\'!$B$11,"no",IF(B12="","unknown",'
-        'IF(B12<\'Assumptions\'!$B$12,"yes","no")))))'
-    )
+    if config["definitions"]["fearon_sarcopenia_branch_enabled"]:
+        sheet["B19"] = (
+            '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
+            'IF(B13<=\'Assumptions\'!$B$11,"no",'
+            'IF(AND(B12<>"",B12<\'Assumptions\'!$B$12),"yes",'
+            'IF(\'Calculator\'!B17="yes","yes",'
+            'IF(AND(B12<>"",B12>=\'Assumptions\'!$B$12,\'Calculator\'!B17="no"),'
+            '"no","unknown"))))))'
+        )
+    else:
+        sheet["B19"] = (
+            '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
+            'IF(B13<=\'Assumptions\'!$B$11,"no",IF(B12="","unknown",'
+            'IF(B12<\'Assumptions\'!$B$12,"yes","no")))))'
+        )
     sheet["B20"] = (
         '=IF(B19="unknown","unknown",IF(B19="yes","no",'
         'IF(OR(B13<=\'Assumptions\'!$B$13,B13>\'Assumptions\'!$B$14),"no",'
@@ -529,7 +540,11 @@ def build_dictionary(workbook: Workbook) -> None:
         ("weights", "kg + date", "25–160 kg; multiple dated rows"),
         ("ecog", "category", "0–4 / unknown"),
         ("reduced_appetite", "tri-state", "yes / no / unknown"),
-        ("sarcopenia", "tri-state", "yes / no / unknown; never inferred"),
+        (
+            "sarcopenia",
+            "tri-state",
+            "documented yes / no / unknown; used in the >2% Fearon branch and never inferred",
+        ),
         ("outcome_3m", "tri-state labels", "Inclusive 3-calendar-month horizon"),
         ("outcome_6m", "tri-state labels", "Inclusive 6-calendar-month horizon"),
         ("risk outputs", "0–100% display", "Simulation only; not calibrated"),
@@ -612,8 +627,9 @@ def build_readme(workbook: Workbook) -> None:
     )
     sheet["A21"] = "Implemented cachexia criteria"
     sheet["B21"] = (
-        "Cachexia if weight loss is >5%, or if weight loss is >2% with BMI "
-        "<20 kg/m². Sarcopenia is retained but not used in v1."
+        "Cachexia if weight loss is >5%, if loss is >2% with BMI <20 kg/m², "
+        "or if loss is >2% with explicitly documented sarcopenia. "
+        "Sarcopenia is never inferred from other fields."
     )
     sheet["A23"] = "Provisional early-risk pattern"
     sheet["B23"] = (
@@ -652,7 +668,7 @@ def main() -> None:
     workbook.calculation.forceFullCalc = False
     build_readme(workbook)
     build_input(workbook, config)
-    build_results(workbook)
+    build_results(workbook, config)
     build_assumptions(workbook, config)
     build_cohort(workbook, patients)
     build_dictionary(workbook)

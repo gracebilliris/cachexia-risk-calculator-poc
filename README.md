@@ -90,6 +90,13 @@ unknown; they are never treated as no or normal. Invalid and implausible values
 raise actionable errors rather than being silently corrected. Simulated risk
 is withheld when BMI or baseline weight change is not calculable.
 
+The third Fearon branch uses only explicitly documented sarcopenia=`yes` with
+weight loss `>2%`. Sarcopenia is never inferred from BMI, ECOG, stage,
+appetite, cancer type, or weight. It changes the criteria label only; no
+simulated risk coefficient has been invented. Its acceptable assessment method
+and the provisional use of baseline evidence in horizon labels await clinical
+review.
+
 ## Limitations
 
 This is an explainable simulation, not a trained or evaluated prediction

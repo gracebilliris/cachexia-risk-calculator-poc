@@ -60,7 +60,7 @@ are in `data/distribution_summary.v1.json`.
 | CLIN-003 | Confirm/reject/revise the provisional early-risk pattern (cachexia criteria not met, >1% and <=5% loss, appetite=yes) and its missing behavior | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-004 | Confirm Fearon operationalisation and negative/unknown truth table | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-005 | Confirm outcome measurement-selection and inclusive boundaries | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-006 | Confirm sarcopenia remains stored but unused in v1 and whether later dated muscle measures are needed | clinical-reviewer, clinical-reviewer | pending |
+| CLIN-006 | Define acceptable documented sarcopenia evidence and confirm whether baseline evidence may be carried into horizon labels or dated muscle measures are required | clinical-reviewer, clinical-reviewer | pending |
 | UX-001 | Identify clinically misleading language or presentation | clinical-reviewer, clinical-reviewer | pending |
 
 Record decisions using `review_decisions.schema.json`; include rationale,

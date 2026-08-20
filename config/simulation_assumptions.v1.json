@@ -113,7 +113,7 @@
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
     "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
-    "fearon_v1_sarcopenia_branch_enabled": false,
+    "fearon_sarcopenia_branch_enabled": true,
     "risk_missing_predictor_policy": "withhold",
     "horizon_boundary": "inclusive calendar date"
   }

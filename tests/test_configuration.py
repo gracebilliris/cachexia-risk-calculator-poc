@@ -58,6 +58,9 @@ class ConfigurationTests(unittest.TestCase):
             config["definitions"]["precachexia_rule_status"],
             "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
         )
+        self.assertTrue(
+            config["definitions"]["fearon_sarcopenia_branch_enabled"]
+        )
 
 
 if __name__ == "__main__":

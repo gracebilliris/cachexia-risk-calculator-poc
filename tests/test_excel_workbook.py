@@ -110,9 +110,11 @@ class ExcelPrototypeTests(unittest.TestCase):
         self.assertIn('"unknown"', results["B26"].value)
         self.assertIn("Estimate withheld", results["B27"].value)
 
-    def test_v1_fearon_formula_does_not_use_sarcopenia(self):
+    def test_fearon_formula_uses_explicit_sarcopenia_branch(self):
         formula = self.workbook["Results"]["B19"].value
-        self.assertNotIn("B17", formula)
+        self.assertIn("'Calculator'!B17", formula)
+        self.assertIn("'Calculator'!B17=\"yes\"", formula)
+        self.assertIn("'Calculator'!B17=\"no\"", formula)
         self.assertIn("'Assumptions'!$B$12", formula)
 
     def test_single_screen_exposes_inputs_and_outputs(self):

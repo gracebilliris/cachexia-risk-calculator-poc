@@ -46,7 +46,7 @@
     },
     "ecog": {"type": ["integer", "null"], "minimum": 0, "maximum": 4, "description": "null means unknown."},
     "reduced_appetite": {"enum": ["yes", "no", "unknown"]},
-    "sarcopenia": {"enum": ["yes", "no", "unknown"], "description": "Stored only; never inferred."},
+    "sarcopenia": {"enum": ["yes", "no", "unknown"], "description": "Explicitly documented evidence used in the >2% Fearon branch; never inferred from other fields."},
     "outcome_3m": {"$ref": "#/$defs/outcome3m"},
     "outcome_6m": {"$ref": "#/$defs/outcome6m"},
     "provenance": {

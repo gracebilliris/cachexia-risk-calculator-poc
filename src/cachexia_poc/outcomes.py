@@ -10,6 +10,7 @@ from .config import load_simulation_config
 from .core import PatientValidationError, parse_date, select_baseline_weight, validate_patient
 
 _DEFINITIONS = load_simulation_config()["definitions"]
+_SARCOPENIA_BRANCH_ENABLED = _DEFINITIONS["fearon_sarcopenia_branch_enabled"]
 DEFAULT_PRECACHEXIA_CONFIG = {
     "lower_weight_loss_percent_exclusive": _DEFINITIONS[
         "precachexia_lower_weight_loss_percent_exclusive"
@@ -45,7 +46,7 @@ def _latest_outcome_weight(
 
 
 def _fearon_status(
-    loss_percent: float, bmi_at_outcome: float | None
+    loss_percent: float, bmi_at_outcome: float | None, sarcopenia: str
 ) -> tuple[str, list[str]]:
     reasons = [f"Observed weight loss is {loss_percent:.3f}%."]
     primary_threshold = _DEFINITIONS["fearon_weight_loss_primary_exclusive"]
@@ -59,11 +60,26 @@ def _fearon_status(
         return "no", reasons + ["All supported branches require weight loss >2%."]
     if bmi_at_outcome is not None and bmi_at_outcome < bmi_threshold:
         return "yes", reasons + ["Supported branch: weight loss >2% and BMI <20."]
-    if bmi_at_outcome is not None and bmi_at_outcome >= bmi_threshold:
-        return "no", reasons + [
-            "The BMI branch is refuted; sarcopenia is reserved for a later version."
+    if _SARCOPENIA_BRANCH_ENABLED and sarcopenia == "yes":
+        return "yes", reasons + [
+            "Supported branch: weight loss >2% and documented sarcopenia evidence."
         ]
-    return "unknown", reasons + ["Not evaluable because BMI is unknown."]
+    if (
+        bmi_at_outcome is not None
+        and bmi_at_outcome >= bmi_threshold
+        and (not _SARCOPENIA_BRANCH_ENABLED or sarcopenia == "no")
+    ):
+        return "no", reasons + [
+            "The BMI and sarcopenia branches are both explicitly refuted."
+        ]
+    unknown_branches = []
+    if bmi_at_outcome is None:
+        unknown_branches.append("BMI")
+    if _SARCOPENIA_BRANCH_ENABLED and sarcopenia == "unknown":
+        unknown_branches.append("sarcopenia")
+    return "unknown", reasons + [
+        "Not evaluable because " + " and ".join(unknown_branches) + " are unknown."
+    ]
 
 
 def _precachexia_status(
@@ -131,7 +147,7 @@ def evaluate_horizon(
         if height is not None
         else None
     )
-    cachexia, cachexia_reasons = _fearon_status(loss, bmi)
+    cachexia, cachexia_reasons = _fearon_status(loss, bmi, patient["sarcopenia"])
     pre_config = {**DEFAULT_PRECACHEXIA_CONFIG, **(config or {})}
     precachexia, pre_reasons = _precachexia_status(
         loss, patient["reduced_appetite"], cachexia, pre_config

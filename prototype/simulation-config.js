@@ -98,7 +98,7 @@ window.SIMULATION_CONFIG = Object.freeze({
   "definitions": {
     "days_per_month": 30.4375,
     "fearon_bmi_exclusive": 20.0,
-    "fearon_v1_sarcopenia_branch_enabled": false,
+    "fearon_sarcopenia_branch_enabled": true,
     "fearon_weight_loss_conditional_exclusive": 2.0,
     "fearon_weight_loss_primary_exclusive": 5.0,
     "horizon_boundary": "inclusive calendar date",

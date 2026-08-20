@@ -53,12 +53,14 @@
     "low": 2
   },
   "outcome_3m_cachexia": {
-    "no": 107,
-    "yes": 13
+    "no": 81,
+    "unknown": 17,
+    "yes": 22
   },
   "outcome_6m_cachexia": {
-    "no": 59,
-    "yes": 61
+    "no": 41,
+    "unknown": 14,
+    "yes": 65
   },
   "edge_cases": {
     "unknown_fields": 1,

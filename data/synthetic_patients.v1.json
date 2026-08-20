@@ -76,7 +76,7 @@
       "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.496%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is unknown."
       ]
     },
@@ -369,12 +369,12 @@
       "outcome_weight_kg": 70.952,
       "weight_loss_percent": 2.2632412700599227,
       "bmi_at_outcome": 24.81289436789404,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.263%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -386,12 +386,12 @@
       "outcome_weight_kg": 69.346,
       "weight_loss_percent": 4.475514842620008,
       "bmi_at_outcome": 24.25125398630032,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.476%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -817,7 +817,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.467%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -1051,7 +1051,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.294%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -1279,12 +1279,12 @@
       "outcome_weight_kg": 54.53,
       "weight_loss_percent": 2.0055349890378458,
       "bmi_at_outcome": 23.57094907542488,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.006%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -1296,12 +1296,12 @@
       "outcome_weight_kg": 53.435,
       "weight_loss_percent": 3.9733314164540103,
       "bmi_at_outcome": 23.09762816514448,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.973%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -1389,7 +1389,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.080%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -1493,12 +1493,12 @@
       "outcome_weight_kg": 72.533,
       "weight_loss_percent": 3.505481055768419,
       "bmi_at_outcome": 20.92070363110477,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.505%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -1628,7 +1628,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.118%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -1744,7 +1744,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.707%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -1843,7 +1843,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.333%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -1860,7 +1860,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.612%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -1955,7 +1955,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 4.253%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -2067,12 +2067,12 @@
       "outcome_weight_kg": 95.233,
       "weight_loss_percent": 2.382197074530785,
       "bmi_at_outcome": 28.65590496757919,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.382%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -2084,12 +2084,12 @@
       "outcome_weight_kg": 92.964,
       "weight_loss_percent": 4.708016851686709,
       "bmi_at_outcome": 27.973155832600376,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.708%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -2181,7 +2181,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 2.688%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -2416,12 +2416,12 @@
       "outcome_weight_kg": 60.573,
       "weight_loss_percent": 2.606360742193784,
       "bmi_at_outcome": 24.6999212186159,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.606%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -2511,12 +2511,12 @@
       "outcome_weight_kg": 101.096,
       "weight_loss_percent": 4.811404252113816,
       "bmi_at_outcome": 40.03927251585297,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.811%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -2754,12 +2754,12 @@
       "outcome_weight_kg": 74.512,
       "weight_loss_percent": 2.6126962136163367,
       "bmi_at_outcome": 24.41408265834079,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.613%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -3175,12 +3175,12 @@
       "outcome_weight_kg": 55.48,
       "weight_loss_percent": 2.5418518453457986,
       "bmi_at_outcome": 22.308638485457365,
-      "cachexia": "no",
+      "cachexia": "yes",
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.542%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -3291,12 +3291,12 @@
       "outcome_weight_kg": 78.163,
       "weight_loss_percent": 4.480074301286827,
       "bmi_at_outcome": 25.14760297783035,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.480%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -3407,12 +3407,12 @@
       "outcome_weight_kg": 125.442,
       "weight_loss_percent": 2.0275230790859102,
       "bmi_at_outcome": 38.93265880928919,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.028%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -3424,12 +3424,12 @@
       "outcome_weight_kg": 122.898,
       "weight_loss_percent": 4.014433215139267,
       "bmi_at_outcome": 38.14309324105182,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.014%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -3525,12 +3525,12 @@
       "outcome_weight_kg": 116.995,
       "weight_loss_percent": 2.4293625112586286,
       "bmi_at_outcome": 37.05036119312329,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.429%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -3542,12 +3542,12 @@
       "outcome_weight_kg": 114.152,
       "weight_loss_percent": 4.800346932648364,
       "bmi_at_outcome": 36.15003060743972,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.800%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -3888,12 +3888,12 @@
       "outcome_weight_kg": 107.493,
       "weight_loss_percent": 3.2222342264477164,
       "bmi_at_outcome": 31.646778928290786,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.222%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -3987,12 +3987,12 @@
       "outcome_weight_kg": 79.894,
       "weight_loss_percent": 3.0494982222383915,
       "bmi_at_outcome": 24.279492225724457,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.049%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -4107,7 +4107,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.315%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -4563,12 +4563,12 @@
       "outcome_weight_kg": 69.93,
       "weight_loss_percent": 2.6166636494032653,
       "bmi_at_outcome": 24.42658819978875,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.617%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -4816,7 +4816,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.564%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -4911,7 +4911,7 @@
       "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.126%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is unknown."
       ]
     },
@@ -5365,7 +5365,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.599%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -5819,12 +5819,12 @@
       "outcome_weight_kg": 81.105,
       "weight_loss_percent": 2.121574164584912,
       "bmi_at_outcome": 26.153445802340514,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.122%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -5836,12 +5836,12 @@
       "outcome_weight_kg": 79.383,
       "weight_loss_percent": 4.199703124434312,
       "bmi_at_outcome": 25.59816272889707,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.200%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -5941,7 +5941,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 2.357%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -5958,7 +5958,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 4.660%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -6057,7 +6057,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.854%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -6296,12 +6296,12 @@
       "outcome_weight_kg": 64.332,
       "weight_loss_percent": 2.862837470556262,
       "bmi_at_outcome": 21.49487119516188,
-      "cachexia": "no",
+      "cachexia": "unknown",
       "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.863%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is unknown."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -6401,7 +6401,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.134%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -6507,7 +6507,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.147%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -6524,7 +6524,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.247%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -6711,12 +6711,12 @@
       "outcome_weight_kg": 87.804,
       "weight_loss_percent": 3.867040378383109,
       "bmi_at_outcome": 28.249429165531215,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.867%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -6829,7 +6829,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.838%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -6945,7 +6945,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.243%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -7059,12 +7059,12 @@
       "outcome_weight_kg": 79.183,
       "weight_loss_percent": 4.667710089092217,
       "bmi_at_outcome": 23.161043886438552,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.668%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -7192,12 +7192,12 @@
       "outcome_weight_kg": 81.582,
       "weight_loss_percent": 3.717603738847196,
       "bmi_at_outcome": 24.0183781132522,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.718%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -7310,7 +7310,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.779%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -7395,12 +7395,12 @@
       "outcome_weight_kg": 124.573,
       "weight_loss_percent": 3.2600507878326592,
       "bmi_at_outcome": 37.40228936010509,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.260%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -7737,12 +7737,12 @@
       "outcome_weight_kg": 77.621,
       "weight_loss_percent": 3.466073027559454,
       "bmi_at_outcome": 28.965556359522036,
-      "cachexia": "no",
+      "cachexia": "yes",
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.466%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -7959,12 +7959,12 @@
       "outcome_weight_kg": 111.513,
       "weight_loss_percent": 2.1798628046106066,
       "bmi_at_outcome": 43.073822242119284,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.180%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -7976,12 +7976,12 @@
       "outcome_weight_kg": 109.082,
       "weight_loss_percent": 4.312356357129081,
       "bmi_at_outcome": 42.134806505204374,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.312%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -8059,12 +8059,12 @@
       "outcome_weight_kg": 72.03,
       "weight_loss_percent": 2.9859792314840985,
       "bmi_at_outcome": 23.121925382596764,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.986%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -8171,7 +8171,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.734%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -8532,12 +8532,12 @@
       "outcome_weight_kg": 66.123,
       "weight_loss_percent": 2.9543853469531394,
       "bmi_at_outcome": 25.732708750630927,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.954%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -8646,12 +8646,12 @@
       "outcome_weight_kg": 106.351,
       "weight_loss_percent": 2.6054067914575616,
       "bmi_at_outcome": 33.641710140563134,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.605%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -8737,7 +8737,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.707%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -8957,7 +8957,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.789%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -9293,12 +9293,12 @@
       "outcome_weight_kg": 93.002,
       "weight_loss_percent": 2.8111022865025266,
       "bmi_at_outcome": 38.26485374705665,
-      "cachexia": "no",
+      "cachexia": "yes",
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.811%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -9411,7 +9411,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.237%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -9546,7 +9546,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.349%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -9664,7 +9664,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.714%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -9877,7 +9877,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 2.700%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -9991,12 +9991,12 @@
       "outcome_weight_kg": 85.013,
       "weight_loss_percent": 4.825185002742841,
       "bmi_at_outcome": 28.636160457892924,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.825%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -10246,7 +10246,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.707%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -10343,12 +10343,12 @@
       "outcome_weight_kg": 109.526,
       "weight_loss_percent": 3.082913016547216,
       "bmi_at_outcome": 36.051426425314396,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.083%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -10482,7 +10482,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.935%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -10575,12 +10575,12 @@
       "outcome_weight_kg": 90.868,
       "weight_loss_percent": 2.775459545055753,
       "bmi_at_outcome": 25.411360165508864,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.775%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -10687,12 +10687,12 @@
       "outcome_weight_kg": 77.708,
       "weight_loss_percent": 3.506680574181689,
       "bmi_at_outcome": 22.7542118775885,
-      "cachexia": "no",
+      "cachexia": "unknown",
       "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 3.507%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is unknown."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -10809,7 +10809,7 @@
       "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.554%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is unknown."
       ]
     },
@@ -10925,7 +10925,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 4.273%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -11039,7 +11039,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 4.328%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -11151,12 +11151,12 @@
       "outcome_weight_kg": 79.486,
       "weight_loss_percent": 4.585504045326859,
       "bmi_at_outcome": 27.471477337569187,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.586%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -11381,7 +11381,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.846%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -11497,7 +11497,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.262%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -11972,7 +11972,7 @@
       "precachexia_candidate": "yes",
       "explanations": [
         "Observed weight loss is 3.507%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
       ]
     },
@@ -12426,12 +12426,12 @@
       "outcome_weight_kg": 85.285,
       "weight_loss_percent": 2.7714442063021543,
       "bmi_at_outcome": 26.26413369779047,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.771%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -12540,12 +12540,12 @@
       "outcome_weight_kg": 74.146,
       "weight_loss_percent": 2.9324745372188556,
       "bmi_at_outcome": 27.702638076051677,
-      "cachexia": "no",
+      "cachexia": "yes",
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.932%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -12753,12 +12753,12 @@
       "outcome_weight_kg": 75.436,
       "weight_loss_percent": 2.4656400708532074,
       "bmi_at_outcome": 26.31871829697978,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.466%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {
@@ -12770,12 +12770,12 @@
       "outcome_weight_kg": 73.576,
       "weight_loss_percent": 4.870511875670727,
       "bmi_at_outcome": 25.669786539829577,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 4.871%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -13222,12 +13222,12 @@
       "outcome_weight_kg": 82.611,
       "weight_loss_percent": 2.7052810100343865,
       "bmi_at_outcome": 29.16551485283791,
-      "cachexia": "no",
-      "precachexia_candidate": "yes",
+      "cachexia": "yes",
+      "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.705%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Limited weight loss and reduced appetite are both present."
+        "Supported branch: weight loss >2% and documented sarcopenia evidence.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "simulated_risk_3m": {
@@ -13325,7 +13325,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 2.573%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -13437,7 +13437,7 @@
       "precachexia_candidate": "no",
       "explanations": [
         "Observed weight loss is 3.140%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
+        "The BMI and sarcopenia branches are both explicitly refuted.",
         "Provisional pre-cachexia: Reduced appetite is explicitly absent."
       ]
     },
@@ -13543,12 +13543,12 @@
       "outcome_weight_kg": 75.011,
       "weight_loss_percent": 2.924771259592868,
       "bmi_at_outcome": 24.71887229928253,
-      "cachexia": "no",
-      "precachexia_candidate": "no",
+      "cachexia": "unknown",
+      "precachexia_candidate": "unknown",
       "explanations": [
         "Observed weight loss is 2.925%.",
-        "The BMI branch is refuted; sarcopenia is reserved for a later version.",
-        "Provisional pre-cachexia: Reduced appetite is explicitly absent."
+        "Not evaluable because sarcopenia are unknown.",
+        "Provisional pre-cachexia: Candidate pre-cachexia is evaluated only after cachexia is excluded."
       ]
     },
     "outcome_6m": {

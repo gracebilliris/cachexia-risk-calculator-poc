@@ -79,6 +79,15 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
         self.assertIn("Assumptions!$B$25", engine["D24"].value)
         self.assertNotIn("Assumptions!$B$20", engine["D24"].value)
 
+    def test_cachexia_formula_uses_documented_sarcopenia(self):
+        formula = self.workbook["Engine"]["B19"].value
+        self.assertIn("'Mock UI'!C18=\"yes\"", formula)
+        self.assertIn("'Mock UI'!C18=\"no\"", formula)
+        self.assertEqual(
+            self.workbook["Mock UI"]["B18"].value,
+            "Documented sarcopenia evidence",
+        )
+
     def test_form_buttons_are_present_and_wired_to_macros(self):
         with ZipFile(WORKBOOK) as archive:
             vml = "\n".join(

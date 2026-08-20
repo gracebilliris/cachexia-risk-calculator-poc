@@ -11,10 +11,14 @@ The result records the horizon date, included measurement date, baseline and
 outcome weights, percentage loss, outcome BMI, tri-state Fearon label,
 tri-state provisional pre-cachexia label, and human-readable branch trace.
 
-V1 uses the >5% loss and >2% loss with BMI <20 branches only. Sarcopenia
-remains in the schema for later use but cannot alter a v1 label. Candidate
-pre-cachexia uses provisional Option B (>1% and <=5% loss plus reduced
-appetite) after cachexia is excluded.
+The implementation uses the >5% loss, >2% loss with BMI <20, and >2% loss
+with explicitly documented sarcopenia branches. Sarcopenia is tri-state and
+never inferred. When BMI does not satisfy its branch and sarcopenia is
+`unknown`, cachexia remains `unknown`; this also prevents a forced
+pre-cachexia classification. Carrying baseline sarcopenia evidence into each
+synthetic horizon is a provisional operational assumption requiring clinical
+review. Candidate pre-cachexia uses the provisional early-risk rule (>1% and
+<=5% loss plus reduced appetite) only after cachexia is excluded.
 
 These are synthetic outcome labels, not predictions. The separate simulated
 risk outputs are calculated from baseline predictors only and are explicitly

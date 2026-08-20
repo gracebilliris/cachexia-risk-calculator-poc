@@ -43,7 +43,7 @@ INPUT_GUIDANCE = {
     15: "Required: 140 to 200 cm.",
     16: "Valid: 0, 1, 2, 3, 4 or unknown.",
     17: "Valid: yes, no or unknown/not documented.",
-    18: "Valid: yes, no or unknown. Stored but unused in v1.",
+    18: "Valid: yes, no or unknown. Must be documented; never inferred.",
 }
 
 NAVY = "#17324D"
@@ -143,7 +143,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         (15, "Height (cm)", 170, "decimal"),
         (16, "Baseline ECOG", "2", "list"),
         (17, "Reduced appetite", "no", "list"),
-        (18, "Sarcopenia (stored; unused in v1)", "unknown", "list"),
+        (18, "Documented sarcopenia evidence", "unknown", "list"),
     ]
     for row, label, value, value_type in input_rows:
         sheet.write(row - 1, 1, label, formats["label"])
@@ -314,8 +314,9 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     sheet.merge_range(
         "G29:L32",
         "Rules shown in plain language\n"
-        "Implemented cachexia criteria: >5% weight loss, or >2% weight loss "
-        "with BMI <20 kg/m². The sarcopenia branch is not evaluated.\n"
+        "Implemented cachexia criteria: >5% weight loss, >2% weight loss "
+        "with BMI <20 kg/m², or >2% loss with documented sarcopenia. "
+        "Sarcopenia is never inferred and has no simulated risk coefficient.\n"
         "Provisional early-risk pattern: cachexia criteria not met, >1% and "
         "<=5% weight loss, and reduced appetite=yes. This project proposal "
         "requires clinical-reviewer and clinical-reviewer's review.",
@@ -373,6 +374,21 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
     prior_candidates = "'Mock UI'!$N$24:$N$33"
     weight_min = config["cohort"]["historical_weight_kg"]["minimum"]
     weight_max = config["cohort"]["historical_weight_kg"]["maximum"]
+    if config["definitions"]["fearon_sarcopenia_branch_enabled"]:
+        cachexia_formula = (
+            '=IF(B13="","unknown",IF(B13>Assumptions!$B$10,"yes",'
+            'IF(B13<=Assumptions!$B$11,"no",'
+            'IF(AND(B12<>"",B12<Assumptions!$B$12),"yes",'
+            'IF(\'Mock UI\'!C18="yes","yes",'
+            'IF(AND(B12<>"",B12>=Assumptions!$B$12,\'Mock UI\'!C18="no"),'
+            '"no","unknown"))))))'
+        )
+    else:
+        cachexia_formula = (
+            '=IF(B13="","unknown",IF(B13>Assumptions!$B$10,"yes",'
+            'IF(B13<=Assumptions!$B$11,"no",IF(B12="","unknown",'
+            'IF(B12<Assumptions!$B$12,"yes","no")))))'
+        )
     formulas = {
         "B8": f'=IF(MAX({baseline_candidates})=0,"",MAX({baseline_candidates}))',
         "B9": (
@@ -395,11 +411,7 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         "B15": '=IF(OR(B9="",B11="",B14<=0),"",(B11-B9)/(B14/Assumptions!$B$8))',
         "B16": '=IF(OR(B13="",B14<=0),"",B13/(B14/Assumptions!$B$8))',
         "B17": '=IF(B13="","unknown",IF(B13>Assumptions!$B$9,"loss",IF(B13<-Assumptions!$B$9,"gain","stable")))',
-        "B19": (
-            '=IF(B13="","unknown",IF(B13>Assumptions!$B$10,"yes",'
-            'IF(B13<=Assumptions!$B$11,"no",IF(B12="","unknown",'
-            'IF(B12<Assumptions!$B$12,"yes","no")))))'
-        ),
+        "B19": cachexia_formula,
         "B20": (
             '=IF(B19="unknown","unknown",IF(B19="yes","no",'
             'IF(OR(B13<=Assumptions!$B$13,B13>Assumptions!$B$14),"no",'

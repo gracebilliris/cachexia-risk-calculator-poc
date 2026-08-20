@@ -101,7 +101,7 @@ class HorizonOutcomeTests(unittest.TestCase):
         self.assertEqual(evaluate_horizon(below, 3)["cachexia"], "yes")
         self.assertEqual(evaluate_horizon(exact, 3)["cachexia"], "no")
 
-    def test_sarcopenia_is_retained_but_not_used_in_v1(self):
+    def test_sarcopenia_branch_uses_explicit_tri_state_evidence(self):
         value = patient(
             height_cm=180,
             sarcopenia="unknown",
@@ -111,10 +111,24 @@ class HorizonOutcomeTests(unittest.TestCase):
             ],
         )
         result = evaluate_horizon(value, 3)
-        self.assertEqual(result["cachexia"], "no")
+        self.assertEqual(result["cachexia"], "unknown")
         explicitly_yes = copy.deepcopy(value)
         explicitly_yes["sarcopenia"] = "yes"
-        self.assertEqual(evaluate_horizon(explicitly_yes, 3)["cachexia"], "no")
+        self.assertEqual(evaluate_horizon(explicitly_yes, 3)["cachexia"], "yes")
+        explicitly_no = copy.deepcopy(value)
+        explicitly_no["sarcopenia"] = "no"
+        self.assertEqual(evaluate_horizon(explicitly_no, 3)["cachexia"], "no")
+
+    def test_documented_sarcopenia_can_decide_when_bmi_is_unknown(self):
+        value = patient(
+            height_cm=None,
+            sarcopenia="yes",
+            weights=[
+                {"date": "2026-01-31", "weight_kg": 80},
+                {"date": "2026-04-30", "weight_kg": 77.6},
+            ],
+        )
+        self.assertEqual(evaluate_horizon(value, 3)["cachexia"], "yes")
 
     def test_provisional_precachexia_and_unknown_appetite(self):
         weights = [

@@ -18,8 +18,8 @@ treatment, patient care, or medical decisions.
   non-calculable states.
 - Inclusive calendar three-/six-month outcome boundaries and independent
   horizon evaluation.
-- Traceable v1 Fearon branches (>5% loss or >2% loss with BMI <20);
-  sarcopenia is retained but unused.
+- Traceable Fearon branches (>5% loss, >2% loss with BMI <20, or >2% loss
+  with explicitly documented sarcopenia); sarcopenia is never inferred.
 - Configurable provisional early-risk pattern (internal configuration name:
   Option B)
   (>1% and <=5% loss plus reduced appetite).
@@ -73,7 +73,7 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 48 Python unit tests covering calculations, validation, missing values,
+- 50 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
@@ -114,7 +114,9 @@ decisions for:
 - confirmation or revision of provisional pre-cachexia Option B and its
   missing-appetite behavior;
 - the baseline-to-horizon outcome measurement rule and inclusive boundaries;
-- whether dated raw sarcopenia/muscle measurements must be added; or
+- what constitutes documented sarcopenia evidence and whether dated
+  horizon-specific muscle assessments must replace the provisional baseline
+  carry-forward assumption; or
 - whether the interface and explanations could be clinically misleading.
 
 No unavailable input has been represented as approved. clinical-reviewer and clinical-reviewer's

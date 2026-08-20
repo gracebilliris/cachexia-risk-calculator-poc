@@ -20,6 +20,7 @@
       monthDays: definitions.days_per_month,
       trajectoryEpsilonPercent: definitions.trajectory_epsilon_percent,
       ageThresholdExclusive: config.risk_outputs.age_threshold_exclusive,
+      sarcopeniaBranchEnabled: definitions.fearon_sarcopenia_branch_enabled,
       fearon: {
         primaryLossExclusive: definitions.fearon_weight_loss_primary_exclusive,
         conditionalLossExclusive: definitions.fearon_weight_loss_conditional_exclusive,
@@ -115,10 +116,22 @@
         fearon = "no — supported branches require >2% loss";
       } else if (derived.bmi !== null && derived.bmi < rule.bmiExclusive) {
         fearon = "yes — loss >2% and BMI <20";
-      } else if (derived.bmi !== null && derived.bmi >= rule.bmiExclusive) {
-        fearon = "no — BMI branch refuted; sarcopenia reserved for later";
+      } else if (
+        assumptions.sarcopeniaBranchEnabled
+        && input.sarcopenia === "yes"
+      ) {
+        fearon = "yes — loss >2% and documented sarcopenia";
+      } else if (
+        derived.bmi !== null
+        && derived.bmi >= rule.bmiExclusive
+        && (
+          !assumptions.sarcopeniaBranchEnabled
+          || input.sarcopenia === "no"
+        )
+      ) {
+        fearon = "no — BMI and sarcopenia branches refuted";
       } else {
-        fearon = "unknown — BMI or sarcopenia branch not evaluable";
+        fearon = "unknown — BMI or sarcopenia evidence unavailable";
       }
 
       const preRule = assumptions.precachexia;
