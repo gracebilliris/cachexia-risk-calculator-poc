@@ -93,10 +93,12 @@ def _risk_output(
     if bmi is not None and bmi < 20:
         score += assumptions["low_bmi_under_20"]
         factors.append("BMI <20 simulation term")
-    cancer_points = config["simulation_relationships"]["cancer_latent_points"][
-        patient["cancer_type"]
-    ]
-    cancer_term = cancer_points * assumptions["cancer_type_multiplier"]
+    cancer_multiplier = config["simulation_relationships"][
+        "cancer_risk_multipliers"
+    ][patient["cancer_type"]]
+    cancer_term = (
+        cancer_multiplier - 1.0
+    ) * assumptions["cancer_type_multiplier"]
     score += cancer_term
     if cancer_term:
         factors.append(f"{patient['cancer_type']} simulation term")
@@ -235,9 +237,10 @@ def generate_patients(
         ecog = None if ecog_text == "unknown" else int(ecog_text)
         sarcopenia = _weighted_choice(rng, cohort["sarcopenia_probabilities"])
         latent = (
-            relationships["stage_latent_points"][stage]
+            relationships["stage_risk_multipliers"][stage]
+            * relationships["cancer_risk_multipliers"][cancer_type]
+            - 1.0
             + relationships["ecog_latent_points"][ecog_text]
-            + relationships["cancer_latent_points"][cancer_type]
             + rng.gauss(0, relationships["latent_random_sd"])
         )
         latent = min(
@@ -296,6 +299,9 @@ def generate_patients(
                 "seed": seed,
                 "config_version": config["metadata"]["config_version"],
                 "clinical_validation": "none",
+                "precachexia_rule_status": config["definitions"][
+                    "precachexia_rule_status"
+                ],
             },
         }
         weights, edge_case = _edge_case_override(

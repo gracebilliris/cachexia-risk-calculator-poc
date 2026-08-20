@@ -24,7 +24,7 @@
         upperInclusive: definitions.precachexia_upper_weight_loss_percent_inclusive
       },
       band: config.risk_outputs.band_thresholds,
-      cancerPoints: config.simulation_relationships.cancer_latent_points,
+      cancerMultipliers: config.simulation_relationships.cancer_risk_multipliers,
       risk: config.risk_outputs
     });
 
@@ -109,14 +109,8 @@
         fearon = "no — supported branches require >2% loss";
       } else if (derived.bmi !== null && derived.bmi < rule.bmiExclusive) {
         fearon = "yes — loss >2% and BMI <20";
-      } else if (input.sarcopenia === "yes") {
-        fearon = "yes — loss >2% and sarcopenia=yes";
-      } else if (
-        derived.bmi !== null
-        && derived.bmi >= rule.bmiExclusive
-        && input.sarcopenia === "no"
-      ) {
-        fearon = "no — conditional branches refuted";
+      } else if (derived.bmi !== null && derived.bmi >= rule.bmiExclusive) {
+        fearon = "no — BMI branch refuted; sarcopenia reserved for later";
       } else {
         fearon = "unknown — BMI or sarcopenia branch not evaluable";
       }
@@ -186,7 +180,7 @@
         score += terms.low_bmi_under_20;
         factors.push("BMI <20 simulation term");
       }
-      const cancer = assumptions.cancerPoints[input.cancerType]
+      const cancer = (assumptions.cancerMultipliers[input.cancerType] - 1)
         * terms.cancer_type_multiplier;
       score += cancer;
       if (cancer) factors.push(`${input.cancerType} simulation term`);

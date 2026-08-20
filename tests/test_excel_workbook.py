@@ -7,7 +7,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.1.xlsx"
+WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.3.xlsx"
 
 
 class ExcelPrototypeTests(unittest.TestCase):
@@ -24,7 +24,7 @@ class ExcelPrototypeTests(unittest.TestCase):
             self.workbook.sheetnames,
             [
                 "START HERE",
-                "Patient Input",
+                "Calculator",
                 "Results",
                 "Assumptions",
                 "Synthetic Cohort",
@@ -32,17 +32,25 @@ class ExcelPrototypeTests(unittest.TestCase):
                 "Clinical Review",
             ],
         )
+        self.assertEqual(
+            [
+                sheet.title
+                for sheet in self.workbook.worksheets
+                if sheet.sheet_state == "visible"
+            ],
+            ["Calculator", "Clinical Review"],
+        )
 
     def test_safety_notice_is_prominent(self):
         for sheet in self.workbook.worksheets:
             self.assertIn("NOT FOR CLINICAL USE", str(sheet["A4"].value))
 
     def test_predictor_formula_enforces_prediction_date_cutoff(self):
-        helper_formula = self.workbook["Patient Input"]["C22"].value
+        helper_formula = self.workbook["Calculator"]["C22"].value
         self.assertIn("A22<=$B$8", helper_formula)
         result_formula = self.workbook["Results"]["B8"].value
         self.assertIn("MAX(", result_formula)
-        self.assertIn("'Patient Input'!$C$22:$C$33", result_formula)
+        self.assertIn("'Calculator'!$C$22:$C$33", result_formula)
 
     def test_formulas_avoid_unencoded_future_functions(self):
         disallowed = ("MAXIFS(", "MINIFS(", "TEXTJOIN(")
@@ -69,13 +77,13 @@ class ExcelPrototypeTests(unittest.TestCase):
         self.assertNotIn("'Assumptions'!$B$20", results["D24"].value)
 
     def test_unknown_is_available_in_validated_inputs(self):
-        validations = list(self.workbook["Patient Input"].data_validations.dataValidation)
+        validations = list(self.workbook["Calculator"].data_validations.dataValidation)
         formulas = {validation.formula1 for validation in validations}
         self.assertTrue(any("unknown" in str(formula) for formula in formulas))
 
     def test_numeric_validations_have_stop_alerts(self):
         validations = list(
-            self.workbook["Patient Input"].data_validations.dataValidation
+            self.workbook["Calculator"].data_validations.dataValidation
         )
         numeric = [
             validation
@@ -93,6 +101,18 @@ class ExcelPrototypeTests(unittest.TestCase):
         self.assertIn('OR(B12="",B13="")', results["B24"].value)
         self.assertIn('"unknown"', results["B26"].value)
         self.assertIn("Estimate withheld", results["B27"].value)
+
+    def test_v1_fearon_formula_does_not_use_sarcopenia(self):
+        formula = self.workbook["Results"]["B19"].value
+        self.assertNotIn("B17", formula)
+        self.assertIn("'Assumptions'!$B$12", formula)
+
+    def test_single_screen_exposes_inputs_and_outputs(self):
+        calculator = self.workbook["Calculator"]
+        self.assertEqual(calculator["G8"].value, "Automatic synthetic results")
+        self.assertEqual(calculator["H10"].value, "='Results'!B12")
+        self.assertEqual(calculator["K9"].value, "='Results'!B25")
+        self.assertIn("Option B", calculator["G20"].value)
 
     def test_named_assumptions_match_canonical_config(self):
         config = json.loads(

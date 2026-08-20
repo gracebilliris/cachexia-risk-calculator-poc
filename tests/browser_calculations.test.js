@@ -81,6 +81,23 @@ test("Fearon and provisional pre-cachexia thresholds remain distinct", () => {
   assert.match(calculator.classify(input(), cachexia).pre, /^no/);
 });
 
+test("sarcopenia is retained but cannot alter v1 classification", () => {
+  const derived = calculator.calculateDerived(input({
+    weights: [
+      { date: "2025-07-31", weightKg: 80, index: 0 },
+      { date: "2026-01-31", weightKg: 77.6, index: 1 }
+    ]
+  }));
+  const noSarcopenia = calculator.classify(
+    input({ sarcopenia: "no", appetite: "no" }), derived
+  );
+  const sarcopenia = calculator.classify(
+    input({ sarcopenia: "yes", appetite: "no" }), derived
+  );
+  assert.equal(noSarcopenia.fearon, sarcopenia.fearon);
+  assert.match(sarcopenia.fearon, /^no/);
+});
+
 test("three- and six-month risk outputs are independent and explained", () => {
   const derived = calculator.calculateDerived(input());
   const risk3 = calculator.risk(input(), derived, "three_month");

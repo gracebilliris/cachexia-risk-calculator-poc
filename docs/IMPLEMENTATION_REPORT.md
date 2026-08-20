@@ -18,8 +18,10 @@ treatment, patient care, or medical decisions.
   non-calculable states.
 - Inclusive calendar three-/six-month outcome boundaries and independent
   horizon evaluation.
-- Traceable Fearon-supported branches without sarcopenia inference.
-- Configurable, visibly provisional pre-cachexia candidate rule.
+- Traceable v1 Fearon branches (>5% loss or >2% loss with BMI <20);
+  sarcopenia is retained but unused.
+- Configurable, visibly provisional pre-cachexia Option B candidate rule
+  (>1% and <=5% loss plus reduced appetite).
 - Reproducible, seed-controlled longitudinal generator using the supplied
   workbook's proposed ranges where available.
 - Central versioned simulation configuration and generated immutable browser
@@ -48,11 +50,15 @@ pre-cachexia thresholds are centralized in
 simulation assumption without calibration, discrimination, causal, treatment,
 diagnostic, or prognostic meaning.
 
+The configured tumour and stage values now match the supplied illustrative
+multipliers. Their product is used only to create plausible synthetic
+interaction; it is not a validated relative risk.
+
 ## Generated cohort
 
 `data/synthetic_patients.v1.json` and `.csv` contain 120 patients generated
-with seed `20260820` and config `1.0.0`. The sample contains 12/49/49/10
-unknown/low/medium/high three-month simulated bands and 12/22/47/39
+with seed `20260820` and config `1.0.0`. The sample contains 12/19/48/41
+unknown/low/medium/high three-month simulated bands and 12/2/37/69
 unknown/low/medium/high six-month bands. Unknown risk means the estimate was
 withheld because BMI or baseline weight change was not calculable. The cohort
 includes explicit labelled cases for unknown fields,
@@ -66,20 +72,21 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 37 Python unit tests covering calculations, validation, missing values,
+- 40 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
   sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
   sheets, formulas, validation, safety notice, and config parity.
-- 6 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
+- 7 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
   missing history, classification boundaries, separate risk behavior, factor
   explanations, and calendar-month arithmetic.
 - Python bytecode compilation for `src/` and `scripts/`.
 - JavaScript syntax checks for the generated config and prototype application.
 - JSON parsing for all configuration, schema, data, summary, and review files.
 - Deterministic regeneration of the 120-patient cohort.
-- Reproducible generation of `excel/cachexia_risk_prototype.v1.1.xlsx`.
+- Reproducible generation of the single-screen
+  `excel/cachexia_risk_prototype.v1.3.xlsx`.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient
@@ -91,9 +98,11 @@ The supplied materials do not contain recorded clinical approval or final
 decisions for:
 
 - exact population distributions beyond the workbook's proposed examples;
-- numerical cancer/stage/ECOG/appetite relationships;
+- confirmation or revision of the supplied illustrative cancer/stage
+  multipliers and provisional ECOG/appetite relationships;
 - future weight transition behavior and all risk coefficients/bands;
-- the pre-cachexia lower/upper thresholds and missing-appetite behavior;
+- confirmation or revision of provisional pre-cachexia Option B and its
+  missing-appetite behavior;
 - the baseline-to-horizon outcome measurement rule and inclusive boundaries;
 - whether dated raw sarcopenia/muscle measurements must be added; or
 - whether the interface and explanations could be clinically misleading.

@@ -101,7 +101,7 @@ class HorizonOutcomeTests(unittest.TestCase):
         self.assertEqual(evaluate_horizon(below, 3)["cachexia"], "yes")
         self.assertEqual(evaluate_horizon(exact, 3)["cachexia"], "no")
 
-    def test_unknown_sarcopenia_is_not_inferred(self):
+    def test_sarcopenia_is_retained_but_not_used_in_v1(self):
         value = patient(
             height_cm=180,
             sarcopenia="unknown",
@@ -111,7 +111,10 @@ class HorizonOutcomeTests(unittest.TestCase):
             ],
         )
         result = evaluate_horizon(value, 3)
-        self.assertEqual(result["cachexia"], "unknown")
+        self.assertEqual(result["cachexia"], "no")
+        explicitly_yes = copy.deepcopy(value)
+        explicitly_yes["sarcopenia"] = "yes"
+        self.assertEqual(evaluate_horizon(explicitly_yes, 3)["cachexia"], "no")
 
     def test_provisional_precachexia_and_unknown_appetite(self):
         weights = [

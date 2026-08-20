@@ -98,10 +98,12 @@ window.SIMULATION_CONFIG = Object.freeze({
   "definitions": {
     "days_per_month": 30.4375,
     "fearon_bmi_exclusive": 20.0,
+    "fearon_v1_sarcopenia_branch_enabled": false,
     "fearon_weight_loss_conditional_exclusive": 2.0,
     "fearon_weight_loss_primary_exclusive": 5.0,
     "horizon_boundary": "inclusive calendar date",
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
+    "precachexia_rule_status": "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
     "risk_missing_predictor_policy": "withhold",
     "trajectory_epsilon_percent": 0.5
@@ -137,7 +139,7 @@ window.SIMULATION_CONFIG = Object.freeze({
         "yes": 0.8
       },
       "baseline_weight_loss_per_percent": 0.15,
-      "cancer_type_multiplier": 0.4,
+      "cancer_type_multiplier": 1.0,
       "ecog": {
         "0": -0.25,
         "1": 0.0,
@@ -149,10 +151,10 @@ window.SIMULATION_CONFIG = Object.freeze({
       "intercept": -1.45,
       "low_bmi_under_20": 0.5,
       "stage": {
-        "I": -0.2,
-        "II": 0.0,
-        "III": 0.4,
-        "IV": 0.85,
+        "I": 0.0,
+        "II": 0.2,
+        "III": 0.5,
+        "IV": 1.0,
         "unknown": 0.0
       }
     },
@@ -164,7 +166,7 @@ window.SIMULATION_CONFIG = Object.freeze({
         "yes": 0.75
       },
       "baseline_weight_loss_per_percent": 0.13,
-      "cancer_type_multiplier": 0.35,
+      "cancer_type_multiplier": 1.0,
       "ecog": {
         "0": -0.3,
         "1": 0.0,
@@ -176,10 +178,10 @@ window.SIMULATION_CONFIG = Object.freeze({
       "intercept": -2.0,
       "low_bmi_under_20": 0.45,
       "stage": {
-        "I": -0.25,
-        "II": 0.0,
-        "III": 0.35,
-        "IV": 0.75,
+        "I": 0.0,
+        "II": 0.2,
+        "III": 0.5,
+        "IV": 1.0,
         "unknown": 0.0
       }
     }
@@ -187,17 +189,17 @@ window.SIMULATION_CONFIG = Object.freeze({
   "simulation_relationships": {
     "appetite_yes_latent_multiplier": 0.8,
     "appetite_yes_logit_intercept": -1.0,
-    "cancer_latent_points": {
-      "breast": -0.4,
-      "colorectal": 0.1,
-      "gastric": 0.7,
-      "head and neck": 0.5,
-      "hepatobiliary": 0.6,
-      "lung": 0.5,
-      "oesophageal": 0.7,
-      "other solid tumour": 0.0,
-      "pancreatic": 1.0,
-      "prostate": -0.4
+    "cancer_risk_multipliers": {
+      "breast": 1.0,
+      "colorectal": 1.3,
+      "gastric": 1.8,
+      "head and neck": 1.6,
+      "hepatobiliary": 2.0,
+      "lung": 1.6,
+      "oesophageal": 1.8,
+      "other solid tumour": 1.0,
+      "pancreatic": 2.0,
+      "prostate": 1.0
     },
     "ecog_latent_points": {
       "0": -0.8,
@@ -218,12 +220,12 @@ window.SIMULATION_CONFIG = Object.freeze({
     "monthly_loss_percent_maximum": 2.5,
     "monthly_loss_percent_minimum": -1.0,
     "six_month_increment_multiplier": 1.0,
-    "stage_latent_points": {
-      "I": -0.8,
-      "II": -0.3,
-      "III": 0.4,
-      "IV": 1.0,
-      "unknown": 0.0
+    "stage_risk_multipliers": {
+      "I": 1.0,
+      "II": 1.2,
+      "III": 1.5,
+      "IV": 2.0,
+      "unknown": 1.0
     }
   }
 });

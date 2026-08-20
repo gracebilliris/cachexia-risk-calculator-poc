@@ -41,6 +41,24 @@ class ConfigurationTests(unittest.TestCase):
             6,
         )
 
+    def test_supplied_simulation_multipliers_are_centralized(self):
+        config = load_simulation_config()
+        relationships = config["simulation_relationships"]
+        self.assertEqual(
+            relationships["stage_risk_multipliers"],
+            {"I": 1.0, "II": 1.2, "III": 1.5, "IV": 2.0, "unknown": 1.0},
+        )
+        self.assertEqual(
+            relationships["cancer_risk_multipliers"]["pancreatic"], 2.0
+        )
+        self.assertEqual(
+            relationships["cancer_risk_multipliers"]["breast"], 1.0
+        )
+        self.assertEqual(
+            config["definitions"]["precachexia_rule_status"],
+            "provisional_option_b_pending_clinical-reviewer_clinical-reviewer_review",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

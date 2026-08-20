@@ -13,7 +13,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.1.xlsx"
+OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.3.xlsx"
 CONFIG_PATH = ROOT / "config" / "simulation_assumptions.v1.json"
 DATA_PATH = ROOT / "data" / "synthetic_patients.v1.json"
 
@@ -116,8 +116,8 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 2, value)
         sheet.cell(row, 3, status)
 
-    cancer = config["simulation_relationships"]["cancer_latent_points"]
-    sheet["E7"], sheet["F7"] = "Cancer type", "Latent points"
+    cancer = config["simulation_relationships"]["cancer_risk_multipliers"]
+    sheet["E7"], sheet["F7"] = "Cancer type", "Illustrative multiplier"
     for row, (key, value) in enumerate(cancer.items(), 8):
         sheet.cell(row, 5, key)
         sheet.cell(row, 6, value)
@@ -154,7 +154,7 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
 
 
 def build_input(workbook: Workbook, config: dict) -> None:
-    sheet = workbook.create_sheet("Patient Input")
+    sheet = workbook.create_sheet("Calculator")
     title(
         sheet,
         "Interactive synthetic patient input",
@@ -171,7 +171,7 @@ def build_input(workbook: Workbook, config: dict) -> None:
         ("Height (cm; blank = unknown)", 170),
         ("ECOG", "2"),
         ("Reduced appetite", "no"),
-        ("Sarcopenia", "unknown"),
+        ("Sarcopenia (future field; not used in v1)", "unknown"),
     ]
     for row, (label, value) in enumerate(labels, 4):
         target_row = row + 4
@@ -288,6 +288,53 @@ def build_input(workbook: Workbook, config: dict) -> None:
     sheet.column_dimensions["E"].width = 42
     sheet.column_dimensions["C"].hidden = True
     sheet.column_dimensions["D"].hidden = True
+    sheet.merge_cells("G8:L8")
+    sheet["G8"] = "Automatic synthetic results"
+    sheet["G8"].font = Font(size=15, bold=True, color=WHITE)
+    sheet["G8"].fill = PatternFill("solid", fgColor=TEAL)
+    output_rows = [
+        (9, "Baseline/current weight", "='Results'!B9", "0.00 kg"),
+        (10, "BMI", "='Results'!B12", "0.00"),
+        (11, "Weight loss", "='Results'!B13", "0.00%"),
+        (12, "Interval", "='Results'!B14", "0 days"),
+        (13, "Weight-loss rate", "='Results'!B15", "0.00 kg/month"),
+        (14, "Trajectory", "='Results'!B17", None),
+        (16, "V1 cachexia status", "='Results'!B19", None),
+        (17, "Option B pre-cachexia candidate", "='Results'!B20", None),
+    ]
+    for row, label, formula, number_format in output_rows:
+        sheet.cell(row, 7, label)
+        sheet.cell(row, 7).font = Font(bold=True)
+        sheet.cell(row, 8, formula)
+        sheet.cell(row, 8).fill = PatternFill("solid", fgColor=PALE_TEAL)
+        if number_format:
+            sheet.cell(row, 8).number_format = number_format
+    sheet["J9"], sheet["K9"] = "3-month illustrative output", "='Results'!B25"
+    sheet["J10"], sheet["K10"] = "Band", "='Results'!B26"
+    sheet["J11"], sheet["K11"] = "Explanation", "='Results'!B27"
+    sheet["J13"], sheet["K13"] = "6-month illustrative output", "='Results'!D25"
+    sheet["J14"], sheet["K14"] = "Band", "='Results'!D26"
+    sheet["J15"], sheet["K15"] = "Explanation", "='Results'!D27"
+    for cell in ("K9", "K13"):
+        sheet[cell].number_format = "0.0%"
+    for row in (9, 10, 11, 13, 14, 15):
+        sheet.cell(row, 10).font = Font(bold=True)
+        sheet.cell(row, 11).fill = PatternFill("solid", fgColor=PALE_TEAL)
+        sheet.cell(row, 11).alignment = Alignment(wrap_text=True, vertical="top")
+    sheet.merge_cells("G20:L23")
+    sheet["G20"] = (
+        "Working definitions for feedback\n"
+        "Cachexia v1: >5% loss, or >2% loss with BMI <20 kg/m². "
+        "Sarcopenia is stored but not used.\n"
+        "Candidate pre-cachexia Option B: after cachexia is excluded, "
+        ">1% and <=5% loss plus reduced appetite=yes. Pending clinical-reviewer and "
+        "clinical-reviewer review."
+    )
+    sheet["G20"].alignment = Alignment(wrap_text=True, vertical="top")
+    sheet["G20"].fill = PatternFill("solid", fgColor=PALE_ORANGE)
+    sheet["G20"].border = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
+    for column in range(7, 13):
+        sheet.column_dimensions[get_column_letter(column)].width = 22
     sheet.freeze_panes = "A8"
 
 
@@ -315,10 +362,10 @@ def build_results(workbook: Workbook) -> None:
     }
     for row, label in labels.items():
         sheet.cell(row, 1, label)
-    dates = "'Patient Input'!$A$22:$A$33"
-    weights = "'Patient Input'!$B$22:$B$33"
-    baseline_candidates = "'Patient Input'!$C$22:$C$33"
-    prior_candidates = "'Patient Input'!$D$22:$D$33"
+    dates = "'Calculator'!$A$22:$A$33"
+    weights = "'Calculator'!$B$22:$B$33"
+    baseline_candidates = "'Calculator'!$C$22:$C$33"
+    prior_candidates = "'Calculator'!$D$22:$D$33"
     weight_min = "'Assumptions'!$B$18"
     weight_max = "'Assumptions'!$B$19"
     sheet["B8"] = (
@@ -338,7 +385,7 @@ def build_results(workbook: Workbook) -> None:
         f'{weights},"<="&{weight_max})<>1,"",SUMIFS({weights},{dates},B10,'
         f'{weights},">="&{weight_min},{weights},"<="&{weight_max})))'
     )
-    sheet["B12"] = '=IF(OR(B9="",\'Patient Input\'!B14=""),"",B9/(\'Patient Input\'!B14/100)^2)'
+    sheet["B12"] = '=IF(OR(B9="",\'Calculator\'!B14=""),"",B9/(\'Calculator\'!B14/100)^2)'
     sheet["B13"] = '=IF(OR(B9="",B11=""),"",((B11-B9)/B11)*100)'
     sheet["B14"] = '=IF(OR(B8="",B10=""),"",B8-B10)'
     sheet["B15"] = '=IF(OR(B9="",B11="",B14<=0),"",(B11-B9)/(B14/\'Assumptions\'!$B$8))'
@@ -346,14 +393,13 @@ def build_results(workbook: Workbook) -> None:
     sheet["B17"] = '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$9,"loss",IF(B13<-\'Assumptions\'!$B$9,"gain","stable")))'
     sheet["B19"] = (
         '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
-        'IF(B13<=\'Assumptions\'!$B$11,"no",IF(OR(AND(B12<>"",B12<\'Assumptions\'!$B$12),'
-        '\'Patient Input\'!B17="yes"),"yes",IF(AND(B12<>"",B12>=\'Assumptions\'!$B$12,'
-        '\'Patient Input\'!B17="no"),"no","unknown")))))'
+        'IF(B13<=\'Assumptions\'!$B$11,"no",IF(B12="","unknown",'
+        'IF(B12<\'Assumptions\'!$B$12,"yes","no")))))'
     )
     sheet["B20"] = (
         '=IF(B19="unknown","unknown",IF(B19="yes","no",'
         'IF(OR(B13<=\'Assumptions\'!$B$13,B13>\'Assumptions\'!$B$14),"no",'
-        'IF(\'Patient Input\'!B16="yes","yes",IF(\'Patient Input\'!B16="no","no","unknown")))))'
+        'IF(\'Calculator\'!B16="yes","yes",IF(\'Calculator\'!B16="no","no","unknown")))))'
     )
 
     sheet["A23"], sheet["B23"], sheet["D23"] = "Simulated horizon", "3 months", "6 months"
@@ -361,20 +407,20 @@ def build_results(workbook: Workbook) -> None:
         "Simulation score", "Displayed estimate", "Risk band", "Factor explanation"
     )
     common3 = (
-        "'Assumptions'!$B$20+IF('Patient Input'!B9>'Assumptions'!$B$15,'Assumptions'!$B$21,0)"
-        "+VLOOKUP('Patient Input'!B13,'Assumptions'!$H$8:$J$12,2,FALSE)"
-        "+VLOOKUP('Patient Input'!B15,'Assumptions'!$L$8:$N$13,2,FALSE)"
-        "+VLOOKUP('Patient Input'!B16,'Assumptions'!$P$8:$R$10,2,FALSE)"
+        "'Assumptions'!$B$20+IF('Calculator'!B9>'Assumptions'!$B$15,'Assumptions'!$B$21,0)"
+        "+VLOOKUP('Calculator'!B13,'Assumptions'!$H$8:$J$12,2,FALSE)"
+        "+VLOOKUP('Calculator'!B15,'Assumptions'!$L$8:$N$13,2,FALSE)"
+        "+VLOOKUP('Calculator'!B16,'Assumptions'!$P$8:$R$10,2,FALSE)"
         "+MAX(0,N(B13))*'Assumptions'!$B$22+IF(AND(B12<>\"\",B12<'Assumptions'!$B$12),'Assumptions'!$B$23,0)"
-        "+VLOOKUP('Patient Input'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)*'Assumptions'!$B$24"
+        "+(VLOOKUP('Calculator'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)-1)*'Assumptions'!$B$24"
     )
     common6 = (
-        "'Assumptions'!$B$25+IF('Patient Input'!B9>'Assumptions'!$B$15,'Assumptions'!$B$26,0)"
-        "+VLOOKUP('Patient Input'!B13,'Assumptions'!$H$8:$J$12,3,FALSE)"
-        "+VLOOKUP('Patient Input'!B15,'Assumptions'!$L$8:$N$13,3,FALSE)"
-        "+VLOOKUP('Patient Input'!B16,'Assumptions'!$P$8:$R$10,3,FALSE)"
+        "'Assumptions'!$B$25+IF('Calculator'!B9>'Assumptions'!$B$15,'Assumptions'!$B$26,0)"
+        "+VLOOKUP('Calculator'!B13,'Assumptions'!$H$8:$J$12,3,FALSE)"
+        "+VLOOKUP('Calculator'!B15,'Assumptions'!$L$8:$N$13,3,FALSE)"
+        "+VLOOKUP('Calculator'!B16,'Assumptions'!$P$8:$R$10,3,FALSE)"
         "+MAX(0,N(B13))*'Assumptions'!$B$27+IF(AND(B12<>\"\",B12<'Assumptions'!$B$12),'Assumptions'!$B$28,0)"
-        "+VLOOKUP('Patient Input'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)*'Assumptions'!$B$29"
+        "+(VLOOKUP('Calculator'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)-1)*'Assumptions'!$B$29"
     )
     sheet["B24"], sheet["D24"] = (
         f'=IF(OR(B12="",B13=""),"",{common3})',
@@ -387,11 +433,11 @@ def build_results(workbook: Workbook) -> None:
     sheet["B26"] = '=IF(B25="","unknown",IF(B25<\'Assumptions\'!$B$16,"low",IF(B25>=\'Assumptions\'!$B$17,"high","medium")))'
     sheet["D26"] = '=IF(D25="","unknown",IF(D25<\'Assumptions\'!$B$16,"low",IF(D25>=\'Assumptions\'!$B$17,"high","medium")))'
     factor_formula = (
-        'TRIM(IF(\'Patient Input\'!B9>\'Assumptions\'!$B$15,"age >55; ","")&'
+        'TRIM(IF(\'Calculator\'!B9>\'Assumptions\'!$B$15,"age >55; ","")&'
         'IF(B13>0,"baseline loss "&TEXT(B13,"0.0")&"%; ","")&'
         'IF(AND(B12<>"",B12<\'Assumptions\'!$B$12),"BMI <20; ","")&'
-        '"stage "&\'Patient Input\'!B13&"; ECOG "&\'Patient Input\'!B15&'
-        '"; appetite="&\'Patient Input\'!B16&"; "&\'Patient Input\'!B11)'
+        '"stage "&\'Calculator\'!B13&"; ECOG "&\'Calculator\'!B15&'
+        '"; appetite="&\'Calculator\'!B16&"; "&\'Calculator\'!B11)'
     )
     withheld = (
         '=IF(OR(B12="",B13=""),'
@@ -546,7 +592,7 @@ def build_readme(workbook: Workbook) -> None:
     )
     warning(sheet, 4)
     instructions = [
-        ("1", "Open Patient Input and change only blue cells."),
+        ("1", "Open Calculator and change only blue input cells."),
         ("2", "Enter an explicit prediction date and dated weight history."),
         ("3", "Open Results to inspect derived variables, transparent labels, and separate simulated horizons."),
         ("4", "Review Assumptions before interpreting any output; every relationship is provisional."),
@@ -564,9 +610,19 @@ def build_readme(workbook: Workbook) -> None:
         "calculation, temporal, boundary, missingness, reproducibility, and "
         "configuration behavior only."
     )
+    sheet["A21"] = "V1 cachexia rule"
+    sheet["B21"] = (
+        "Cachexia if weight loss is >5%, or if weight loss is >2% with BMI "
+        "<20 kg/m². Sarcopenia is retained but not used in v1."
+    )
+    sheet["A23"] = "Provisional pre-cachexia — Option B"
+    sheet["B23"] = (
+        "After cachexia is excluded: weight loss >1% and <=5% plus reduced "
+        "appetite=yes. Pending clinical-reviewer and clinical-reviewer review."
+    )
     sheet.column_dimensions["A"].width = 20
     sheet.column_dimensions["B"].width = 95
-    for row in range(8, 20):
+    for row in range(8, 25):
         sheet.cell(row, 2).alignment = Alignment(wrap_text=True, vertical="top")
 
 
@@ -602,7 +658,15 @@ def main() -> None:
     build_dictionary(workbook)
     build_review(workbook)
     style_headers(workbook)
-    workbook.active = 0
+    for hidden_sheet in (
+        "START HERE",
+        "Results",
+        "Assumptions",
+        "Synthetic Cohort",
+        "Data Dictionary",
+    ):
+        workbook[hidden_sheet].sheet_state = "hidden"
+    workbook.active = workbook.sheetnames.index("Calculator")
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     workbook.save(OUTPUT)
     print(f"Built {OUTPUT.relative_to(ROOT)}")
