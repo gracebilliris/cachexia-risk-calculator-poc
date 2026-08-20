@@ -4,4 +4,5 @@ __pycache__/
 .pytest_cache/
 .coverage
 ~$*.xlsx
+~$*.xlsm
 Data Extraction_literature review_20260728.xlsx

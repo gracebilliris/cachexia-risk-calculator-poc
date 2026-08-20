@@ -17,13 +17,17 @@ prototype is included.
 ## Run
 
 Python 3.9 or newer is required. The browser/Python prototype has no runtime
-packages; rebuilding the Excel workbook requires `openpyxl`.
+packages; rebuilding the macro-free Excel workbook requires `openpyxl`.
+Rebuilding the separate VBA mock UI requires Python 3.10 or newer plus the
+`vba` optional dependencies.
 
 ```bash
 PYTHONPATH=src python3 scripts/generate_synthetic.py \
   --count 120 --seed 20260820
 python3 scripts/sync_browser_config.py
 python3 scripts/build_excel_prototype.py
+python3.12 -m pip install -e '.[vba]'
+python3.12 scripts/build_excel_vba_prototype.py
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 node --test tests/browser_calculations.test.js
 python3 scripts/run_local.py
@@ -34,15 +38,23 @@ hosting or network exposure is configured. The static page can also be opened
 directly from `prototype/index.html`.
 
 The page is interactive: change factors or dated weights and press **Calculate
-simulated outputs**. The Excel workbook provides an independent macro-free
-interface for non-technical review.
+simulated outputs**. Two independent Excel editions are provided:
+
+- `cachexia_risk_prototype.v1.4.xlsx` is macro-free and maximizes portability.
+- `cachexia_risk_mock_ui.v1.0.xlsm` uses native Form Control buttons for
+  **Calculate / validate**, **Reset form**, example profiles, and review
+  navigation. Enable macros only after confirming the file came from this
+  private repository. Inputs, dropdowns, formulas, and outputs still work if
+  macros remain disabled.
 
 ## Key implementation paths
 
 | Deliverable | Path |
 |---|---|
 | Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js`, `prototype/styles.css` |
-| Excel prototype | `excel/cachexia_risk_prototype.v1.4.xlsx` |
+| Macro-free Excel prototype | `excel/cachexia_risk_prototype.v1.4.xlsx` |
+| VBA mock UI | `excel/cachexia_risk_mock_ui.v1.0.xlsm` |
+| VBA source | `vba/CachexiaUI.bas` |
 | Generator | `src/cachexia_poc/generator.py`, `scripts/generate_synthetic.py` |
 | Central assumptions | `config/simulation_assumptions.v1.json` |
 | Generated browser config | `prototype/simulation-config.js` (do not edit manually) |

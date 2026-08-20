@@ -72,12 +72,13 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 40 Python unit tests covering calculations, validation, missing values,
+- 47 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
   sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
-  sheets, formulas, validation, safety notice, and config parity.
+  sheets, formulas, validation, safety notice, config parity, VBA package
+  structure, Form Control wiring, and version-controlled macro source.
 - 7 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
   missing history, classification boundaries, separate risk behavior, factor
   explanations, and calendar-month arithmetic.
@@ -85,8 +86,11 @@ The relocated repository's final run completed:
 - JavaScript syntax checks for the generated config and prototype application.
 - JSON parsing for all configuration, schema, data, summary, and review files.
 - Deterministic regeneration of the 120-patient cohort.
-- Reproducible generation of the single-screen
-  `excel/cachexia_risk_prototype.v1.4.xlsx`.
+- Reproducible generation of the macro-free
+  `excel/cachexia_risk_prototype.v1.4.xlsx` and app-like
+  `excel/cachexia_risk_mock_ui.v1.0.xlsm`.
+- Direct Microsoft Excel opening of the VBA workbook without a repair dialog,
+  plus execution of its high-risk sample macro and live formula outputs.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient
