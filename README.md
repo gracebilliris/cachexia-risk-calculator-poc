@@ -41,11 +41,13 @@ The page is interactive: change factors or dated weights and press **Calculate
 simulated outputs**. Two independent Excel editions are provided:
 
 - `cachexia_risk_prototype.v1.4.xlsx` is macro-free and maximizes portability.
-- `cachexia_risk_mock_ui.v1.0.xlsm` uses native Form Control buttons for
+- `cachexia_risk_mock_ui.v1.1.xlsm` uses native Form Control buttons for
   **Calculate / validate**, **Reset form**, example profiles, and review
-  navigation. Enable macros only after confirming the file came from this
-  private repository. Inputs, dropdowns, formulas, and outputs still work if
-  macros remain disabled.
+  navigation. Each input has an adjacent valid-value descriptor. Cancer
+  subtype changes to `SCLC / NSCLC / unknown` for lung cancer and
+  `not applicable` otherwise. Enable macros only after confirming the file
+  came from this private repository. Inputs, dropdowns, formulas, and outputs
+  still work if macros remain disabled.
 
 ## Key implementation paths
 
@@ -53,7 +55,7 @@ simulated outputs**. Two independent Excel editions are provided:
 |---|---|
 | Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js`, `prototype/styles.css` |
 | Macro-free Excel prototype | `excel/cachexia_risk_prototype.v1.4.xlsx` |
-| VBA mock UI | `excel/cachexia_risk_mock_ui.v1.0.xlsm` |
+| VBA mock UI | `excel/cachexia_risk_mock_ui.v1.1.xlsm` |
 | VBA source | `vba/CachexiaUI.bas` |
 | Generator | `src/cachexia_poc/generator.py`, `scripts/generate_synthetic.py` |
 | Central assumptions | `config/simulation_assumptions.v1.json` |

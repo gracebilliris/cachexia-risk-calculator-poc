@@ -27,9 +27,24 @@ except ImportError as error:
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "excel" / "cachexia_risk_mock_ui.v1.0.xlsm"
+OUTPUT = ROOT / "excel" / "cachexia_risk_mock_ui.v1.1.xlsm"
 CONFIG_PATH = ROOT / "config" / "simulation_assumptions.v1.json"
 VBA_SOURCE = ROOT / "vba" / "CachexiaUI.bas"
+VBA_SHEET_SOURCE = ROOT / "vba" / "MockUISheet.cls"
+VBA_WORKBOOK_SOURCE = ROOT / "vba" / "ThisWorkbook.cls"
+
+INPUT_GUIDANCE = {
+    9: "Required date. Records after this date cannot be predictors.",
+    10: "Required whole number: 18 to 95 years.",
+    11: "Valid: female, male or unknown.",
+    12: "Required confirmed cancer type from the dropdown.",
+    13: "Required for lung: SCLC, NSCLC or unknown.",
+    14: "Valid: I, II, III, IV or unknown.",
+    15: "Required: 140 to 200 cm.",
+    16: "Valid: 0, 1, 2, 3, 4 or unknown.",
+    17: "Valid: yes, no or unknown/not documented.",
+    18: "Valid: yes, no or unknown. Stored but unused in v1.",
+}
 
 NAVY = "#17324D"
 TEAL = "#006D71"
@@ -46,12 +61,20 @@ GREEN = "#548235"
 
 def create_vba_project(destination: Path) -> None:
     source = VBA_SOURCE.read_text(encoding="utf-8").replace("\n", "\r\n")
+    sheet_source = VBA_SHEET_SOURCE.read_text(encoding="utf-8").replace(
+        "\n", "\r\n"
+    )
+    workbook_source = VBA_WORKBOOK_SOURCE.read_text(encoding="utf-8").replace(
+        "\n", "\r\n"
+    )
     with tempfile.TemporaryDirectory() as temporary_directory:
         template = Path(temporary_directory) / "macro_template.xlsm"
         with ExcelFile.create_new(template) as workbook:
             project = workbook.vba_project()
             project.rename_module("Module1", "CachexiaUI")
             workbook.set_module("CachexiaUI", source)
+            workbook.set_module("Sheet1", sheet_source)
+            workbook.set_module("ThisWorkbook", workbook_source)
             workbook.save()
         with ZipFile(template) as archive:
             destination.write_bytes(archive.read("xl/vbaProject.bin"))
@@ -85,6 +108,7 @@ def write_safety_notice(sheet, formats: dict) -> None:
 
 def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     sheet = workbook.add_worksheet("Mock UI")
+    sheet.set_vba_name("Sheet1")
     sheet.activate()
     sheet.hide_gridlines(2)
     sheet.set_tab_color(TEAL)
@@ -92,7 +116,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     sheet.set_column("A:A", 3)
     sheet.set_column("B:B", 27)
     sheet.set_column("C:C", 20)
-    sheet.set_column("D:F", 4)
+    sheet.set_column("D:F", 10)
     sheet.set_column("G:G", 25)
     sheet.set_column("H:I", 16)
     sheet.set_column("J:J", 3)
@@ -127,6 +151,15 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
             sheet.write_datetime(row - 1, 2, value, formats["input_date"])
         else:
             sheet.write(row - 1, 2, value, formats["input"])
+        sheet.merge_range(
+            row - 1,
+            3,
+            row - 1,
+            5,
+            INPUT_GUIDANCE[row],
+            formats["guidance"],
+        )
+        sheet.set_row(row - 1, 30)
 
     add_list_validation(sheet, "C11", ["female", "male", "unknown"])
     add_list_validation(
@@ -136,6 +169,18 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     add_list_validation(sheet, "C16", ["0", "1", "2", "3", "4", "unknown"])
     add_list_validation(sheet, "C17", ["yes", "no", "unknown"])
     add_list_validation(sheet, "C18", ["yes", "no", "unknown"])
+    sheet.data_validation(
+        "C13",
+        {
+            "validate": "list",
+            "source": '=INDIRECT(IF($C$12="lung","LungSubtypeValues","NonLungSubtypeValues"))',
+            "input_title": "Lung subtype",
+            "input_message": "SCLC, NSCLC or unknown for lung; otherwise not applicable.",
+            "error_title": "Invalid subtype",
+            "error_message": "Choose a value permitted for the selected cancer type.",
+            "error_type": "stop",
+        },
+    )
     sheet.data_validation(
         "C9",
         {
@@ -467,6 +512,9 @@ def build_assumptions(workbook, config: dict) -> None:
         sheet.write(row - 1, 15, key)
         sheet.write(row - 1, 16, config["risk_outputs"]["three_month"]["appetite"][key])
         sheet.write(row - 1, 17, config["risk_outputs"]["six_month"]["appetite"][key])
+    for row, subtype in enumerate(("SCLC", "NSCLC", "unknown"), 8):
+        sheet.write(row - 1, 19, subtype)
+    sheet.write("U8", "not applicable")
 
 
 def build_clinical_review(workbook, formats: dict) -> None:
@@ -560,6 +608,16 @@ def make_formats(workbook) -> dict:
         "definition": workbook.add_format({"bg_color": PALE_ORANGE, "border": border, "text_wrap": True, "valign": "top"}),
         "macro_note": workbook.add_format({"italic": True, "font_color": DARK_GREY, "bg_color": GREY, "border": border, "text_wrap": True, "valign": "vcenter"}),
         "review_input": workbook.add_format({"bg_color": BLUE_INPUT, "border": border, "text_wrap": True, "valign": "top"}),
+        "guidance": workbook.add_format(
+            {
+                "font_size": 9,
+                "font_color": DARK_GREY,
+                "bg_color": GREY,
+                "border": border,
+                "text_wrap": True,
+                "valign": "vcenter",
+            }
+        ),
     }
 
 
@@ -571,6 +629,9 @@ def main() -> None:
         create_vba_project(vba_project)
         workbook = xlsxwriter.Workbook(OUTPUT)
         workbook.add_vba_project(vba_project)
+        workbook.set_vba_name("ThisWorkbook")
+        workbook.define_name("LungSubtypeValues", "=Assumptions!$T$8:$T$10")
+        workbook.define_name("NonLungSubtypeValues", "=Assumptions!$U$8:$U$8")
         workbook.set_properties(
             {
                 "title": "Synthetic cachexia risk mock UI",

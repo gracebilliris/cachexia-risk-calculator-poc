@@ -7,8 +7,10 @@ from zipfile import ZipFile
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKBOOK = ROOT / "excel" / "cachexia_risk_mock_ui.v1.0.xlsm"
+WORKBOOK = ROOT / "excel" / "cachexia_risk_mock_ui.v1.1.xlsm"
 VBA_SOURCE = ROOT / "vba" / "CachexiaUI.bas"
+VBA_SHEET_SOURCE = ROOT / "vba" / "MockUISheet.cls"
+VBA_WORKBOOK_SOURCE = ROOT / "vba" / "ThisWorkbook.cls"
 
 
 class ExcelVbaPrototypeTests(unittest.TestCase):
@@ -44,6 +46,23 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
         self.assertEqual(sheet["G21"].value, "=Engine!B25")
         self.assertEqual(sheet["K21"].value, "=Engine!D25")
 
+    def test_inputs_have_visible_guidance_and_dynamic_subtype_validation(self):
+        sheet = self.workbook["Mock UI"]
+        for row in range(9, 19):
+            self.assertTrue(sheet[f"D{row}"].value, f"Missing guidance at row {row}")
+        self.assertIn("confirmed cancer type", sheet["D12"].value)
+        self.assertIn("SCLC, NSCLC or unknown", sheet["D13"].value)
+        validations = list(sheet.data_validations.dataValidation)
+        subtype = next(
+            validation
+            for validation in validations
+            if "C13" in str(validation.sqref)
+        )
+        self.assertIn("LungSubtypeValues", subtype.formula1)
+        self.assertIn("NonLungSubtypeValues", subtype.formula1)
+        self.assertIn("LungSubtypeValues", self.workbook.defined_names)
+        self.assertIn("NonLungSubtypeValues", self.workbook.defined_names)
+
     def test_temporal_helpers_exclude_post_prediction_weights(self):
         sheet = self.workbook["Mock UI"]
         self.assertIn("B24<=$C$9", sheet["M24"].value)
@@ -78,7 +97,17 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
         self.assertIn("Public Sub ResetForm()", source)
         self.assertIn("Public Sub LoadLowRiskExample()", source)
         self.assertIn("Public Sub LoadHighRiskExample()", source)
+        self.assertIn("Public Sub ConfigureLungSubtypeField()", source)
+        self.assertIn("Public Sub UpdateInputGuidance()", source)
         self.assertIn("must not be used for clinical decisions", source)
+        self.assertIn(
+            "ConfigureLungSubtypeField",
+            VBA_SHEET_SOURCE.read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            "InitializeMockUI",
+            VBA_WORKBOOK_SOURCE.read_text(encoding="utf-8"),
+        )
 
 
 if __name__ == "__main__":

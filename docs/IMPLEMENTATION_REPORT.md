@@ -72,7 +72,7 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 47 Python unit tests covering calculations, validation, missing values,
+- 48 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
@@ -88,9 +88,11 @@ The relocated repository's final run completed:
 - Deterministic regeneration of the 120-patient cohort.
 - Reproducible generation of the macro-free
   `excel/cachexia_risk_prototype.v1.4.xlsx` and app-like
-  `excel/cachexia_risk_mock_ui.v1.0.xlsm`.
+  `excel/cachexia_risk_mock_ui.v1.1.xlsm`.
 - Direct Microsoft Excel opening of the VBA workbook without a repair dialog,
-  plus execution of its high-risk sample macro and live formula outputs.
+  execution of its high-risk sample macro and live formula outputs, and
+  runtime confirmation that lung/non-lung selections update subtype values
+  and visible guidance correctly.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient
