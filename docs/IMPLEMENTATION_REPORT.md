@@ -73,7 +73,7 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 60 Python unit tests covering calculations, validation, missing values,
+- 62 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,

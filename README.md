@@ -49,13 +49,13 @@ simulated outputs**. Two independent Excel editions are provided:
   navigation. Each input has an adjacent valid-value descriptor. Cancer
   subtype changes to `SCLC / NSCLC / unknown` for lung cancer and
   `not applicable` otherwise. Enable macros only after confirming the file
-  came from this repository or its GitHub Pages site. Inputs, dropdowns, formulas, and outputs
-  still work if macros remain disabled.
+  came from this repository. Inputs, dropdowns, formulas, and outputs still
+  work if macros remain disabled.
 
 The GitHub Pages deployment runs the JavaScript calculation module generated
 from the canonical simulation assumptions. It does not run a Python service or
 send entered data to this repository. The deployment workflow rebuilds and
-tests both Excel editions and publishes them as downloads with the static site.
+tests the Excel editions, but workbooks are not published with the static site.
 
 ## Key implementation paths
 
@@ -81,7 +81,7 @@ tests both Excel editions and publishes them as downloads with the static site.
 | Final report | `docs/IMPLEMENTATION_REPORT.md` |
 
 The clinical review workbook opens on **START HERE**, followed by 12
-plain-language **Key Scenarios** and a short **Review Decisions** sheet. The
+representative **Key Scenarios** and a short **Review Decisions** sheet. The
 complete 324-case matrix and detailed risk assumptions remain available as
 reference sheets rather than being the primary review workflow.
 

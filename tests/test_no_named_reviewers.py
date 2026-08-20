@@ -55,5 +55,19 @@ class NamedReviewerPrivacyTests(unittest.TestCase):
             )
 
 
+class PublishedSiteTests(unittest.TestCase):
+    def test_site_does_not_publish_workbook_downloads(self):
+        page = (ROOT / "prototype" / "index.html").read_text(encoding="utf-8")
+        self.assertNotIn(".xlsx", page.casefold())
+        self.assertNotIn(".xlsm", page.casefold())
+        self.assertNotIn("downloads/", page.casefold())
+
+        workflow = (
+            ROOT / ".github" / "workflows" / "pages.yml"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("_site/downloads", workflow)
+        self.assertNotIn("cp excel/", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()

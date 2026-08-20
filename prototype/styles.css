@@ -50,23 +50,6 @@ button.secondary { border: 1px solid var(--brand); background: white; color: var
 .risk-card { margin: 0; }
 .risk-value { color: var(--brand); font-size: 3.4rem; font-weight: 900; letter-spacing: -.05em; }
 .risk-card li { margin: 8px 0; color: var(--muted); }
-.download-grid { display: flex; flex-wrap: wrap; gap: 12px; }
-.download {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  padding: 10px 16px;
-  border-radius: 9px;
-  background: var(--brand);
-  color: white;
-  font-weight: 800;
-  text-decoration: none;
-}
-.download:focus, .download:hover {
-  outline: 3px solid rgba(0,93,97,.2);
-  background: #004b4e;
-}
-
 @media (max-width: 680px) {
   header { padding-top: 28px; }
   .risk-grid, .classifications { grid-template-columns: 1fr; }

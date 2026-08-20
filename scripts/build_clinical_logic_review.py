@@ -242,26 +242,30 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     sheet.title = "START HERE"
     add_title(
         sheet,
-        "Clinical logic review matrix",
-        "A plain-language review of the prototype's current classification rules.",
+        "Clinical classification logic review",
+        "Current prototype rules, representative scenarios, and decision points for clinical review.",
     )
     add_warning(sheet)
     counts = Counter(
         (case["expected_cachexia"], case["expected_early_risk"]) for case in cases
     )
     instructions = [
-        ("1. Start with Key Scenarios", "Review 12 representative examples in plain language. Use the dropdown in each row to agree, disagree, or ask a question."),
-        ("2. Review the rule questions", "Use Review Decisions to approve, reject, or request a change to each major rule."),
-        ("3. Use Full Logic Matrix if needed", "The complete 324-case table is included for boundary and unknown-value checking. It is not necessary to read every row."),
+        ("Suggested review sequence", "Key Scenarios presents 12 representative examples, followed by the main clinical questions in Review Decisions."),
+        ("Recording scenario feedback", "Each scenario includes a review-status dropdown and a field for comments or suggested revisions."),
+        ("Optional detailed reference", "Full Logic Matrix contains all 324 combinations for focused checking of boundaries and unknown values; row-by-row review is not expected."),
         ("Cachexia rule", "Yes when loss is >5%; or loss is >2% with BMI <20; or loss is >2% with explicitly documented sarcopenia."),
         ("Provisional early-risk rule", "Yes only when cachexia is excluded, loss is >1% and <=5%, and reduced appetite is yes."),
+        ("Result values", "Yes = criteria met; no = criteria not met; unknown = available information cannot confirm or exclude the criteria."),
         ("Meaning of unknown", "Unknown is not treated as no. A result remains unknown when the available information cannot confirm or exclude the rule."),
         ("Meaning of sarcopenia", "Yes = independently documented; no = assessed and absent; unknown = not assessed or not documented. It is never inferred."),
         ("Important assumption", "These test cases treat measured weight loss as involuntary because there is no separate involuntary-loss field."),
         ("Risk percentages", "Risk Assumptions contains illustrative simulation terms only. They are not calibrated probabilities or validated clinical effects."),
-        ("Review status", "All rules are pending clinical review. Completing this workbook documents feedback; it does not validate the prototype."),
+        ("Current status", "All rules remain pending clinical review. Recorded feedback documents the review outcome but does not validate the prototype."),
     ]
     sheet["A8"], sheet["B8"] = "Topic", "Current interpretation"
+    for cell in (sheet["A8"], sheet["B8"]):
+        cell.font = Font(bold=True, color=WHITE)
+        cell.fill = PatternFill("solid", fgColor=TEAL)
     for row, (topic, text) in enumerate(instructions, 9):
         sheet.cell(row, 1, topic)
         sheet.cell(row, 2, text)
@@ -317,10 +321,10 @@ def add_review_validation(sheet, cell_range: str) -> None:
         allow_blank=False,
     )
     decision.errorStyle = "stop"
-    decision.error = "Choose pending, agree, disagree, or question."
+    decision.error = "Select pending, agree, disagree, or question."
     decision.showErrorMessage = True
-    decision.promptTitle = "Record your review"
-    decision.prompt = "Choose agree, disagree, question, or leave as pending."
+    decision.promptTitle = "Review status"
+    decision.prompt = "Available values: pending, agree, disagree, or question."
     decision.showInputMessage = True
     sheet.add_data_validation(decision)
     decision.add(cell_range)
@@ -366,11 +370,11 @@ def build_key_scenarios_sheet(
         "Sarcopenia",
         "Reduced appetite",
         "Cachexia result",
-        "Why?",
+        "Reason for result",
         "Early-risk result",
-        "Why?",
-        "Your review",
-        "Comments / requested change",
+        "Reason for result",
+        "Review status",
+        "Clinical comments or suggested revisions",
     ]
     for column, header in enumerate(headers, 1):
         cell = sheet.cell(7, column, header)
@@ -413,7 +417,7 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     add_title(
         sheet,
         "Complete logic matrix",
-        "All 324 combinations. Use filters to inspect a threshold or missing-value pattern.",
+        "All 324 combinations, available for filtered review of thresholds and missing-value patterns.",
     )
     add_warning(sheet)
     headers = [
@@ -424,12 +428,12 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
         "Sarcopenia",
         "Reduced appetite",
         "Cachexia result",
-        "Why?",
+        "Reason for result",
         "Early-risk result",
-        "Why?",
+        "Reason for result",
         "Boundary/missing?",
-        "Your review",
-        "Comments / requested change",
+        "Review status",
+        "Clinical comments or suggested revisions",
     ]
     for column, header in enumerate(headers, 1):
         cell = sheet.cell(7, column, header)
@@ -545,17 +549,17 @@ def build_decisions_sheet(workbook: Workbook) -> None:
     sheet = workbook.create_sheet("Review Decisions")
     add_title(
         sheet,
-        "Structured clinical review decisions",
-        "Record approved changes precisely; blank or pending does not mean approval.",
+        "Clinical decision record",
+        "Pending indicates that no clinical decision has been recorded.",
     )
     add_warning(sheet)
     headers = [
         "Decision ID",
-        "Topic",
-        "Current rule",
+        "Clinical question",
+        "Current prototype rule",
         "Decision",
-        "Replacement rule / requested change",
-        "Rationale",
+        "Suggested revision",
+        "Rationale or comments",
         "Reviewed by / role",
         "Date",
     ]
@@ -565,15 +569,15 @@ def build_decisions_sheet(workbook: Workbook) -> None:
         cell.fill = PatternFill("solid", fgColor=TEAL)
         cell.alignment = Alignment(wrap_text=True, vertical="center")
     topics = [
-        ("MATRIX-001", "Fearon primary boundary", "loss >5%"),
-        ("MATRIX-002", "Fearon BMI branch", "loss >2% and BMI <20"),
-        ("MATRIX-003", "Fearon sarcopenia branch", "loss >2% and documented sarcopenia"),
-        ("MATRIX-004", "Unknown handling", "unknown branches do not become no"),
-        ("MATRIX-005", "Provisional early-risk interval", "loss >1% and <=5%"),
-        ("MATRIX-006", "Appetite requirement", "reduced appetite=yes"),
-        ("MATRIX-007", "Sarcopenia evidence", "baseline explicit tri-state carried into synthetic horizons"),
-        ("MATRIX-008", "Involuntary loss", "synthetic rule cases assume weight loss is involuntary"),
-        ("MATRIX-009", "Risk terms", "illustrative configured coefficients and multipliers"),
+        ("MATRIX-001", "Should the primary cachexia threshold require loss greater than 5%, excluding exactly 5%?", "Weight loss >5%"),
+        ("MATRIX-002", "Should the low-BMI branch require both loss greater than 2% and BMI below 20?", "Weight loss >2% and BMI <20"),
+        ("MATRIX-003", "Should documented sarcopenia identify cachexia when weight loss is greater than 2%?", "Weight loss >2% and documented sarcopenia"),
+        ("MATRIX-004", "Should a classification remain unknown when available evidence cannot confirm or exclude a criterion?", "Unknown is kept distinct from no"),
+        ("MATRIX-005", "Is the proposed early-risk weight-loss interval appropriate?", "Weight loss >1% and <=5%, after cachexia is excluded"),
+        ("MATRIX-006", "Should reduced appetite be required for the proposed early-risk pattern?", "Reduced appetite = yes"),
+        ("MATRIX-007", "What evidence should count as documented sarcopenia, and can baseline evidence be carried into future outcome labels?", "Explicit yes/no/unknown evidence; provisional baseline carry-forward"),
+        ("MATRIX-008", "Should involuntary weight loss be recorded separately rather than assumed for synthetic rule cases?", "Measured loss is treated as involuntary in rule-testing scenarios"),
+        ("MATRIX-009", "Should the illustrative risk percentages remain in the demonstrator?", "Configured simulation coefficients and multipliers; not clinically validated"),
     ]
     for row, values in enumerate(topics, 8):
         sheet.cell(row, 1, values[0])
@@ -589,10 +593,10 @@ def build_decisions_sheet(workbook: Workbook) -> None:
         allow_blank=False,
     )
     decision.errorStyle = "stop"
-    decision.error = "Choose pending, approved, rejected, or revision_requested."
+    decision.error = "Select pending, approved, rejected, or revision_requested."
     decision.showErrorMessage = True
-    decision.promptTitle = "Record the decision"
-    decision.prompt = "Choose a decision and add rationale for any completed review."
+    decision.promptTitle = "Decision status"
+    decision.prompt = "Available values: pending, approved, rejected, or revision_requested."
     decision.showInputMessage = True
     sheet.add_data_validation(decision)
     decision.add(f"D8:D{7 + len(topics)}")

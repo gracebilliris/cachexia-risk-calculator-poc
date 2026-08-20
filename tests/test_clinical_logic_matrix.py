@@ -94,6 +94,15 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
         self.assertEqual(scenarios["A8"].value, "No weight loss")
         self.assertIn("Loss over 5%", [scenarios.cell(row, 1).value for row in range(8, 20)])
         self.assertIn("J8:J19", str(list(scenarios.data_validations.dataValidation)[0].sqref))
+        self.assertEqual(scenarios["J7"].value, "Review status")
+        self.assertEqual(
+            scenarios["K7"].value,
+            "Clinical comments or suggested revisions",
+        )
+
+        decisions = self.workbook["Review Decisions"]
+        self.assertEqual(decisions["B7"].value, "Clinical question")
+        self.assertIn("greater than 5%", decisions["B8"].value)
 
         matrix = self.workbook["Full Logic Matrix"]
         self.assertIn("NOT FOR CLINICAL USE", matrix["A4"].value)
@@ -131,6 +140,18 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                         self.assertFalse(
                             any(name.casefold() in cell.value.casefold() for name in blocked),
                             f"Named reviewer found in {sheet.title}!{cell.coordinate}",
+                        )
+
+    def test_workbook_uses_neutral_review_language(self):
+        disallowed = ("plain-language", "your review")
+        for sheet in self.workbook.worksheets:
+            for row in sheet.iter_rows():
+                for cell in row:
+                    if isinstance(cell.value, str):
+                        folded = cell.value.casefold()
+                        self.assertFalse(
+                            any(phrase in folded for phrase in disallowed),
+                            f"Non-neutral wording found in {sheet.title}!{cell.coordinate}",
                         )
 
 
