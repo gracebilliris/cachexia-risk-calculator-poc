@@ -1,0 +1,118 @@
+{
+  "metadata": {
+    "config_version": "1.0.0",
+    "purpose": "Synthetic research-only proof of concept",
+    "warning": "Every distribution, coefficient, probability, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect.",
+    "source_workbook": "Data Extraction_literature review_20260728.xlsx",
+    "source_sheet": "Prototype 1_agreed predictors",
+    "clinical-reviewer_confirmation_status": "pending"
+  },
+  "cohort": {
+    "prediction_date_start": "2026-01-15",
+    "prediction_date_cycle_days": 60,
+    "age": {"minimum": 18, "maximum": 95, "triangular_mode": 65},
+    "sex_probabilities": {"female": 0.49, "male": 0.49, "unknown": 0.02},
+    "height_cm": {
+      "female": {"minimum": 140, "maximum": 190, "mean": 162, "sd": 7},
+      "male": {"minimum": 150, "maximum": 200, "mean": 176, "sd": 7},
+      "unknown": {"minimum": 140, "maximum": 200, "mean": 169, "sd": 9}
+    },
+    "bmi": {"minimum": 15, "maximum": 45, "triangular_mode": 24},
+    "weight_kg": {"minimum": 35, "maximum": 150},
+    "historical_weight_kg": {"minimum": 25, "maximum": 160},
+    "ecog_probabilities": {"0": 0.1425, "1": 0.38, "2": 0.285, "3": 0.114, "4": 0.0285, "unknown": 0.05},
+    "stage_probabilities": {"I": 0.1, "II": 0.18, "III": 0.32, "IV": 0.35, "unknown": 0.05},
+    "cancer_type_probabilities": {
+      "lung": 0.18,
+      "colorectal": 0.13,
+      "oesophageal": 0.08,
+      "gastric": 0.08,
+      "pancreatic": 0.12,
+      "hepatobiliary": 0.08,
+      "head and neck": 0.1,
+      "breast": 0.09,
+      "prostate": 0.07,
+      "other solid tumour": 0.07
+    },
+    "lung_subtype_probabilities": {"SCLC": 0.25, "NSCLC": 0.75},
+    "sarcopenia_probabilities": {"yes": 0.15, "no": 0.55, "unknown": 0.3},
+    "insufficient_history_probability": 0.12,
+    "appetite_unknown_probability": 0.1,
+    "history_month_offsets": [-6, -3],
+    "future_horizon_months": [3, 6],
+    "deliberate_edge_case_count": 8
+  },
+  "edge_cases": {
+    "baseline_weight_gain_percent": 3.0,
+    "limited_weight_loss_percent": 3.0,
+    "supported_cachexia_weight_loss_percent": 6.0,
+    "bmi_boundary_height_cm": 170.0,
+    "bmi_boundary_value": 20.0,
+    "weight_loss_lower_boundary_percent": 2.0,
+    "weight_loss_upper_boundary_percent": 5.0
+  },
+  "simulation_relationships": {
+    "stage_latent_points": {"I": -0.8, "II": -0.3, "III": 0.4, "IV": 1.0, "unknown": 0.0},
+    "ecog_latent_points": {"0": -0.8, "1": -0.3, "2": 0.4, "3": 0.9, "4": 1.3, "unknown": 0.0},
+    "cancer_latent_points": {
+      "lung": 0.5,
+      "colorectal": 0.1,
+      "oesophageal": 0.7,
+      "gastric": 0.7,
+      "pancreatic": 1.0,
+      "hepatobiliary": 0.6,
+      "head and neck": 0.5,
+      "breast": -0.4,
+      "prostate": -0.4,
+      "other solid tumour": 0.0
+    },
+    "latent_random_sd": 0.45,
+    "appetite_yes_logit_intercept": -1.0,
+    "appetite_yes_latent_multiplier": 0.8,
+    "historical_monthly_loss_percent_intercept": 0.0,
+    "historical_monthly_loss_percent_latent_multiplier": 0.22,
+    "future_monthly_loss_percent_intercept": 0.15,
+    "future_monthly_loss_percent_latent_multiplier": 0.42,
+    "future_monthly_loss_percent_random_sd": 0.35,
+    "six_month_increment_multiplier": 1.0,
+    "monthly_loss_percent_minimum": -1.0,
+    "monthly_loss_percent_maximum": 2.5,
+    "latent_score_minimum": -2.0,
+    "latent_score_maximum": 3.0
+  },
+  "risk_outputs": {
+    "age_threshold_exclusive": 55,
+    "three_month": {
+      "intercept": -2.0,
+      "age_over_55": 0.25,
+      "stage": {"I": -0.25, "II": 0.0, "III": 0.35, "IV": 0.75, "unknown": 0.0},
+      "ecog": {"0": -0.3, "1": 0.0, "2": 0.35, "3": 0.7, "4": 1.0, "unknown": 0.0},
+      "appetite": {"yes": 0.75, "no": 0.0, "unknown": 0.15},
+      "baseline_weight_loss_per_percent": 0.13,
+      "low_bmi_under_20": 0.45,
+      "cancer_type_multiplier": 0.35
+    },
+    "six_month": {
+      "intercept": -1.45,
+      "age_over_55": 0.3,
+      "stage": {"I": -0.2, "II": 0.0, "III": 0.4, "IV": 0.85, "unknown": 0.0},
+      "ecog": {"0": -0.25, "1": 0.0, "2": 0.4, "3": 0.8, "4": 1.1, "unknown": 0.0},
+      "appetite": {"yes": 0.8, "no": 0.0, "unknown": 0.15},
+      "baseline_weight_loss_per_percent": 0.15,
+      "low_bmi_under_20": 0.5,
+      "cancer_type_multiplier": 0.4
+    },
+    "band_thresholds": {"low_upper_exclusive": 0.3, "high_lower_inclusive": 0.6}
+  },
+  "definitions": {
+    "days_per_month": 30.4375,
+    "trajectory_epsilon_percent": 0.5,
+    "fearon_weight_loss_primary_exclusive": 5.0,
+    "fearon_weight_loss_conditional_exclusive": 2.0,
+    "fearon_bmi_exclusive": 20.0,
+    "precachexia_lower_weight_loss_percent_exclusive": 1.0,
+    "precachexia_upper_weight_loss_percent_inclusive": 5.0,
+    "risk_missing_predictor_policy": "withhold",
+    "horizon_boundary": "inclusive calendar date"
+  }
+}

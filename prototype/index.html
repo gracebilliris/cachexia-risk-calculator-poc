@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Synthetic Cachexia Risk POC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <p class="eyebrow">Research-only synthetic-data demonstrator</p>
+    <h1>Cachexia and pre-cachexia simulation prototype</h1>
+    <div class="warning" role="alert">
+      <strong>Not for clinical use.</strong> Patients and outputs are synthetic.
+      Risk relationships are simulation assumptions, not clinically validated
+      effects. Do not use this prototype for diagnosis, prognosis, treatment,
+      patient care, or any medical decision.
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="patient-heading">
+      <h2 id="patient-heading">Baseline inputs</h2>
+      <p class="hint">Unknown remains distinct from “no”. Required values are marked *.</p>
+      <div class="grid">
+        <label>Prediction date *<input id="prediction-date" type="date" value="2026-01-31"></label>
+        <label>Age (18–95) *<input id="age" type="number" min="18" max="95" value="65"></label>
+        <label>Sex *
+          <select id="sex"><option>female</option><option>male</option><option>unknown</option></select>
+        </label>
+        <label>Cancer type *
+          <select id="cancer-type">
+            <option>lung</option><option>colorectal</option><option>oesophageal</option>
+            <option>gastric</option><option>pancreatic</option><option>hepatobiliary</option>
+            <option>head and neck</option><option>breast</option><option>prostate</option>
+            <option>other solid tumour</option>
+          </select>
+        </label>
+        <label>Cancer subtype<input id="cancer-subtype" placeholder="e.g. NSCLC"></label>
+        <label>Stage *
+          <select id="stage"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option>unknown</option></select>
+        </label>
+        <label>Height (cm)<input id="height" type="number" min="140" max="200" step="0.1" value="170"></label>
+        <label>ECOG *
+          <select id="ecog"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="unknown">unknown</option></select>
+        </label>
+        <label>Reduced appetite *
+          <select id="appetite"><option>yes</option><option selected>no</option><option>unknown</option></select>
+        </label>
+        <label>Sarcopenia *
+          <select id="sarcopenia"><option>yes</option><option>no</option><option selected>unknown</option></select>
+        </label>
+      </div>
+
+      <div class="weight-heading">
+        <div><h3>Dated weight history</h3><p class="hint">Only dates on or before prediction are predictors.</p></div>
+        <button id="add-weight" type="button" class="secondary">Add measurement</button>
+      </div>
+      <div id="weights"></div>
+      <button id="calculate" type="button">Calculate simulated outputs</button>
+      <div id="errors" class="errors" role="alert" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="derived-heading">
+      <h2 id="derived-heading">Baseline-derived variables</h2>
+      <div id="derived" class="metrics" aria-live="polite"></div>
+      <div class="classifications">
+        <div><span>Fearon-supported status</span><strong id="fearon">Not calculated</strong></div>
+        <div><span>Provisional pre-cachexia candidate</span><strong id="precachexia">Not calculated</strong></div>
+      </div>
+      <p class="hint">Sarcopenia is used only when explicitly entered; it is never inferred. The pre-cachexia rule is provisional and requires clinical-reviewer and clinical-reviewer’s review.</p>
+    </section>
+
+    <section class="risk-grid" aria-label="Simulated risk estimates">
+      <article class="card risk-card">
+        <p class="eyebrow">3-month horizon</p>
+        <div id="risk-3m" class="risk-value">—</div>
+        <p id="band-3m"></p>
+        <ul id="factors-3m"></ul>
+      </article>
+      <article class="card risk-card">
+        <p class="eyebrow">6-month horizon</p>
+        <div id="risk-6m" class="risk-value">—</div>
+        <p id="band-6m"></p>
+        <ul id="factors-6m"></ul>
+      </article>
+    </section>
+
+    <p class="footnote">The risk percentages are interpretable deterministic transformations of the displayed inputs. They are not calibrated probabilities.</p>
+  </main>
+  <script src="simulation-config.js"></script>
+  <script src="calculations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

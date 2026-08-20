@@ -1,0 +1,7 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+~$*.xlsx
+Data Extraction_literature review_20260728.xlsx

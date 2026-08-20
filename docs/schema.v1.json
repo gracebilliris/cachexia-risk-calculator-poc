@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cachexia-poc/schema.v1.json",
+  "title": "Synthetic cachexia POC patient v1",
+  "description": "Research-only synthetic data. Unknown values are explicit and never equivalent to negative.",
+  "type": "object",
+  "required": [
+    "patient_id",
+    "prediction_date",
+    "age",
+    "sex",
+    "cancer_type",
+    "cancer_subtype",
+    "cancer_stage",
+    "height_cm",
+    "weights",
+    "ecog",
+    "reduced_appetite",
+    "sarcopenia",
+    "outcome_3m",
+    "outcome_6m",
+    "provenance"
+  ],
+  "properties": {
+    "patient_id": {"type": "string", "pattern": "^SYN-", "description": "Synthetic identifier only."},
+    "prediction_date": {"type": "string", "format": "date"},
+    "age": {"type": "integer", "minimum": 18, "maximum": 95, "unit": "years"},
+    "sex": {"enum": ["female", "male", "unknown"]},
+    "cancer_type": {
+      "enum": ["lung", "colorectal", "oesophageal", "gastric", "pancreatic", "hepatobiliary", "head and neck", "breast", "prostate", "other solid tumour"]
+    },
+    "cancer_subtype": {"type": ["string", "null"], "description": "SCLC/NSCLC for lung; null otherwise."},
+    "cancer_stage": {"enum": ["I", "II", "III", "IV", "unknown"]},
+    "height_cm": {"type": ["number", "null"], "minimum": 140, "maximum": 200, "unit": "cm"},
+    "weights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "weight_kg"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "weight_kg": {"type": "number", "minimum": 25, "maximum": 160, "unit": "kg"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "ecog": {"type": ["integer", "null"], "minimum": 0, "maximum": 4, "description": "null means unknown."},
+    "reduced_appetite": {"enum": ["yes", "no", "unknown"]},
+    "sarcopenia": {"enum": ["yes", "no", "unknown"], "description": "Stored only; never inferred."},
+    "outcome_3m": {"$ref": "#/$defs/outcome3m"},
+    "outcome_6m": {"$ref": "#/$defs/outcome6m"},
+    "provenance": {
+      "type": "object",
+      "required": ["synthetic", "seed", "config_version", "clinical_validation"],
+      "properties": {
+        "synthetic": {"const": true},
+        "seed": {"type": "integer"},
+        "config_version": {"type": "string"},
+        "clinical_validation": {"const": "none"}
+      }
+    }
+  },
+  "$defs": {
+    "outcomeBase": {
+      "type": "object",
+      "required": ["horizon_months", "horizon_date", "cachexia", "precachexia_candidate"],
+      "properties": {
+        "horizon_months": {"enum": [3, 6]},
+        "horizon_date": {"type": "string", "format": "date"},
+        "cachexia": {"enum": ["yes", "no", "unknown"]},
+        "precachexia_candidate": {"enum": ["yes", "no", "unknown"]}
+      }
+    },
+    "outcome3m": {
+      "allOf": [
+        {"$ref": "#/$defs/outcomeBase"},
+        {"type": "object", "properties": {"horizon_months": {"const": 3}}}
+      ]
+    },
+    "outcome6m": {
+      "allOf": [
+        {"$ref": "#/$defs/outcomeBase"},
+        {"type": "object", "properties": {"horizon_months": {"const": 6}}}
+      ]
+    }
+  }
+}

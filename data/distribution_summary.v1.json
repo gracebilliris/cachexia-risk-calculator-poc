@@ -1,0 +1,76 @@
+{
+  "warning": "Synthetic simulation output; not clinically validated or for medical use.",
+  "count": 120,
+  "seed": 20260820,
+  "config_version": "1.0.0",
+  "sex": {
+    "male": 56,
+    "female": 60,
+    "unknown": 4
+  },
+  "cancer_type": {
+    "gastric": 10,
+    "oesophageal": 10,
+    "head and neck": 12,
+    "prostate": 7,
+    "pancreatic": 21,
+    "lung": 23,
+    "hepatobiliary": 8,
+    "breast": 10,
+    "colorectal": 14,
+    "other solid tumour": 5
+  },
+  "stage": {
+    "IV": 43,
+    "III": 39,
+    "II": 21,
+    "I": 13,
+    "unknown": 4
+  },
+  "ecog": {
+    "unknown": 8,
+    "1": 47,
+    "2": 37,
+    "3": 11,
+    "0": 13,
+    "4": 4
+  },
+  "appetite": {
+    "unknown": 11,
+    "no": 70,
+    "yes": 39
+  },
+  "risk_3m_band": {
+    "unknown": 12,
+    "low": 49,
+    "medium": 49,
+    "high": 10
+  },
+  "risk_6m_band": {
+    "unknown": 12,
+    "medium": 47,
+    "low": 22,
+    "high": 39
+  },
+  "outcome_3m_cachexia": {
+    "no": 98,
+    "yes": 12,
+    "unknown": 10
+  },
+  "outcome_6m_cachexia": {
+    "no": 65,
+    "unknown": 10,
+    "yes": 45
+  },
+  "edge_cases": {
+    "unknown_fields": 1,
+    "insufficient_history": 1,
+    "baseline_weight_gain": 1,
+    "baseline_stability": 1,
+    "limited_loss_with_appetite": 1,
+    "supported_cachexia_pattern": 1,
+    "bmi_20_weight_loss_2_boundary": 1,
+    "weight_loss_5_boundary": 1,
+    "none": 112
+  }
+}

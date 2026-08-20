@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synthetic-cachexia-poc"
+version = "0.1.0"
+description = "Research-only synthetic cachexia risk proof of concept"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+excel = ["openpyxl>=3.1,<4"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

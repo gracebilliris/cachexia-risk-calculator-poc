@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cachexia POC clinical review decisions",
+  "type": "object",
+  "required": ["review_status", "decisions"],
+  "properties": {
+    "review_status": {"enum": ["pending", "in_progress", "completed"]},
+    "reviewers": {
+      "type": "array",
+      "items": {"type": "string", "enum": ["clinical-reviewer", "clinical-reviewer"]}
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "owner", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^(CLIN|UX)-[0-9]{3}$"},
+          "question": {"type": "string"},
+          "owner": {
+            "type": "array",
+            "items": {"type": "string", "enum": ["clinical-reviewer", "clinical-reviewer"]},
+            "minItems": 1
+          },
+          "status": {"enum": ["pending", "approved", "rejected", "revision_requested"]},
+          "decision": {"type": ["string", "null"]},
+          "rationale": {"type": ["string", "null"]},
+          "effective_date": {"type": ["string", "null"], "format": "date"},
+          "requested_changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "description"],
+              "properties": {
+                "path": {"type": "string"},
+                "description": {"type": "string"}
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["approved", "rejected", "revision_requested"]}}},
+            "then": {"required": ["decision", "rationale", "effective_date"]}
+          }
+        ]
+      }
+    }
+  }
+}
