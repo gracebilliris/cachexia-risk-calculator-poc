@@ -22,7 +22,7 @@ Public Sub UpdateInputGuidance()
         .Range("D15").Value = "Required: 140 to 200 cm."
         .Range("D16").Value = "Valid: 0, 1, 2, 3, 4 or unknown."
         .Range("D17").Value = "Valid: yes, no or unknown/not documented."
-        .Range("D18").Value = "Valid: yes, no or unknown. Must be documented; never inferred."
+        .Range("D18").Value = "yes=documented; no=assessed and absent; unknown=not assessed/documented."
     End With
 
     UpdateSubtypeGuidance

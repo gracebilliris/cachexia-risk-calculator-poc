@@ -52,7 +52,11 @@
           <select id="appetite"><option>yes</option><option selected>no</option><option>unknown</option></select>
         </label>
         <label>Documented sarcopenia evidence *
-          <select id="sarcopenia"><option>yes</option><option>no</option><option selected>unknown</option></select>
+          <select id="sarcopenia">
+            <option value="yes">yes — independently documented</option>
+            <option value="no">no — assessed and absent</option>
+            <option value="unknown" selected>unknown — not assessed or not documented</option>
+          </select>
         </label>
       </div>
 
@@ -72,7 +76,7 @@
         <div><span>Implemented cachexia criteria met?</span><strong id="fearon">Not calculated</strong></div>
         <div><span>Provisional early-risk pattern met?</span><strong id="precachexia">Not calculated</strong></div>
       </div>
-      <p class="hint">Implemented cachexia criteria: &gt;5% weight loss, &gt;2% loss with BMI &lt;20 kg/m², or &gt;2% loss with explicitly documented sarcopenia. Sarcopenia is never inferred and affects the criteria label only; no simulated risk coefficient has been assigned. Provisional early-risk pattern: cachexia criteria not met, &gt;1% to ≤5% loss, and reduced appetite=yes. This project proposal requires clinical-reviewer and clinical-reviewer’s review.</p>
+      <p class="hint">Implemented cachexia criteria: &gt;5% weight loss, &gt;2% loss with BMI &lt;20 kg/m², or &gt;2% loss with explicitly documented sarcopenia. For sarcopenia, “no” means assessed and absent; “unknown” means not assessed or not documented. Sarcopenia is never inferred and affects the criteria label only; no simulated risk coefficient has been assigned. Provisional early-risk pattern: cachexia criteria not met, &gt;1% to ≤5% loss, and reduced appetite=yes. This project proposal requires clinical-reviewer and clinical-reviewer’s review.</p>
     </section>
 
     <section class="risk-grid" aria-label="Simulated risk estimates">

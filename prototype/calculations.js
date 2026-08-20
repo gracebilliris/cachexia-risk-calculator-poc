@@ -131,7 +131,15 @@
       ) {
         fearon = "no — BMI and sarcopenia branches refuted";
       } else {
-        fearon = "unknown — BMI or sarcopenia evidence unavailable";
+        const unavailable = [];
+        if (derived.bmi === null) unavailable.push("BMI");
+        if (
+          assumptions.sarcopeniaBranchEnabled
+          && input.sarcopenia === "unknown"
+        ) {
+          unavailable.push("sarcopenia evidence");
+        }
+        fearon = `unknown — ${unavailable.join(" and ")} unavailable`;
       }
 
       const preRule = assumptions.precachexia;

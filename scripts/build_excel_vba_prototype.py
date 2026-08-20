@@ -43,7 +43,7 @@ INPUT_GUIDANCE = {
     15: "Required: 140 to 200 cm.",
     16: "Valid: 0, 1, 2, 3, 4 or unknown.",
     17: "Valid: yes, no or unknown/not documented.",
-    18: "Valid: yes, no or unknown. Must be documented; never inferred.",
+    18: "yes=documented; no=assessed and absent; unknown=not assessed/documented.",
 }
 
 NAVY = "#17324D"
@@ -316,7 +316,8 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         "Rules shown in plain language\n"
         "Implemented cachexia criteria: >5% weight loss, >2% weight loss "
         "with BMI <20 kg/m², or >2% loss with documented sarcopenia. "
-        "Sarcopenia is never inferred and has no simulated risk coefficient.\n"
+        "For sarcopenia, no=assessed and absent; unknown=not documented. "
+        "It is never inferred and has no simulated risk coefficient.\n"
         "Provisional early-risk pattern: cachexia criteria not met, >1% and "
         "<=5% weight loss, and reduced appetite=yes. This project proposal "
         "requires clinical-reviewer and clinical-reviewer's review.",

@@ -108,7 +108,10 @@ test("documented sarcopenia implements the third Fearon branch", () => {
   );
   assert.match(noSarcopenia.fearon, /^no/);
   assert.match(sarcopenia.fearon, /^yes/);
-  assert.match(unknownSarcopenia.fearon, /^unknown/);
+  assert.equal(
+    unknownSarcopenia.fearon,
+    "unknown — sarcopenia evidence unavailable"
+  );
 });
 
 test("three- and six-month risk outputs are independent and explained", () => {
