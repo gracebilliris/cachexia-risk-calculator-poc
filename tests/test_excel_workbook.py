@@ -7,7 +7,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.3.xlsx"
+WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.4.xlsx"
 
 
 class ExcelPrototypeTests(unittest.TestCase):
@@ -68,6 +68,14 @@ class ExcelPrototypeTests(unittest.TestCase):
         for sheet in self.workbook.worksheets:
             self.assertEqual(list(sheet.tables.values()), [])
             self.assertEqual(len(sheet.conditional_formatting), 0)
+        self.assertFalse(self.workbook.calculation.fullCalcOnLoad)
+        self.assertFalse(self.workbook.calculation.forceFullCalc)
+
+    def test_custom_unit_formats_quote_literal_text(self):
+        calculator = self.workbook["Calculator"]
+        self.assertEqual(calculator["H9"].number_format, '0.00 "kg"')
+        self.assertEqual(calculator["H12"].number_format, '0 "days"')
+        self.assertEqual(calculator["H13"].number_format, '0.00 "kg/month"')
 
     def test_three_and_six_month_formulas_are_separate(self):
         results = self.workbook["Results"]

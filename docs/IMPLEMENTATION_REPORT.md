@@ -86,7 +86,7 @@ The relocated repository's final run completed:
 - JSON parsing for all configuration, schema, data, summary, and review files.
 - Deterministic regeneration of the 120-patient cohort.
 - Reproducible generation of the single-screen
-  `excel/cachexia_risk_prototype.v1.3.xlsx`.
+  `excel/cachexia_risk_prototype.v1.4.xlsx`.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient

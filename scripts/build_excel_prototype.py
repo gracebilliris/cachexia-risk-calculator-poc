@@ -13,7 +13,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.3.xlsx"
+OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.4.xlsx"
 CONFIG_PATH = ROOT / "config" / "simulation_assumptions.v1.json"
 DATA_PATH = ROOT / "data" / "synthetic_patients.v1.json"
 
@@ -293,11 +293,11 @@ def build_input(workbook: Workbook, config: dict) -> None:
     sheet["G8"].font = Font(size=15, bold=True, color=WHITE)
     sheet["G8"].fill = PatternFill("solid", fgColor=TEAL)
     output_rows = [
-        (9, "Baseline/current weight", "='Results'!B9", "0.00 kg"),
+        (9, "Baseline/current weight", "='Results'!B9", '0.00 "kg"'),
         (10, "BMI", "='Results'!B12", "0.00"),
         (11, "Weight loss", "='Results'!B13", "0.00%"),
-        (12, "Interval", "='Results'!B14", "0 days"),
-        (13, "Weight-loss rate", "='Results'!B15", "0.00 kg/month"),
+        (12, "Interval", "='Results'!B14", '0 "days"'),
+        (13, "Weight-loss rate", "='Results'!B15", '0.00 "kg/month"'),
         (14, "Trajectory", "='Results'!B17", None),
         (16, "V1 cachexia status", "='Results'!B19", None),
         (17, "Option B pre-cachexia candidate", "='Results'!B20", None),
@@ -648,8 +648,8 @@ def main() -> None:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     patients = json.loads(DATA_PATH.read_text(encoding="utf-8"))
     workbook = Workbook()
-    workbook.calculation.fullCalcOnLoad = True
-    workbook.calculation.forceFullCalc = True
+    workbook.calculation.fullCalcOnLoad = False
+    workbook.calculation.forceFullCalc = False
     build_readme(workbook)
     build_input(workbook, config)
     build_results(workbook)
