@@ -14,6 +14,8 @@ The source literature workbook is intentionally retained outside this
 repository and is excluded by `.gitignore`; the generated synthetic Excel
 prototype is included.
 
+**Live synthetic demonstrator:** <https://gracebilliris.github.io/cachexia-risk-calculator-poc/>
+
 ## Run
 
 Python 3.9 or newer is required. The browser/Python prototype has no runtime
@@ -33,9 +35,9 @@ node --test tests/browser_calculations.test.js
 python3 scripts/run_local.py
 ```
 
-Open <http://127.0.0.1:8000>. The server binds to loopback only; no remote
-hosting or network exposure is configured. The static page can also be opened
-directly from `prototype/index.html`.
+Open <http://127.0.0.1:8000> for local development. The development server
+binds to loopback only. The static page can also be opened directly from
+`prototype/index.html`.
 
 The page is interactive: change factors or dated weights and press **Calculate
 simulated outputs**. Two independent Excel editions are provided:
@@ -46,8 +48,13 @@ simulated outputs**. Two independent Excel editions are provided:
   navigation. Each input has an adjacent valid-value descriptor. Cancer
   subtype changes to `SCLC / NSCLC / unknown` for lung cancer and
   `not applicable` otherwise. Enable macros only after confirming the file
-  came from this private repository. Inputs, dropdowns, formulas, and outputs
+  came from this repository or its GitHub Pages site. Inputs, dropdowns, formulas, and outputs
   still work if macros remain disabled.
+
+The GitHub Pages deployment runs the JavaScript calculation module generated
+from the canonical simulation assumptions. It does not run a Python service or
+send entered data to this repository. The deployment workflow rebuilds and
+tests both Excel editions and publishes them as downloads with the static site.
 
 ## Key implementation paths
 

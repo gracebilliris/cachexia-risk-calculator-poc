@@ -17,8 +17,10 @@ Please assess:
 2. Whether clinical-reviewer's illustrative cancer and stage multipliers, their
    multiplicative interaction, and provisional ECOG/appetite associations
    introduce misleading or implausible combinations.
-3. Provisional Option B: cachexia excluded, loss >1% and <=5%, and reduced
-   appetite=yes. Confirm, reject, or revise it.
+3. **Provisional early-risk pattern** (internal configuration name:
+   Option B): cachexia criteria excluded, loss >1% and <=5%, and reduced
+   appetite=yes. The clinician-facing prototypes show the full rule rather
+   than the internal name. Confirm, reject, or revise it.
 4. The Fearon implementation, strict boundaries, use of horizon BMI, and
    unknown handling in `CLINICAL_RULES.md`.
 5. Separate example three- and six-month labels and baseline-only simulated
@@ -55,7 +57,7 @@ are in `data/distribution_summary.v1.json`.
 |---|---|---|---|
 | CLIN-001 | Confirm or revise predictor ranges/distributions | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-002 | Confirm stage/ECOG/appetite simulation relationships | clinical-reviewer, clinical-reviewer | pending |
-| CLIN-003 | Confirm/reject/revise Option B (>1% and <=5% loss plus appetite=yes) and its missing behavior | clinical-reviewer, clinical-reviewer | pending |
+| CLIN-003 | Confirm/reject/revise the provisional early-risk pattern (cachexia criteria not met, >1% and <=5% loss, appetite=yes) and its missing behavior | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-004 | Confirm Fearon operationalisation and negative/unknown truth table | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-005 | Confirm outcome measurement-selection and inclusive boundaries | clinical-reviewer, clinical-reviewer | pending |
 | CLIN-006 | Confirm sarcopenia remains stored but unused in v1 and whether later dated muscle measures are needed | clinical-reviewer, clinical-reviewer | pending |

@@ -36,7 +36,11 @@
             <option>other solid tumour</option>
           </select>
         </label>
-        <label>Cancer subtype<input id="cancer-subtype" placeholder="e.g. NSCLC"></label>
+        <label>Lung cancer subtype
+          <select id="cancer-subtype">
+            <option>SCLC</option><option selected>NSCLC</option><option>unknown</option>
+          </select>
+        </label>
         <label>Stage *
           <select id="stage"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option>unknown</option></select>
         </label>
@@ -65,10 +69,10 @@
       <h2 id="derived-heading">Baseline-derived variables</h2>
       <div id="derived" class="metrics" aria-live="polite"></div>
       <div class="classifications">
-        <div><span>Fearon-supported status</span><strong id="fearon">Not calculated</strong></div>
-        <div><span>Provisional pre-cachexia candidate</span><strong id="precachexia">Not calculated</strong></div>
+        <div><span>Implemented cachexia criteria met?</span><strong id="fearon">Not calculated</strong></div>
+        <div><span>Provisional early-risk pattern met?</span><strong id="precachexia">Not calculated</strong></div>
       </div>
-      <p class="hint">Sarcopenia is retained for future use but does not affect v1 classification. Option B pre-cachexia (&gt;1% to ≤5% loss plus reduced appetite) is provisional and requires clinical-reviewer and clinical-reviewer’s review.</p>
+      <p class="hint">Implemented cachexia criteria: &gt;5% weight loss, or &gt;2% loss with BMI &lt;20 kg/m²; the sarcopenia branch is not evaluated. Provisional early-risk pattern: cachexia criteria not met, &gt;1% to ≤5% loss, and reduced appetite=yes. This project proposal requires clinical-reviewer and clinical-reviewer’s review.</p>
     </section>
 
     <section class="risk-grid" aria-label="Simulated risk estimates">
@@ -87,6 +91,27 @@
     </section>
 
     <p class="footnote">The risk percentages are interpretable deterministic transformations of the displayed inputs. They are not calibrated probabilities.</p>
+
+    <section class="card" aria-labelledby="downloads-heading">
+      <h2 id="downloads-heading">Excel review workbooks</h2>
+      <p class="hint">
+        These files are rebuilt from the same version-controlled assumptions
+        whenever this site is deployed. They contain synthetic examples only.
+      </p>
+      <div class="download-grid">
+        <a class="download" href="downloads/cachexia_risk_prototype.v1.4.xlsx">
+          Macro-free workbook (.xlsx)
+        </a>
+        <a class="download" href="downloads/cachexia_risk_mock_ui.v1.1.xlsm">
+          Guided mock UI with VBA controls (.xlsm)
+        </a>
+      </div>
+      <p class="hint">
+        The VBA edition requires Excel macro permission for its buttons.
+        Enable macros only when the workbook was downloaded from this site or
+        the linked GitHub repository.
+      </p>
+    </section>
   </main>
   <script src="simulation-config.js"></script>
   <script src="calculations.js"></script>

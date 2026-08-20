@@ -5,6 +5,12 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   root.CachexiaCalculations = api;
 }(typeof globalThis !== "undefined" ? globalThis : this, function buildApi() {
+  function cancerSubtypeOptions(cancerType) {
+    return cancerType === "lung"
+      ? ["SCLC", "NSCLC", "unknown"]
+      : ["not applicable"];
+  }
+
   function createCalculator(config) {
     if (!config?.metadata?.warning?.toLowerCase().includes("simulation assumption")) {
       throw new Error("A labelled simulation configuration is required.");
@@ -202,5 +208,5 @@
     return { addMonths, calculateDerived, classify, risk };
   }
 
-  return { createCalculator };
+  return { cancerSubtypeOptions, createCalculator };
 }));

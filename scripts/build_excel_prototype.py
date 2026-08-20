@@ -299,8 +299,8 @@ def build_input(workbook: Workbook, config: dict) -> None:
         (12, "Interval", "='Results'!B14", '0 "days"'),
         (13, "Weight-loss rate", "='Results'!B15", '0.00 "kg/month"'),
         (14, "Trajectory", "='Results'!B17", None),
-        (16, "V1 cachexia status", "='Results'!B19", None),
-        (17, "Option B pre-cachexia candidate", "='Results'!B20", None),
+        (16, "Implemented cachexia criteria met?", "='Results'!B19", None),
+        (17, "Provisional early-risk pattern met?", "='Results'!B20", None),
     ]
     for row, label, formula, number_format in output_rows:
         sheet.cell(row, 7, label)
@@ -323,12 +323,12 @@ def build_input(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 11).alignment = Alignment(wrap_text=True, vertical="top")
     sheet.merge_cells("G20:L23")
     sheet["G20"] = (
-        "Working definitions for feedback\n"
-        "Cachexia v1: >5% loss, or >2% loss with BMI <20 kg/m². "
-        "Sarcopenia is stored but not used.\n"
-        "Candidate pre-cachexia Option B: after cachexia is excluded, "
-        ">1% and <=5% loss plus reduced appetite=yes. Pending clinical-reviewer and "
-        "clinical-reviewer review."
+        "Rules shown in plain language\n"
+        "Implemented cachexia criteria: >5% weight loss, or >2% weight loss "
+        "with BMI <20 kg/m². The sarcopenia branch is not evaluated.\n"
+        "Provisional early-risk pattern: cachexia criteria not met, >1% and "
+        "<=5% weight loss, and reduced appetite=yes. This project proposal "
+        "requires clinical-reviewer and clinical-reviewer's review."
     )
     sheet["G20"].alignment = Alignment(wrap_text=True, vertical="top")
     sheet["G20"].fill = PatternFill("solid", fgColor=PALE_ORANGE)
@@ -357,8 +357,8 @@ def build_results(workbook: Workbook) -> None:
         15: "Weight-loss rate (kg/month)",
         16: "Rate (percentage points/month)",
         17: "Trajectory",
-        19: "Fearon-supported status",
-        20: "Provisional pre-cachexia candidate",
+        19: "Implemented cachexia criteria met?",
+        20: "Provisional early-risk pattern met?",
     }
     for row, label in labels.items():
         sheet.cell(row, 1, label)
@@ -610,12 +610,12 @@ def build_readme(workbook: Workbook) -> None:
         "calculation, temporal, boundary, missingness, reproducibility, and "
         "configuration behavior only."
     )
-    sheet["A21"] = "V1 cachexia rule"
+    sheet["A21"] = "Implemented cachexia criteria"
     sheet["B21"] = (
         "Cachexia if weight loss is >5%, or if weight loss is >2% with BMI "
         "<20 kg/m². Sarcopenia is retained but not used in v1."
     )
-    sheet["A23"] = "Provisional pre-cachexia — Option B"
+    sheet["A23"] = "Provisional early-risk pattern"
     sheet["B23"] = (
         "After cachexia is excluded: weight loss >1% and <=5% plus reduced "
         "appetite=yes. Pending clinical-reviewer and clinical-reviewer review."

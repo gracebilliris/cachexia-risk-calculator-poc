@@ -42,6 +42,9 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
         sheet = self.workbook["Mock UI"]
         self.assertIn("NOT FOR CLINICAL USE", sheet["A3"].value)
         self.assertEqual(sheet["G7"].value, "3  Automatic synthetic outputs")
+        self.assertEqual(sheet["G16"].value, "Implemented cachexia criteria met?")
+        self.assertEqual(sheet["G17"].value, "Provisional early-risk pattern met?")
+        self.assertNotIn("Option B", sheet["G29"].value)
         self.assertEqual(sheet["H9"].value, "=Engine!B9")
         self.assertEqual(sheet["G21"].value, "=Engine!B25")
         self.assertEqual(sheet["K21"].value, "=Engine!D25")

@@ -120,7 +120,8 @@ class ExcelPrototypeTests(unittest.TestCase):
         self.assertEqual(calculator["G8"].value, "Automatic synthetic results")
         self.assertEqual(calculator["H10"].value, "='Results'!B12")
         self.assertEqual(calculator["K9"].value, "='Results'!B25")
-        self.assertIn("Option B", calculator["G20"].value)
+        self.assertIn("Provisional early-risk pattern", calculator["G20"].value)
+        self.assertNotIn("Option B", calculator["G20"].value)
 
     def test_named_assumptions_match_canonical_config(self):
         config = json.loads(

@@ -5,12 +5,21 @@ const test = require("node:test");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const { createCalculator } = require("../prototype/calculations.js");
+const { cancerSubtypeOptions,
+createCalculator } = require("../prototype/calculations.js");
 const config = JSON.parse(fs.readFileSync(
   path.join(__dirname, "..", "config", "simulation_assumptions.v1.json"),
   "utf8"
 ));
 const calculator = createCalculator(config);
+
+test("lung subtype choices follow selected cancer type", () => {
+  assert.deepEqual(
+    cancerSubtypeOptions("lung"),
+    ["SCLC", "NSCLC", "unknown"]
+  );
+  assert.deepEqual(cancerSubtypeOptions("pancreatic"), ["not applicable"]);
+});
 
 function input(overrides = {}) {
   return {

@@ -20,7 +20,8 @@ treatment, patient care, or medical decisions.
   horizon evaluation.
 - Traceable v1 Fearon branches (>5% loss or >2% loss with BMI <20);
   sarcopenia is retained but unused.
-- Configurable, visibly provisional pre-cachexia Option B candidate rule
+- Configurable provisional early-risk pattern (internal configuration name:
+  Option B)
   (>1% and <=5% loss plus reduced appetite).
 - Reproducible, seed-controlled longitudinal generator using the supplied
   workbook's proposed ranges where available.
@@ -79,7 +80,7 @@ The relocated repository's final run completed:
   sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
   sheets, formulas, validation, safety notice, config parity, VBA package
   structure, Form Control wiring, and version-controlled macro source.
-- 7 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
+- 8 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
   missing history, classification boundaries, separate risk behavior, factor
   explanations, and calendar-month arithmetic.
 - Python bytecode compilation for `src/` and `scripts/`.
@@ -93,6 +94,9 @@ The relocated repository's final run completed:
   execution of its high-risk sample macro and live formula outputs, and
   runtime confirmation that lung/non-lung selections update subtype values
   and visible guidance correctly.
+- Public GitHub Pages deployment of the static JavaScript-parity prototype,
+  with both Excel editions rebuilt and published as downloads by the
+  deployment workflow.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient

@@ -8,6 +8,24 @@ const calculator = window.CachexiaCalculations.createCalculator(CONFIG);
 const $ = (id) => document.getElementById(id);
 const weightContainer = $("weights");
 
+function syncCancerSubtype() {
+  const subtype = $("cancer-subtype");
+  const previous = subtype.value;
+  const isLung = $("cancer-type").value === "lung";
+  const values = window.CachexiaCalculations.cancerSubtypeOptions(
+    $("cancer-type").value
+  );
+  subtype.replaceChildren(...values.map((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    return option;
+  }));
+  subtype.value = values.includes(previous)
+    ? previous
+    : (isLung ? "unknown" : "not applicable");
+}
+
 function addWeightRow(dateValue = "", weightValue = "") {
   const row = document.createElement("div");
   row.className = "weight-row";
@@ -45,7 +63,8 @@ function readInput() {
     errors, predictionDate, age, height, weights,
     stage: $("stage").value, ecog: $("ecog").value,
     appetite: $("appetite").value, sarcopenia: $("sarcopenia").value,
-    cancerType: $("cancer-type").value
+    cancerType: $("cancer-type").value,
+    cancerSubtype: $("cancer-subtype").value
   };
 }
 
@@ -103,6 +122,8 @@ function calculate() {
 
 $("add-weight").addEventListener("click", () => addWeightRow());
 $("calculate").addEventListener("click", calculate);
+$("cancer-type").addEventListener("change", syncCancerSubtype);
 addWeightRow("2025-07-31", "80");
 addWeightRow("2026-01-31", "76");
+syncCancerSubtype();
 calculate();

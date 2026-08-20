@@ -285,8 +285,8 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         (12, "Interval", "=Engine!B14", formats["result_days"]),
         (13, "Weight-loss rate", "=Engine!B15", formats["result_rate"]),
         (14, "Trajectory", "=Engine!B17", formats["result_text"]),
-        (16, "V1 cachexia status", "=Engine!B19", formats["result_text"]),
-        (17, "Option B pre-cachexia candidate", "=Engine!B20", formats["result_text"]),
+        (16, "Implemented cachexia criteria met?", "=Engine!B19", formats["result_text"]),
+        (17, "Provisional early-risk pattern met?", "=Engine!B20", formats["result_text"]),
     ]
     for row, label, formula, result_format in output_rows:
         sheet.write(row - 1, 6, label, formats["label"])
@@ -313,12 +313,12 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
 
     sheet.merge_range(
         "G29:L32",
-        "Working definitions for feedback\n"
-        "Cachexia v1: >5% loss, or >2% loss with BMI <20 kg/m². "
-        "Sarcopenia is stored but not used.\n"
-        "Candidate pre-cachexia Option B: after cachexia is excluded, "
-        ">1% and <=5% loss plus reduced appetite=yes. Pending clinical-reviewer and "
-        "clinical-reviewer review.",
+        "Rules shown in plain language\n"
+        "Implemented cachexia criteria: >5% weight loss, or >2% weight loss "
+        "with BMI <20 kg/m². The sarcopenia branch is not evaluated.\n"
+        "Provisional early-risk pattern: cachexia criteria not met, >1% and "
+        "<=5% weight loss, and reduced appetite=yes. This project proposal "
+        "requires clinical-reviewer and clinical-reviewer's review.",
         formats["definition"],
     )
 
@@ -361,8 +361,8 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         15: "Weight-loss rate (kg/month)",
         16: "Rate (percentage points/month)",
         17: "Trajectory",
-        19: "Fearon-supported status",
-        20: "Provisional pre-cachexia candidate",
+        19: "Implemented cachexia criteria met?",
+        20: "Provisional early-risk pattern met?",
     }
     for row, label in labels.items():
         sheet.write(row - 1, 0, label)
