@@ -74,6 +74,7 @@ tests both Excel editions and publishes them as downloads with the static site.
 | Formulas/temporal rules | `docs/FORMULAS_AND_TEMPORAL_RULES.md` |
 | Fearon/pre-cachexia notes | `docs/CLINICAL_RULES.md`, `docs/OUTCOME_IMPLEMENTATION.md` |
 | Clinical review package | `docs/CLINICAL_REVIEW_PACKAGE.md` |
+| Clinical logic test matrix | `docs/CLINICAL_LOGIC_TEST_MATRIX.md`, `tests/fixtures/clinical_logic_cases.v1.json` |
 | Tests | `tests/` |
 | Final report | `docs/IMPLEMENTATION_REPORT.md` |
 

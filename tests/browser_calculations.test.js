@@ -11,6 +11,14 @@ const config = JSON.parse(fs.readFileSync(
   path.join(__dirname, "..", "config", "simulation_assumptions.v1.json"),
   "utf8"
 ));
+const clinicalCases = JSON.parse(fs.readFileSync(
+  path.join(
+    __dirname,
+    "fixtures",
+    "clinical_logic_cases.v1.json"
+  ),
+  "utf8"
+));
 const calculator = createCalculator(config);
 
 test("lung subtype choices follow selected cancer type", () => {
@@ -130,4 +138,60 @@ test("month-end calendar arithmetic is deterministic", () => {
     calculator.addMonths("2026-01-31", 3).toISOString().slice(0, 10),
     "2026-04-30"
   );
+});
+
+test("browser classifications match the clinical-reviewer decision table", () => {
+  for (const clinicalCase of clinicalCases.classification_cases) {
+    const caseInput = input({
+      predictionDate: "2026-04-30",
+      height: clinicalCase.height_cm,
+      appetite: clinicalCase.appetite,
+      sarcopenia: clinicalCase.sarcopenia,
+      weights: [
+        {
+          date: "2026-01-31",
+          weightKg: clinicalCase.baseline_weight_kg,
+          index: 0
+        },
+        {
+          date: "2026-04-30",
+          weightKg: clinicalCase.outcome_weight_kg,
+          index: 1
+        }
+      ]
+    });
+    const derived = calculator.calculateDerived(caseInput);
+    const result = calculator.classify(caseInput, derived);
+    assert.equal(
+      result.fearon.startsWith(clinicalCase.expected_cachexia),
+      true,
+      `${clinicalCase.id}: cachexia`
+    );
+    assert.equal(
+      result.pre.startsWith(clinicalCase.expected_precachexia),
+      true,
+      `${clinicalCase.id}: provisional early-risk pattern`
+    );
+  }
+});
+
+test("browser risk arithmetic matches the documented simulation case", () => {
+  const clinicalCase = clinicalCases.risk_case;
+  const caseInput = input({
+    age: clinicalCase.patient.age,
+    stage: clinicalCase.patient.cancer_stage,
+    ecog: String(clinicalCase.patient.ecog),
+    appetite: clinicalCase.patient.reduced_appetite,
+    cancerType: clinicalCase.patient.cancer_type
+  });
+  const derived = {
+    bmi: clinicalCase.predictors.bmi,
+    loss: clinicalCase.predictors.weight_loss_percent
+  };
+  for (const horizon of ["three_month", "six_month"]) {
+    const result = calculator.risk(caseInput, derived, horizon);
+    const expected = clinicalCase.expected[horizon];
+    assert.ok(Math.abs(result.probability - expected.probability) < 1e-12);
+    assert.equal(result.band, expected.band);
+  }
 });

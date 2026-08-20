@@ -7,6 +7,9 @@ This package concerns a synthetic, research-only POC. Risk estimates are
 simulation assumptions and must not be interpreted as clinical probabilities
 or used for medical decisions.
 
+The executable review cases and requirement mapping are recorded in
+`CLINICAL_LOGIC_TEST_MATRIX.md`.
+
 ## Requested review
 
 Please assess:

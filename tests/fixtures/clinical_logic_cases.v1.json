@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "purpose": "Software-conformance cases derived from clinical-reviewer's supplied notes and recorded project decisions.",
+    "warning": "Passing these cases does not establish clinical validity, accuracy, calibration, or fitness for patient care.",
+    "clinical_approval": "pending clinical-reviewer and clinical-reviewer review"
+  },
+  "classification_cases": [
+    {
+      "id": "fearon-primary-over-five",
+      "source": "Fearon rule supplied in clinical-reviewer handoff",
+      "status": "documented_requirement",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 75.9,
+      "height_cm": 180.0,
+      "sarcopenia": "unknown",
+      "appetite": "yes",
+      "expected_cachexia": "yes",
+      "expected_precachexia": "no"
+    },
+    {
+      "id": "exact-five-bmi-above-sarcopenia-no",
+      "source": "Strict >5 boundary and provisional early-risk rule",
+      "status": "project_operationalisation_pending_review",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 76.0,
+      "height_cm": 170.0,
+      "sarcopenia": "no",
+      "appetite": "yes",
+      "expected_cachexia": "no",
+      "expected_precachexia": "yes"
+    },
+    {
+      "id": "exact-five-sarcopenia-unknown",
+      "source": "Unknown values are not treated as negative",
+      "status": "documented_requirement",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 76.0,
+      "height_cm": 170.0,
+      "sarcopenia": "unknown",
+      "appetite": "yes",
+      "expected_cachexia": "unknown",
+      "expected_precachexia": "unknown"
+    },
+    {
+      "id": "exact-five-documented-sarcopenia",
+      "source": "Fearon sarcopenia branch supplied in clinical-reviewer handoff",
+      "status": "subsequent_project_decision_pending_review",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 76.0,
+      "height_cm": 170.0,
+      "sarcopenia": "yes",
+      "appetite": "yes",
+      "expected_cachexia": "yes",
+      "expected_precachexia": "no"
+    },
+    {
+      "id": "conditional-low-bmi",
+      "source": "Fearon >2% loss with BMI <20 branch",
+      "status": "documented_requirement",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 77.6,
+      "height_cm": 200.0,
+      "sarcopenia": "unknown",
+      "appetite": "no",
+      "expected_cachexia": "yes",
+      "expected_precachexia": "no"
+    },
+    {
+      "id": "exact-two-does-not-enter-conditional-branches",
+      "source": "Strict >2 boundary",
+      "status": "project_operationalisation_pending_review",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 78.4,
+      "height_cm": 180.0,
+      "sarcopenia": "yes",
+      "appetite": "yes",
+      "expected_cachexia": "no",
+      "expected_precachexia": "yes"
+    },
+    {
+      "id": "exact-one-does-not-enter-provisional-pattern",
+      "source": "Provisional lower boundary is exclusive",
+      "status": "project_operationalisation_pending_review",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 79.2,
+      "height_cm": 180.0,
+      "sarcopenia": "no",
+      "appetite": "yes",
+      "expected_cachexia": "no",
+      "expected_precachexia": "no"
+    },
+    {
+      "id": "limited-loss-appetite-no",
+      "source": "Provisional early-risk pattern requires appetite=yes",
+      "status": "project_operationalisation_pending_review",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 77.6,
+      "height_cm": 180.0,
+      "sarcopenia": "no",
+      "appetite": "no",
+      "expected_cachexia": "no",
+      "expected_precachexia": "no"
+    },
+    {
+      "id": "limited-loss-appetite-unknown",
+      "source": "Unknown appetite is not treated as no",
+      "status": "documented_requirement",
+      "baseline_weight_kg": 80.0,
+      "outcome_weight_kg": 77.6,
+      "height_cm": 180.0,
+      "sarcopenia": "no",
+      "appetite": "unknown",
+      "expected_cachexia": "no",
+      "expected_precachexia": "unknown"
+    }
+  ],
+  "risk_case": {
+    "id": "clinical-reviewer-illustrative-risk-terms",
+    "source": "Illustrative multipliers and centralized simulation coefficients",
+    "status": "simulation_assumption_not_clinically_validated",
+    "patient": {
+      "age": 60,
+      "cancer_type": "colorectal",
+      "cancer_stage": "III",
+      "ecog": 2,
+      "reduced_appetite": "yes"
+    },
+    "predictors": {
+      "bmi": 26.0,
+      "weight_loss_percent": 5.0
+    },
+    "expected": {
+      "three_month": {
+        "score": 0.8,
+        "probability": 0.6899744811276125,
+        "band": "high"
+      },
+      "six_month": {
+        "score": 1.6,
+        "probability": 0.8320183851339245,
+        "band": "high"
+      }
+    }
+  },
+  "configuration_expectations": {
+    "age": {
+      "minimum": 18,
+      "maximum": 95,
+      "triangular_mode": 65
+    },
+    "ecog_probabilities": {
+      "0": 0.1425,
+      "1": 0.38,
+      "2": 0.285,
+      "3": 0.114,
+      "4": 0.0285,
+      "unknown": 0.05
+    },
+    "cancer_risk_multipliers": {
+      "lung": 1.6,
+      "colorectal": 1.3,
+      "oesophageal": 1.8,
+      "gastric": 1.8,
+      "pancreatic": 2.0,
+      "hepatobiliary": 2.0,
+      "head and neck": 1.6,
+      "breast": 1.0,
+      "prostate": 1.0,
+      "other solid tumour": 1.0
+    },
+    "stage_risk_multipliers": {
+      "I": 1.0,
+      "II": 1.2,
+      "III": 1.5,
+      "IV": 2.0,
+      "unknown": 1.0
+    }
+  }
+}
