@@ -73,19 +73,22 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 54 Python unit tests covering calculations, validation, missing values,
+- 58 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
   sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
   sheets, formulas, validation, safety notice, config parity, VBA package
   structure, Form Control wiring, and version-controlled macro source.
-- 10 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
+- 11 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
   missing history, classification boundaries, separate risk behavior, factor
   explanations, and calendar-month arithmetic.
 - A versioned clinical-logic decision table executed against both Python and
   browser implementations, with source/status metadata and a worked
   three-/six-month score calculation.
+- An exhaustive 324-case classification matrix and clinician review workbook
+  covering every configured weight-loss, BMI, sarcopenia, and appetite state
+  combination.
 - Python bytecode compilation for `src/` and `scripts/`.
 - JavaScript syntax checks for the generated config and prototype application.
 - JSON parsing for all configuration, schema, data, summary, and review files.

@@ -30,6 +30,7 @@ python3 scripts/sync_browser_config.py
 python3 scripts/build_excel_prototype.py
 python3.12 -m pip install -e '.[vba]'
 python3.12 scripts/build_excel_vba_prototype.py
+python3.12 scripts/build_clinical_logic_review.py
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 node --test tests/browser_calculations.test.js
 python3 scripts/run_local.py
@@ -63,6 +64,7 @@ tests both Excel editions and publishes them as downloads with the static site.
 | Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js`, `prototype/styles.css` |
 | Macro-free Excel prototype | `excel/cachexia_risk_prototype.v1.4.xlsx` |
 | VBA mock UI | `excel/cachexia_risk_mock_ui.v1.1.xlsm` |
+| Clinical logic review workbook | `excel/clinical_logic_review_matrix.v1.xlsx` |
 | VBA source | `vba/CachexiaUI.bas` |
 | Generator | `src/cachexia_poc/generator.py`, `scripts/generate_synthetic.py` |
 | Central assumptions | `config/simulation_assumptions.v1.json` |
@@ -74,7 +76,7 @@ tests both Excel editions and publishes them as downloads with the static site.
 | Formulas/temporal rules | `docs/FORMULAS_AND_TEMPORAL_RULES.md` |
 | Fearon/pre-cachexia notes | `docs/CLINICAL_RULES.md`, `docs/OUTCOME_IMPLEMENTATION.md` |
 | Clinical review package | `docs/CLINICAL_REVIEW_PACKAGE.md` |
-| Clinical logic test matrix | `docs/CLINICAL_LOGIC_TEST_MATRIX.md`, `tests/fixtures/clinical_logic_cases.v1.json` |
+| Clinical logic test matrix | `docs/CLINICAL_LOGIC_TEST_MATRIX.md`, `tests/fixtures/clinical_logic_cases.v1.json`, `data/clinical_logic_matrix.v1.json` |
 | Tests | `tests/` |
 | Final report | `docs/IMPLEMENTATION_REPORT.md` |
 

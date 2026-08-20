@@ -39,6 +39,7 @@ jobs:
         run: |
           python scripts/build_excel_prototype.py
           python scripts/build_excel_vba_prototype.py
+          python scripts/build_clinical_logic_review.py
 
       - name: Run automated tests
         env:
@@ -53,6 +54,7 @@ jobs:
           cp -R prototype/. _site/
           cp excel/cachexia_risk_prototype.v1.4.xlsx _site/downloads/
           cp excel/cachexia_risk_mock_ui.v1.1.xlsm _site/downloads/
+          cp excel/clinical_logic_review_matrix.v1.xlsx _site/downloads/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages

@@ -10,6 +10,15 @@ The executable decision table is
 review status, inputs, and expected tri-state outputs. The same cases are
 executed independently against the Python and browser implementations.
 
+The exhaustive generated matrix is available as:
+
+- `data/clinical_logic_matrix.v1.json` for automated tests; and
+- `excel/clinical_logic_review_matrix.v1.xlsx` for clinical-reviewer and clinical-reviewer.
+
+It contains all 324 combinations of nine weight-loss states, four BMI states,
+three sarcopenia states, and three appetite states. Reviewer decisions and
+comments can be recorded directly in the workbook.
+
 ## Requirement traceability
 
 | Requirement or assumption | Recorded source/status | Automated evidence |

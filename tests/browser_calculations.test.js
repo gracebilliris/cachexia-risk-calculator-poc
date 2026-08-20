@@ -19,6 +19,15 @@ const clinicalCases = JSON.parse(fs.readFileSync(
   ),
   "utf8"
 ));
+const fullClinicalMatrix = JSON.parse(fs.readFileSync(
+  path.join(
+    __dirname,
+    "..",
+    "data",
+    "clinical_logic_matrix.v1.json"
+  ),
+  "utf8"
+));
 const calculator = createCalculator(config);
 
 test("lung subtype choices follow selected cancer type", () => {
@@ -193,5 +202,32 @@ test("browser risk arithmetic matches the documented simulation case", () => {
     const expected = clinicalCase.expected[horizon];
     assert.ok(Math.abs(result.probability - expected.probability) < 1e-12);
     assert.equal(result.band, expected.band);
+  }
+});
+
+test("browser classifications match all 324 review-matrix cases", () => {
+  assert.equal(fullClinicalMatrix.cases.length, 324);
+  for (const clinicalCase of fullClinicalMatrix.cases) {
+    const result = calculator.classify(
+      input({
+        appetite: clinicalCase.reduced_appetite,
+        sarcopenia: clinicalCase.sarcopenia
+      }),
+      {
+        baseline: {},
+        loss: clinicalCase.weight_loss_percent,
+        bmi: clinicalCase.bmi
+      }
+    );
+    assert.equal(
+      result.fearon.startsWith(clinicalCase.expected_cachexia),
+      true,
+      `${clinicalCase.case_id}: cachexia`
+    );
+    assert.equal(
+      result.pre.startsWith(clinicalCase.expected_early_risk),
+      true,
+      `${clinicalCase.case_id}: provisional early-risk pattern`
+    );
   }
 });

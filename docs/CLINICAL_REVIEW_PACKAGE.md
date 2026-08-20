@@ -8,7 +8,8 @@ simulation assumptions and must not be interpreted as clinical probabilities
 or used for medical decisions.
 
 The executable review cases and requirement mapping are recorded in
-`CLINICAL_LOGIC_TEST_MATRIX.md`.
+`CLINICAL_LOGIC_TEST_MATRIX.md`. The complete 324-case review workbook is
+`../excel/clinical_logic_review_matrix.v1.xlsx`.
 
 ## Requested review
 
