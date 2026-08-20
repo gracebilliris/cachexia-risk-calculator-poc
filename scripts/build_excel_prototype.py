@@ -301,21 +301,19 @@ def build_results(workbook: Workbook) -> None:
         sheet.cell(row, 1, label)
     dates = "'Patient Input'!$A$22:$A$33"
     weights = "'Patient Input'!$B$22:$B$33"
-    complete = f'{dates},"<>",{weights},">="&WeightMin,{weights},"<="&WeightMax'
     sheet["B8"] = (
-        f'=IF(COUNTIFS({complete},{dates},"<="&\'Patient Input\'!$B$8)=0,"",'
-        f'MAXIFS({dates},{dates},"<="&\'Patient Input\'!$B$8,{dates},"<>",'
-        f'{weights},">="&WeightMin,{weights},"<="&WeightMax))'
+        f'=IFERROR(AGGREGATE(14,6,{dates}/(({dates}<>"")*'
+        f'({dates}<=\'Patient Input\'!$B$8)*({weights}>=WeightMin)*'
+        f'({weights}<=WeightMax)),1),"")'
     )
     sheet["B9"] = (
         f'=IF(B8="","",LOOKUP(2,1/(({dates}=B8)*({weights}<>"")*'
         f'({weights}>=WeightMin)*({weights}<=WeightMax)),{weights}))'
     )
     sheet["B10"] = (
-        f'=IF(B8="","",IF(COUNTIFS({complete},{dates},">="&EDATE(B8,-6),'
-        f'{dates},"<"&B8)=0,"",MINIFS({dates},{dates},">="&EDATE(B8,-6),'
-        f'{dates},"<"&B8,{dates},"<>",{weights},">="&WeightMin,'
-        f'{weights},"<="&WeightMax)))'
+        f'=IF(B8="","",IFERROR(AGGREGATE(15,6,{dates}/(({dates}<>"")*'
+        f'({dates}>=EDATE(B8,-6))*({dates}<B8)*({weights}>=WeightMin)*'
+        f'({weights}<=WeightMax)),1),""))'
     )
     sheet["B11"] = (
         f'=IF(B10="","",LOOKUP(2,1/(({dates}=B10)*({weights}<>"")*'
@@ -370,16 +368,16 @@ def build_results(workbook: Workbook) -> None:
     sheet["B26"] = '=IF(B25="","unknown",IF(B25<BandLow,"low",IF(B25>=BandHigh,"high","medium")))'
     sheet["D26"] = '=IF(D25="","unknown",IF(D25<BandLow,"low",IF(D25>=BandHigh,"high","medium")))'
     factor_formula = (
-        '=TEXTJOIN("; ",TRUE,IF(\'Patient Input\'!B9>AgeThreshold,"age >55",""),'
-        'IF(B13>0,"baseline loss "&TEXT(B13,"0.0")&"%",""),'
-        'IF(AND(B12<>"",B12<FearonBMI),"BMI <20",""),'
-        '"stage "&\'Patient Input\'!B13,"ECOG "&\'Patient Input\'!B15,'
-        '"appetite="&\'Patient Input\'!B16,\'Patient Input\'!B11)'
+        'TRIM(IF(\'Patient Input\'!B9>AgeThreshold,"age >55; ","")&'
+        'IF(B13>0,"baseline loss "&TEXT(B13,"0.0")&"%; ","")&'
+        'IF(AND(B12<>"",B12<FearonBMI),"BMI <20; ","")&'
+        '"stage "&\'Patient Input\'!B13&"; ECOG "&\'Patient Input\'!B15&'
+        '"; appetite="&\'Patient Input\'!B16&"; "&\'Patient Input\'!B11)'
     )
     withheld = (
         '=IF(OR(B12="",B13=""),'
         '"Estimate withheld: BMI and baseline weight change are required.",'
-        f'{factor_formula[1:]})'
+        f'{factor_formula})'
     )
     sheet["B27"], sheet["D27"] = withheld, withheld
     sheet["A29"] = "Interpretation"

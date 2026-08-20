@@ -39,11 +39,22 @@ class ExcelPrototypeTests(unittest.TestCase):
 
     def test_predictor_formula_enforces_prediction_date_cutoff(self):
         formula = self.workbook["Results"]["B8"].value
-        self.assertIn('"<="', formula)
+        self.assertIn("<=", formula)
         self.assertIn("'Patient Input'!$B$8", formula)
-        self.assertIn("COUNTIFS", formula)
+        self.assertIn("AGGREGATE", formula)
         self.assertIn("WeightMin", formula)
         self.assertIn("WeightMax", formula)
+
+    def test_formulas_avoid_unencoded_future_functions(self):
+        disallowed = ("MAXIFS(", "MINIFS(", "TEXTJOIN(")
+        for sheet in self.workbook.worksheets:
+            for row in sheet.iter_rows():
+                for cell in row:
+                    if cell.data_type == "f":
+                        self.assertFalse(
+                            any(name in cell.value for name in disallowed),
+                            f"{sheet.title}!{cell.coordinate}: {cell.value}",
+                        )
 
     def test_three_and_six_month_formulas_are_separate(self):
         results = self.workbook["Results"]
