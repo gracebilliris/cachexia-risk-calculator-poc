@@ -42,7 +42,7 @@ interface for non-technical review.
 | Deliverable | Path |
 |---|---|
 | Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js`, `prototype/styles.css` |
-| Excel prototype | `excel/cachexia_risk_prototype.v1.xlsx` |
+| Excel prototype | `excel/cachexia_risk_prototype.v1.1.xlsx` |
 | Generator | `src/cachexia_poc/generator.py`, `scripts/generate_synthetic.py` |
 | Central assumptions | `config/simulation_assumptions.v1.json` |
 | Generated browser config | `prototype/simulation-config.js` (do not edit manually) |

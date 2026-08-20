@@ -66,7 +66,7 @@ estimate prevalence or performance.
 
 The relocated repository's final run completed:
 
-- 36 Python unit tests covering calculations, validation, missing values,
+- 37 Python unit tests covering calculations, validation, missing values,
   duplicate/equal dates, irregular intervals, reproducibility, edge mix,
   browser-config parity, schema horizon pinning, post-baseline leakage,
   inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
@@ -79,7 +79,7 @@ The relocated repository's final run completed:
 - JavaScript syntax checks for the generated config and prototype application.
 - JSON parsing for all configuration, schema, data, summary, and review files.
 - Deterministic regeneration of the 120-patient cohort.
-- Reproducible generation of `excel/cachexia_risk_prototype.v1.xlsx`.
+- Reproducible generation of `excel/cachexia_risk_prototype.v1.1.xlsx`.
 
 An independent final review identified and prompted correction of stale UI
 results after invalid input, duplicated browser assumptions, and insufficient

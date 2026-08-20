@@ -8,15 +8,12 @@ from datetime import date
 from pathlib import Path
 
 from openpyxl import Workbook
-from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
-from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.workbook.defined_name import DefinedName
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.xlsx"
+OUTPUT = ROOT / "excel" / "cachexia_risk_prototype.v1.1.xlsx"
 CONFIG_PATH = ROOT / "config" / "simulation_assumptions.v1.json"
 DATA_PATH = ROOT / "data" / "synthetic_patients.v1.json"
 
@@ -77,10 +74,6 @@ def add_list_validation(sheet, cell: str, values: list[str]) -> None:
     validation.add(sheet[cell])
 
 
-def define_name(workbook: Workbook, name: str, reference: str) -> None:
-    workbook.defined_names.add(DefinedName(name, attr_text=reference))
-
-
 def build_assumptions(workbook: Workbook, config: dict) -> None:
     sheet = workbook.create_sheet("Assumptions")
     title(
@@ -122,7 +115,6 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 1, key)
         sheet.cell(row, 2, value)
         sheet.cell(row, 3, status)
-        define_name(workbook, key, f"'Assumptions'!$B${row}")
 
     cancer = config["simulation_relationships"]["cancer_latent_points"]
     sheet["E7"], sheet["F7"] = "Cancer type", "Latent points"
@@ -155,10 +147,6 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 18, config["risk_outputs"]["six_month"]["appetite"][key])
     appetite_end = 7 + len(appetites)
 
-    define_name(workbook, "CancerTable", f"'Assumptions'!$E$8:$F${cancer_end}")
-    define_name(workbook, "StageTable", f"'Assumptions'!$H$8:$J${stage_end}")
-    define_name(workbook, "EcogTable", f"'Assumptions'!$L$8:$N${ecog_end}")
-    define_name(workbook, "AppetiteTable", f"'Assumptions'!$P$8:$R${appetite_end}")
     for column in range(1, 19):
         sheet.column_dimensions[get_column_letter(column)].width = 20
     sheet.column_dimensions["C"].width = 32
@@ -232,7 +220,13 @@ def build_input(workbook: Workbook, config: dict) -> None:
 
     sheet["A20"] = "Dated weight history (predictors use only dates <= prediction date)"
     sheet["A20"].font = Font(size=13, bold=True, color=TEAL)
-    sheet["A21"], sheet["B21"], sheet["C21"] = "Measurement date", "Weight (kg)", "Eligibility note"
+    sheet["A21"], sheet["B21"], sheet["C21"], sheet["D21"], sheet["E21"] = (
+        "Measurement date",
+        "Weight (kg)",
+        "Baseline candidate",
+        "Prior candidate",
+        "Eligibility note",
+    )
     sheet["A22"], sheet["B22"] = date(2025, 7, 31), 80
     sheet["A23"], sheet["B23"] = date(2026, 1, 31), 76
     for row in range(22, 34):
@@ -240,7 +234,25 @@ def build_input(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 2).fill = PatternFill("solid", fgColor=PALE_TEAL)
         sheet.cell(row, 1).number_format = "yyyy-mm-dd"
         sheet.cell(
-            row, 3, f'=IF(A{row}="","",IF(A{row}<=$B$8,"baseline-eligible","outcome-only / excluded from predictors"))'
+            row,
+            3,
+            f'=IF(AND(ISNUMBER(A{row}),ISNUMBER(B{row}),A{row}<=$B$8,'
+            f"B{row}>='Assumptions'!$B$18,B{row}<='Assumptions'!$B$19),"
+            f"A{row},0)",
+        )
+        sheet.cell(
+            row,
+            4,
+            f'=IF(AND(ISNUMBER(A{row}),ISNUMBER(B{row}),\'Results\'!$B$8<>"",'
+            f"A{row}<'Results'!$B$8,A{row}>=EDATE('Results'!$B$8,-6),"
+            f"B{row}>='Assumptions'!$B$18,B{row}<='Assumptions'!$B$19),"
+            f"A{row},DATE(9999,12,31))",
+        )
+        sheet.cell(
+            row,
+            5,
+            f'=IF(OR(A{row}="",B{row}=""),"incomplete / ignored",'
+            f'IF(A{row}<=$B$8,"baseline-eligible","outcome-only / excluded from predictors"))',
         )
     weight_bounds = config["cohort"]["historical_weight_kg"]
     weight_validation = DataValidation(
@@ -271,7 +283,11 @@ def build_input(workbook: Workbook, config: dict) -> None:
     date_validation.add("A22:A33")
     sheet.column_dimensions["A"].width = 44
     sheet.column_dimensions["B"].width = 24
-    sheet.column_dimensions["C"].width = 42
+    sheet.column_dimensions["C"].width = 18
+    sheet.column_dimensions["D"].width = 18
+    sheet.column_dimensions["E"].width = 42
+    sheet.column_dimensions["C"].hidden = True
+    sheet.column_dimensions["D"].hidden = True
     sheet.freeze_panes = "A8"
 
 
@@ -301,39 +317,42 @@ def build_results(workbook: Workbook) -> None:
         sheet.cell(row, 1, label)
     dates = "'Patient Input'!$A$22:$A$33"
     weights = "'Patient Input'!$B$22:$B$33"
+    baseline_candidates = "'Patient Input'!$C$22:$C$33"
+    prior_candidates = "'Patient Input'!$D$22:$D$33"
+    weight_min = "'Assumptions'!$B$18"
+    weight_max = "'Assumptions'!$B$19"
     sheet["B8"] = (
-        f'=IFERROR(AGGREGATE(14,6,{dates}/(({dates}<>"")*'
-        f'({dates}<=\'Patient Input\'!$B$8)*({weights}>=WeightMin)*'
-        f'({weights}<=WeightMax)),1),"")'
+        f'=IF(MAX({baseline_candidates})=0,"",MAX({baseline_candidates}))'
     )
     sheet["B9"] = (
-        f'=IF(B8="","",LOOKUP(2,1/(({dates}=B8)*({weights}<>"")*'
-        f'({weights}>=WeightMin)*({weights}<=WeightMax)),{weights}))'
+        f'=IF(B8="","",IF(COUNTIFS({dates},B8,{weights},">="&{weight_min},'
+        f'{weights},"<="&{weight_max})<>1,"",SUMIFS({weights},{dates},B8,'
+        f'{weights},">="&{weight_min},{weights},"<="&{weight_max})))'
     )
     sheet["B10"] = (
-        f'=IF(B8="","",IFERROR(AGGREGATE(15,6,{dates}/(({dates}<>"")*'
-        f'({dates}>=EDATE(B8,-6))*({dates}<B8)*({weights}>=WeightMin)*'
-        f'({weights}<=WeightMax)),1),""))'
+        f'=IF(OR(B8="",MIN({prior_candidates})=DATE(9999,12,31)),"",'
+        f'MIN({prior_candidates}))'
     )
     sheet["B11"] = (
-        f'=IF(B10="","",LOOKUP(2,1/(({dates}=B10)*({weights}<>"")*'
-        f'({weights}>=WeightMin)*({weights}<=WeightMax)),{weights}))'
+        f'=IF(B10="","",IF(COUNTIFS({dates},B10,{weights},">="&{weight_min},'
+        f'{weights},"<="&{weight_max})<>1,"",SUMIFS({weights},{dates},B10,'
+        f'{weights},">="&{weight_min},{weights},"<="&{weight_max})))'
     )
     sheet["B12"] = '=IF(OR(B9="",\'Patient Input\'!B14=""),"",B9/(\'Patient Input\'!B14/100)^2)'
     sheet["B13"] = '=IF(OR(B9="",B11=""),"",((B11-B9)/B11)*100)'
     sheet["B14"] = '=IF(OR(B8="",B10=""),"",B8-B10)'
-    sheet["B15"] = '=IF(OR(B9="",B11="",B14<=0),"",(B11-B9)/(B14/DaysPerMonth))'
-    sheet["B16"] = '=IF(OR(B13="",B14<=0),"",B13/(B14/DaysPerMonth))'
-    sheet["B17"] = '=IF(B13="","unknown",IF(B13>TrajectoryEpsilon,"loss",IF(B13<-TrajectoryEpsilon,"gain","stable")))'
+    sheet["B15"] = '=IF(OR(B9="",B11="",B14<=0),"",(B11-B9)/(B14/\'Assumptions\'!$B$8))'
+    sheet["B16"] = '=IF(OR(B13="",B14<=0),"",B13/(B14/\'Assumptions\'!$B$8))'
+    sheet["B17"] = '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$9,"loss",IF(B13<-\'Assumptions\'!$B$9,"gain","stable")))'
     sheet["B19"] = (
-        '=IF(B13="","unknown",IF(B13>FearonPrimary,"yes",'
-        'IF(B13<=FearonConditional,"no",IF(OR(AND(B12<>"",B12<FearonBMI),'
-        '\'Patient Input\'!B17="yes"),"yes",IF(AND(B12<>"",B12>=FearonBMI,'
+        '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
+        'IF(B13<=\'Assumptions\'!$B$11,"no",IF(OR(AND(B12<>"",B12<\'Assumptions\'!$B$12),'
+        '\'Patient Input\'!B17="yes"),"yes",IF(AND(B12<>"",B12>=\'Assumptions\'!$B$12,'
         '\'Patient Input\'!B17="no"),"no","unknown")))))'
     )
     sheet["B20"] = (
         '=IF(B19="unknown","unknown",IF(B19="yes","no",'
-        'IF(OR(B13<=PreLower,B13>PreUpper),"no",'
+        'IF(OR(B13<=\'Assumptions\'!$B$13,B13>\'Assumptions\'!$B$14),"no",'
         'IF(\'Patient Input\'!B16="yes","yes",IF(\'Patient Input\'!B16="no","no","unknown")))))'
     )
 
@@ -342,20 +361,20 @@ def build_results(workbook: Workbook) -> None:
         "Simulation score", "Displayed estimate", "Risk band", "Factor explanation"
     )
     common3 = (
-        "Risk3Intercept+IF('Patient Input'!B9>AgeThreshold,Risk3Age,0)"
-        "+VLOOKUP('Patient Input'!B13,StageTable,2,FALSE)"
-        "+VLOOKUP('Patient Input'!B15,EcogTable,2,FALSE)"
-        "+VLOOKUP('Patient Input'!B16,AppetiteTable,2,FALSE)"
-        "+MAX(0,N(B13))*Risk3Loss+IF(AND(B12<>\"\",B12<FearonBMI),Risk3BMI,0)"
-        "+VLOOKUP('Patient Input'!B11,CancerTable,2,FALSE)*Risk3Cancer"
+        "'Assumptions'!$B$20+IF('Patient Input'!B9>'Assumptions'!$B$15,'Assumptions'!$B$21,0)"
+        "+VLOOKUP('Patient Input'!B13,'Assumptions'!$H$8:$J$12,2,FALSE)"
+        "+VLOOKUP('Patient Input'!B15,'Assumptions'!$L$8:$N$13,2,FALSE)"
+        "+VLOOKUP('Patient Input'!B16,'Assumptions'!$P$8:$R$10,2,FALSE)"
+        "+MAX(0,N(B13))*'Assumptions'!$B$22+IF(AND(B12<>\"\",B12<'Assumptions'!$B$12),'Assumptions'!$B$23,0)"
+        "+VLOOKUP('Patient Input'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)*'Assumptions'!$B$24"
     )
     common6 = (
-        "Risk6Intercept+IF('Patient Input'!B9>AgeThreshold,Risk6Age,0)"
-        "+VLOOKUP('Patient Input'!B13,StageTable,3,FALSE)"
-        "+VLOOKUP('Patient Input'!B15,EcogTable,3,FALSE)"
-        "+VLOOKUP('Patient Input'!B16,AppetiteTable,3,FALSE)"
-        "+MAX(0,N(B13))*Risk6Loss+IF(AND(B12<>\"\",B12<FearonBMI),Risk6BMI,0)"
-        "+VLOOKUP('Patient Input'!B11,CancerTable,2,FALSE)*Risk6Cancer"
+        "'Assumptions'!$B$25+IF('Patient Input'!B9>'Assumptions'!$B$15,'Assumptions'!$B$26,0)"
+        "+VLOOKUP('Patient Input'!B13,'Assumptions'!$H$8:$J$12,3,FALSE)"
+        "+VLOOKUP('Patient Input'!B15,'Assumptions'!$L$8:$N$13,3,FALSE)"
+        "+VLOOKUP('Patient Input'!B16,'Assumptions'!$P$8:$R$10,3,FALSE)"
+        "+MAX(0,N(B13))*'Assumptions'!$B$27+IF(AND(B12<>\"\",B12<'Assumptions'!$B$12),'Assumptions'!$B$28,0)"
+        "+VLOOKUP('Patient Input'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)*'Assumptions'!$B$29"
     )
     sheet["B24"], sheet["D24"] = (
         f'=IF(OR(B12="",B13=""),"",{common3})',
@@ -365,12 +384,12 @@ def build_results(workbook: Workbook) -> None:
         '=IF(B24="","",1/(1+EXP(-B24)))',
         '=IF(D24="","",1/(1+EXP(-D24)))',
     )
-    sheet["B26"] = '=IF(B25="","unknown",IF(B25<BandLow,"low",IF(B25>=BandHigh,"high","medium")))'
-    sheet["D26"] = '=IF(D25="","unknown",IF(D25<BandLow,"low",IF(D25>=BandHigh,"high","medium")))'
+    sheet["B26"] = '=IF(B25="","unknown",IF(B25<\'Assumptions\'!$B$16,"low",IF(B25>=\'Assumptions\'!$B$17,"high","medium")))'
+    sheet["D26"] = '=IF(D25="","unknown",IF(D25<\'Assumptions\'!$B$16,"low",IF(D25>=\'Assumptions\'!$B$17,"high","medium")))'
     factor_formula = (
-        'TRIM(IF(\'Patient Input\'!B9>AgeThreshold,"age >55; ","")&'
+        'TRIM(IF(\'Patient Input\'!B9>\'Assumptions\'!$B$15,"age >55; ","")&'
         'IF(B13>0,"baseline loss "&TEXT(B13,"0.0")&"%; ","")&'
-        'IF(AND(B12<>"",B12<FearonBMI),"BMI <20; ","")&'
+        'IF(AND(B12<>"",B12<\'Assumptions\'!$B$12),"BMI <20; ","")&'
         '"stage "&\'Patient Input\'!B13&"; ECOG "&\'Patient Input\'!B15&'
         '"; appetite="&\'Patient Input\'!B16&"; "&\'Patient Input\'!B11)'
     )
@@ -404,14 +423,6 @@ def build_results(workbook: Workbook) -> None:
     sheet.column_dimensions["D"].width = 34
     for column in range(5, 9):
         sheet.column_dimensions[get_column_letter(column)].width = 14
-    sheet.conditional_formatting.add(
-        "B25:D25",
-        CellIsRule(
-            operator="greaterThanOrEqual",
-            formula=["BandHigh"],
-            fill=PatternFill("solid", fgColor="F4CCCC"),
-        ),
-    )
 
 
 def build_cohort(workbook: Workbook, patients: list[dict]) -> None:
@@ -448,16 +459,10 @@ def build_cohort(workbook: Workbook, patients: list[dict]) -> None:
         for column, value in enumerate(values, 1):
             sheet.cell(row, column, value)
     last_row = 7 + len(patients)
-    table = Table(displayName="SyntheticCohort", ref=f"A7:S{last_row}")
-    table.tableStyleInfo = TableStyleInfo(
-        name="TableStyleMedium2", showRowStripes=True, showColumnStripes=False
-    )
-    sheet.add_table(table)
     for column in range(1, 20):
         sheet.column_dimensions[get_column_letter(column)].width = 18
     sheet.column_dimensions["A"].width = 24
     sheet.freeze_panes = "A8"
-    sheet.auto_filter.ref = f"A7:S{last_row}"
     for row in range(8, last_row + 1):
         sheet.cell(row, 15).number_format = "0.0%"
         sheet.cell(row, 18).number_format = "0.0%"

@@ -7,7 +7,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.xlsx"
+WORKBOOK = ROOT / "excel" / "cachexia_risk_prototype.v1.1.xlsx"
 
 
 class ExcelPrototypeTests(unittest.TestCase):
@@ -38,12 +38,11 @@ class ExcelPrototypeTests(unittest.TestCase):
             self.assertIn("NOT FOR CLINICAL USE", str(sheet["A4"].value))
 
     def test_predictor_formula_enforces_prediction_date_cutoff(self):
-        formula = self.workbook["Results"]["B8"].value
-        self.assertIn("<=", formula)
-        self.assertIn("'Patient Input'!$B$8", formula)
-        self.assertIn("AGGREGATE", formula)
-        self.assertIn("WeightMin", formula)
-        self.assertIn("WeightMax", formula)
+        helper_formula = self.workbook["Patient Input"]["C22"].value
+        self.assertIn("A22<=$B$8", helper_formula)
+        result_formula = self.workbook["Results"]["B8"].value
+        self.assertIn("MAX(", result_formula)
+        self.assertIn("'Patient Input'!$C$22:$C$33", result_formula)
 
     def test_formulas_avoid_unencoded_future_functions(self):
         disallowed = ("MAXIFS(", "MINIFS(", "TEXTJOIN(")
@@ -56,12 +55,18 @@ class ExcelPrototypeTests(unittest.TestCase):
                             f"{sheet.title}!{cell.coordinate}: {cell.value}",
                         )
 
+    def test_conservative_ooxml_avoids_fragile_features(self):
+        self.assertEqual(list(self.workbook.defined_names.values()), [])
+        for sheet in self.workbook.worksheets:
+            self.assertEqual(list(sheet.tables.values()), [])
+            self.assertEqual(len(sheet.conditional_formatting), 0)
+
     def test_three_and_six_month_formulas_are_separate(self):
         results = self.workbook["Results"]
-        self.assertIn("Risk3Intercept", results["B24"].value)
-        self.assertNotIn("Risk6", results["B24"].value)
-        self.assertIn("Risk6Intercept", results["D24"].value)
-        self.assertNotIn("Risk3", results["D24"].value)
+        self.assertIn("'Assumptions'!$B$20", results["B24"].value)
+        self.assertNotIn("'Assumptions'!$B$25", results["B24"].value)
+        self.assertIn("'Assumptions'!$B$25", results["D24"].value)
+        self.assertNotIn("'Assumptions'!$B$20", results["D24"].value)
 
     def test_unknown_is_available_in_validated_inputs(self):
         validations = list(self.workbook["Patient Input"].data_validations.dataValidation)
