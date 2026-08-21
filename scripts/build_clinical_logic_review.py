@@ -634,11 +634,15 @@ def style_workbook(workbook: Workbook) -> None:
             sheet.page_setup.orientation = "landscape"
         for row in sheet.iter_rows():
             for cell in row:
-                font = copy(cell.font)
-                font.name = "Times New Roman"
-                font.family = 1
-                font.scheme = None
-                cell.font = font
+                is_table_or_content_cell = (
+                    cell.value is not None or cell.fill.fill_type is not None
+                )
+                if is_table_or_content_cell:
+                    font = copy(cell.font)
+                    font.name = "Times New Roman"
+                    font.family = 1
+                    font.scheme = None
+                    cell.font = font
                 if cell.value is not None and cell.row >= 7:
                     cell.alignment = Alignment(
                         wrap_text=cell.alignment.wrap_text,

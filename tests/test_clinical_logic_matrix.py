@@ -187,6 +187,27 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
             "Times New Roman",
         )
 
+    def test_non_table_blank_cells_have_no_fill_or_direct_style(self):
+        for sheet_name, references in {
+            "START HERE": ("A3", "B3", "P6"),
+            "Key Scenarios": ("A3", "B3", "P6"),
+            "Review Decisions": ("A3", "B3", "P6"),
+            "Full Logic Matrix": ("A3", "B3", "P6"),
+            "Risk Assumptions": ("A3", "B3", "P6"),
+        }.items():
+            sheet = self.workbook[sheet_name]
+            for reference in references:
+                cell = sheet[reference]
+                self.assertIsNone(
+                    cell.fill.fill_type,
+                    f"Unexpected fill in {sheet_name}!{reference}",
+                )
+                self.assertEqual(
+                    cell.style_id,
+                    0,
+                    f"Unexpected direct style in {sheet_name}!{reference}",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
