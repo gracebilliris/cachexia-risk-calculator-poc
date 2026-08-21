@@ -6,6 +6,7 @@ from __future__ import annotations
 import itertools
 import json
 from collections import Counter
+from copy import copy
 from pathlib import Path
 from typing import Any
 
@@ -243,7 +244,7 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     add_title(
         sheet,
         "Clinical classification logic review",
-        "Current prototype rules, representative scenarios, and decision points for clinical review.",
+        "Cachexia and provisional early-risk classification logic.",
     )
     add_warning(sheet)
     counts = Counter(
@@ -611,6 +612,9 @@ def build_decisions_sheet(workbook: Workbook) -> None:
 
 
 def style_workbook(workbook: Workbook) -> None:
+    for named_style in workbook._named_styles:
+        if named_style.name == "Normal":
+            named_style.font = Font(name="Times New Roman", size=11)
     for sheet in workbook.worksheets:
         sheet.sheet_view.showGridLines = False
         sheet.sheet_view.zoomScale = 90
@@ -625,6 +629,9 @@ def style_workbook(workbook: Workbook) -> None:
             sheet.page_setup.orientation = "landscape"
         for row in sheet.iter_rows():
             for cell in row:
+                font = copy(cell.font)
+                font.name = "Times New Roman"
+                cell.font = font
                 if cell.value is not None and cell.row >= 7:
                     cell.alignment = Alignment(
                         wrap_text=cell.alignment.wrap_text,

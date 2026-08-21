@@ -89,6 +89,11 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                 "Risk Assumptions",
             ],
         )
+        start = self.workbook["START HERE"]
+        self.assertEqual(
+            start["A2"].value,
+            "Cachexia and provisional early-risk classification logic.",
+        )
         scenarios = self.workbook["Key Scenarios"]
         self.assertEqual(scenarios.max_row, 19)
         self.assertEqual(scenarios["A8"].value, "No weight loss")
@@ -153,6 +158,25 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                             any(phrase in folded for phrase in disallowed),
                             f"Non-neutral wording found in {sheet.title}!{cell.coordinate}",
                         )
+
+    def test_all_workbook_cells_use_times_new_roman(self):
+        for sheet in self.workbook.worksheets:
+            for row in sheet.iter_rows():
+                for cell in row:
+                    if cell.value is not None:
+                        self.assertEqual(
+                            cell.font.name,
+                            "Times New Roman",
+                            f"Unexpected font in {sheet.title}!{cell.coordinate}",
+                        )
+        self.assertEqual(
+            self.workbook["Key Scenarios"]["K8"].font.name,
+            "Times New Roman",
+        )
+        self.assertEqual(
+            self.workbook["Review Decisions"]["E8"].font.name,
+            "Times New Roman",
+        )
 
 
 if __name__ == "__main__":
