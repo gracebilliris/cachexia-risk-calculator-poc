@@ -614,7 +614,12 @@ def build_decisions_sheet(workbook: Workbook) -> None:
 def style_workbook(workbook: Workbook) -> None:
     for named_style in workbook._named_styles:
         if named_style.name == "Normal":
-            named_style.font = Font(name="Times New Roman", size=11)
+            named_style.font = Font(
+                name="Times New Roman",
+                size=11,
+                family=1,
+                scheme=None,
+            )
     for sheet in workbook.worksheets:
         sheet.sheet_view.showGridLines = False
         sheet.sheet_view.zoomScale = 90
@@ -631,6 +636,8 @@ def style_workbook(workbook: Workbook) -> None:
             for cell in row:
                 font = copy(cell.font)
                 font.name = "Times New Roman"
+                font.family = 1
+                font.scheme = None
                 cell.font = font
                 if cell.value is not None and cell.row >= 7:
                     cell.alignment = Alignment(

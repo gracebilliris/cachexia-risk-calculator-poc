@@ -169,6 +169,15 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                             "Times New Roman",
                             f"Unexpected font in {sheet.title}!{cell.coordinate}",
                         )
+                        self.assertIsNone(
+                            cell.font.scheme,
+                            f"Theme font overrides Times New Roman in {sheet.title}!{cell.coordinate}",
+                        )
+                        self.assertEqual(
+                            cell.font.family,
+                            1.0,
+                            f"Unexpected font family in {sheet.title}!{cell.coordinate}",
+                        )
         self.assertEqual(
             self.workbook["Key Scenarios"]["K8"].font.name,
             "Times New Roman",
