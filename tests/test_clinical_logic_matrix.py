@@ -86,7 +86,7 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
                 "Key Scenarios",
                 "Review Decisions",
                 "Full Logic Matrix",
-                "Risk Assumptions",
+                "Category Assumptions",
             ],
         )
         start = self.workbook["START HERE"]
@@ -94,6 +94,15 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
             start["A2"].value,
             "Cachexia and provisional early-risk classification logic.",
         )
+        start_text = " ".join(
+            str(cell.value)
+            for row in start.iter_rows()
+            for cell in row
+            if cell.value is not None
+        )
+        self.assertIn(">1% lower bound has no consensus basis", start_text)
+        self.assertIn("Eligibility and inclusion criteria are not defined", start_text)
+        self.assertIn("10.1016/S1470-2045(10)70218-7", start_text)
         scenarios = self.workbook["Key Scenarios"]
         self.assertEqual(scenarios.max_row, 19)
         self.assertEqual(scenarios["A8"].value, "No weight loss")
@@ -108,6 +117,15 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
         decisions = self.workbook["Review Decisions"]
         self.assertEqual(decisions["B7"].value, "Clinical question")
         self.assertIn("greater than 5%", decisions["B8"].value)
+        decision_text = " ".join(
+            str(cell.value)
+            for row in decisions.iter_rows()
+            for cell in row
+            if cell.value is not None
+        )
+        self.assertIn("eligibility and inclusion criteria", decision_text)
+        self.assertIn("Baseline appetite is never carried forward", decision_text)
+        self.assertIn("target outcome or estimand", decision_text)
 
         matrix = self.workbook["Full Logic Matrix"]
         self.assertIn("NOT FOR CLINICAL USE", matrix["A4"].value)
@@ -119,8 +137,8 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
         self.assertIn("agree", validations[0].formula1)
         self.assertIn("L8:L331", str(validations[0].sqref))
 
-    def test_risk_terms_are_labelled_as_unvalidated_assumptions(self):
-        sheet = self.workbook["Risk Assumptions"]
+    def test_category_terms_are_labelled_as_unvalidated_assumptions(self):
+        sheet = self.workbook["Category Assumptions"]
         statuses = {
             sheet.cell(row, 5).value
             for row in range(8, sheet.max_row + 1)
@@ -131,9 +149,19 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
         self.assertTrue(
             all(
                 "not clinically validated" in status
-                or "not a relative risk" in status
+                or "not a clinical" in status
                 for status in statuses
             )
+        )
+        sheet_text = " ".join(
+            str(cell.value)
+            for row in sheet.iter_rows()
+            for cell in row
+            if cell.value is not None
+        )
+        self.assertIn(
+            "Target outcome is not defined pending clinical review",
+            sheet_text,
         )
 
     def test_workbook_contains_no_named_reviewers(self):
@@ -193,7 +221,7 @@ class ClinicalLogicMatrixTests(unittest.TestCase):
             "Key Scenarios": ("A3", "B3", "P6"),
             "Review Decisions": ("A3", "B3", "P6"),
             "Full Logic Matrix": ("A3", "B3", "P6"),
-            "Risk Assumptions": ("A3", "B3", "P6"),
+            "Category Assumptions": ("A3", "B3", "P6"),
         }.items():
             sheet = self.workbook[sheet_name]
             for reference in references:

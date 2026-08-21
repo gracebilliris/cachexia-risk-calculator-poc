@@ -24,7 +24,11 @@ WORKBOOK_SUFFIXES = {".xlsx", ".xlsm"}
 class NamedReviewerPrivacyTests(unittest.TestCase):
     def test_repository_text_and_workbooks_do_not_name_reviewers(self):
         for path in ROOT.rglob("*"):
-            if not path.is_file() or ".git" in path.parts:
+            if (
+                not path.is_file()
+                or ".git" in path.parts
+                or path.name.startswith("~$")
+            ):
                 continue
             if path.suffix.lower() in TEXT_SUFFIXES:
                 self._assert_anonymous(path, path.read_bytes())
@@ -67,6 +71,24 @@ class PublishedSiteTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertNotIn("_site/downloads", workflow)
         self.assertNotIn("cp excel/", workflow)
+
+    def test_site_uses_safe_category_and_population_wording(self):
+        page = (ROOT / "prototype" / "index.html").read_text(encoding="utf-8")
+        folded = page.casefold()
+        self.assertIn("eligibility and inclusion criteria are not yet defined", folded)
+        self.assertIn("synthetic stratifier pending clinical review", folded)
+        self.assertIn("illustrative simulation category", folded)
+        self.assertIn("based on baseline predictors only", folded)
+        self.assertIn(
+            "target outcome is not defined pending clinical review",
+            folded,
+        )
+        self.assertIn("future-use", folded)
+        self.assertNotIn("probability", folded)
+        self.assertNotIn("medium", folded)
+        app = (ROOT / "prototype" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("subtype.disabled = !isLung", app)
+        self.assertIn("field.hidden = !isLung", app)
 
 
 if __name__ == "__main__":

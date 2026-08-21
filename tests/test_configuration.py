@@ -40,6 +40,39 @@ class ConfigurationTests(unittest.TestCase):
             ]["const"],
             6,
         )
+        self.assertIn("Migration from v1.0", schema["$comment"])
+        self.assertIn("follow_up_appetite_observations", schema["required"])
+        self.assertEqual(
+            schema["$defs"]["categoryBase"]["properties"]["category"]["enum"],
+            ["low", "moderate", "high", None],
+        )
+        self.assertEqual(
+            schema["$defs"]["categoryBase"]["properties"]["target_outcome"][
+                "const"
+            ],
+            "not_defined_pending_clinical_review",
+        )
+        self.assertFalse(
+            schema["$defs"]["outcomeBase"]["properties"][
+                "fearon_classification"
+            ]["const"]
+        )
+        self.assertIn(
+            "outcome_interval_days",
+            schema["$defs"]["outcomeBase"]["required"],
+        )
+        subtype_rule = schema["allOf"][0]
+        self.assertEqual(
+            subtype_rule["then"]["properties"]["cancer_subtype"]["enum"],
+            ["SCLC", "NSCLC", "unknown"],
+        )
+        self.assertEqual(
+            subtype_rule["else"]["properties"]["cancer_subtype"]["const"],
+            "not applicable",
+        )
+        serialized = json.dumps(schema).casefold()
+        self.assertNotIn('"probability"', serialized)
+        self.assertNotIn('"score"', serialized)
 
     def test_supplied_simulation_multipliers_are_centralized(self):
         config = load_simulation_config()
@@ -58,9 +91,28 @@ class ConfigurationTests(unittest.TestCase):
             config["definitions"]["precachexia_rule_status"],
             "provisional_option_b_pending_clinical_review",
         )
-        self.assertTrue(
+        self.assertFalse(
             config["definitions"]["fearon_sarcopenia_branch_enabled"]
         )
+        self.assertEqual(
+            config["definitions"]["sarcopenia_status"],
+            "future_use_pending_clinical_definition",
+        )
+        self.assertEqual(
+            config["illustrative_category_model"]["output_contract"]["categories"],
+            ["low", "moderate", "high"],
+        )
+        self.assertEqual(
+            config["illustrative_category_model"]["output_contract"][
+                "target_outcome"
+            ],
+            "not_defined_pending_clinical_review",
+        )
+        self.assertEqual(
+            config["population_scope"]["eligibility_status"],
+            "not_defined_pending_clinical_review",
+        )
+        self.assertEqual(config["population_scope"]["agreed_exclusions"], [])
 
 
 if __name__ == "__main__":

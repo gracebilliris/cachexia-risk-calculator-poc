@@ -1,27 +1,86 @@
-# Synthetic cachexia risk proof of concept
+# Synthetic cachexia simulation proof of concept
 
-> **Research-only and not for clinical use.** All patients and outputs are
-> synthetic. Every risk relationship, coefficient, probability, multiplier,
-> threshold, and score is a simulation assumption. This project is not
-> clinically validated and must not be used for diagnosis, prognosis,
-> treatment, patient care, or medical decisions.
+> **Research-only and not for clinical use.** All records and outputs are
+> synthetic. Every distribution, coefficient, multiplier, threshold, and
+> relationship is an editable simulation assumption. Do not use this project
+> for diagnosis, prognosis, treatment, patient care, or medical decisions.
 
-This dependency-free Python/static-web POC explores separate three- and
-six-month cachexia and provisional pre-cachexia simulation outputs. It uses the
-proposed synthetic ranges in `Data Extraction_literature review_20260728.xlsx`
-where available and labels additional assumptions for clinical confirmation.
-The source literature workbook is intentionally retained outside this
-repository and is excluded by `.gitignore`; the generated synthetic Excel
-prototype is included.
+This dependency-light Python/static-web POC demonstrates:
+
+- baseline-derived current cachexia criteria status;
+- a provisional pre-cachexia candidate rule;
+- qualified 3-month and 6-month synthetic follow-up outcomes; and
+- separate 3-month and 6-month ordinal **illustrative simulation categories**
+  (`low`, `moderate`, or `high`) based on baseline predictors only.
+
+Eligibility and inclusion criteria are not yet defined. The cancer-type labels
+are synthetic stratifiers for an adult solid-tumour POC pending clinical
+review. They do not establish an agreed population definition.
 
 **Live synthetic demonstrator:** <https://gracebilliris.github.io/cachexia-risk-calculator-poc/>
 
-## Run
+## Safe output contract
 
-Python 3.9 or newer is required. The browser/Python prototype has no runtime
-packages; rebuilding the macro-free Excel workbook requires `openpyxl`.
-Rebuilding the separate VBA mock UI requires Python 3.10 or newer plus the
-`vba` optional dependencies.
+Clinical-facing and generated outputs contain no numeric model value. Each
+horizon returns an ordinal illustrative simulation category, explanation,
+basis, status, and
+`target_outcome: "not_defined_pending_clinical_review"`. **Target outcome is
+not defined pending clinical review.** The categories are illustrative only
+and are withheld when any of these required baseline inputs is unavailable:
+
+- cancer stage;
+- ECOG;
+- reduced appetite;
+- BMI; or
+- baseline weight change.
+
+Sex and lung subtype are descriptive/future-use fields and do not alter the
+current category. Sarcopenia remains a tri-state future-use field pending a
+clinical definition; it is never inferred, its baseline value does not decide
+a future label, and it does not alter the category. When weight loss is >2%
+and <=5%, BMI is >=20, and the sarcopenia branch is disabled, criteria status
+is `unknown`, not `no`, because the unevaluated third branch could change the
+result.
+
+## Clinical and temporal framing
+
+Fearon et al. (2011) describes **>5% weight loss over the past 6 months**.
+Accordingly, this project separates retrospective baseline-derived status from
+future synthetic outcomes:
+
+- baseline status uses eligible retrospective weight evidence up to six
+  months;
+- the 3-month baseline-to-horizon label is explicitly a research-only
+  threshold-based outcome that differs from Fearon in both direction and
+  window length; and
+- although the 6-month label matches the six-month window length, it looks
+  forward from baseline and is not a Fearon classification; it is a
+  prospective research endpoint only, not a diagnosis.
+
+Both future outcome objects record `fearon_classification: false` and the
+actual `outcome_interval_days` from baseline weight date to selected outcome
+weight date. Baseline sarcopenia is never reused as future evidence.
+
+Future provisional pre-cachexia labels use dated synthetic follow-up appetite
+observations. Baseline `reduced_appetite` remains a predictor and is never
+carried forward as future observed evidence.
+
+The provisional candidate rule is cachexia criteria excluded, loss **>1% and
+<=5%**, and reduced appetite=`yes`. The >1% lower bound has no consensus basis
+and remains an editable simulation parameter; <=5% is consensus-aligned.
+Binary appetite is a POC simplification.
+
+References:
+
+- Fearon K, et al. *Lancet Oncology*. 2011;12(5):489-495.
+  <https://doi.org/10.1016/S1470-2045(10)70218-7>
+- Muscaritoli M, et al. *Clinical Nutrition*. 2010;29(2):154-159.
+  <https://doi.org/10.1016/j.clnu.2009.12.004>
+
+## Run and regenerate
+
+Python 3.9 or newer is required for the core project. Workbook generation
+requires the declared optional dependencies.
 
 ```bash
 PYTHONPATH=src python3 scripts/generate_synthetic.py \
@@ -36,86 +95,45 @@ node --test tests/browser_calculations.test.js
 python3 scripts/run_local.py
 ```
 
-Open <http://127.0.0.1:8000> for local development. The development server
-binds to loopback only. The static page can also be opened directly from
-`prototype/index.html`.
+Open <http://127.0.0.1:8000> for local development. The page can also be
+opened directly from `prototype/index.html`.
 
-The page is interactive: change factors or dated weights and press **Calculate
-simulated outputs**. Two independent Excel editions are provided:
+The Excel files remain repository/local review artifacts:
 
-- `cachexia_risk_prototype.v1.4.xlsx` is macro-free and maximizes portability.
-- `cachexia_risk_mock_ui.v1.1.xlsm` uses native Form Control buttons for
-  **Calculate / validate**, **Reset form**, example profiles, and review
-  navigation. Each input has an adjacent valid-value descriptor. Cancer
-  subtype changes to `SCLC / NSCLC / unknown` for lung cancer and
-  `not applicable` otherwise. Enable macros only after confirming the file
-  came from this repository. Inputs, dropdowns, formulas, and outputs still
-  work if macros remain disabled.
+- `excel/cachexia_risk_prototype.v1.4.xlsx` is macro-free;
+- `excel/cachexia_risk_mock_ui.v1.1.xlsm` provides native form controls; and
+- `excel/clinical_logic_review_matrix.v1.xlsx` records unresolved review
+  questions and the exhaustive classification matrix.
 
-The GitHub Pages deployment runs the JavaScript calculation module generated
-from the canonical simulation assumptions. It does not run a Python service or
-send entered data to this repository. The deployment workflow rebuilds and
-tests the Excel editions, but workbooks are not published with the static site.
+The Pages workflow rebuilds and tests the workbooks but publishes only the
+static browser files. It does not copy workbook files into the Pages artifact.
 
 ## Key implementation paths
 
 | Deliverable | Path |
 |---|---|
-| Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js`, `prototype/styles.css` |
-| Macro-free Excel prototype | `excel/cachexia_risk_prototype.v1.4.xlsx` |
-| VBA mock UI | `excel/cachexia_risk_mock_ui.v1.1.xlsm` |
-| Clinical logic review workbook | `excel/clinical_logic_review_matrix.v1.xlsx` |
-| VBA source | `vba/CachexiaUI.bas` |
-| Generator | `src/cachexia_poc/generator.py`, `scripts/generate_synthetic.py` |
+| Browser prototype | `prototype/index.html`, `prototype/app.js`, `prototype/calculations.js` |
+| Python calculations | `src/cachexia_poc/` |
 | Central assumptions | `config/simulation_assumptions.v1.json` |
-| Generated browser config | `prototype/simulation-config.js` (do not edit manually) |
-| Sample JSON/CSV | `data/synthetic_patients.v1.json`, `data/synthetic_patients.v1.csv` |
-| Distribution summary | `data/distribution_summary.v1.json` |
-| Formal schema | `docs/schema.v1.json` |
-| Data dictionary | `docs/DATA_DICTIONARY.md` |
-| Formulas/temporal rules | `docs/FORMULAS_AND_TEMPORAL_RULES.md` |
-| Fearon/pre-cachexia notes | `docs/CLINICAL_RULES.md`, `docs/OUTCOME_IMPLEMENTATION.md` |
-| Clinical review package | `docs/CLINICAL_REVIEW_PACKAGE.md` |
-| Clinical logic test matrix | `docs/CLINICAL_LOGIC_TEST_MATRIX.md`, `tests/fixtures/clinical_logic_cases.v1.json`, `data/clinical_logic_matrix.v1.json` |
+| Generated browser config | `prototype/simulation-config.js` |
+| Generated cohort and summary | `data/` |
+| Formal schema and migration note | `docs/schema.v1.json` |
+| Workbook builders | `scripts/build_excel_prototype.py`, `scripts/build_excel_vba_prototype.py`, `scripts/build_clinical_logic_review.py` |
+| Review workbooks | `excel/` |
+| Clinical and temporal documentation | `docs/CLINICAL_RULES.md`, `docs/FORMULAS_AND_TEMPORAL_RULES.md`, `docs/OUTCOME_IMPLEMENTATION.md` |
+| Review package and test matrix | `docs/CLINICAL_REVIEW_PACKAGE.md`, `docs/CLINICAL_LOGIC_TEST_MATRIX.md` |
 | Tests | `tests/` |
-| Final report | `docs/IMPLEMENTATION_REPORT.md` |
 
-The clinical review workbook opens on **START HERE**, followed by 12
-representative **Key Scenarios** and a short **Review Decisions** sheet. The
-complete 324-case matrix and detailed risk assumptions remain available as
-reference sheets rather than being the primary review workflow.
+## Boundaries and limitations
 
-## Temporal and missing-data guarantees
+Thresholds remain strict: >5%, >2%, and BMI <20. Predictors read only
+measurements dated on or before `prediction_date`; future observations cannot
+leak into baseline calculations. Loss <=2% remains `no`; loss >5% and loss
+>2% with BMI <20 remain `yes`. In the >2% to <=5%, BMI >=20 interval, the
+disabled sarcopenia branch leaves cachexia and provisional early-risk status
+`unknown`. Unknown is never treated as no.
 
-Baseline predictors use only measurements dated on or before each patient's
-explicit `prediction_date`. Three- and six-month outcomes use separate
-inclusive calendar boundaries. Automated tests mutate post-baseline and
-six-month measurements to prove they cannot change baseline or three-month
-results.
-
-Unknown ECOG, appetite, sarcopenia, BMI, and non-calculable changes remain
-unknown; they are never treated as no or normal. Invalid and implausible values
-raise actionable errors rather than being silently corrected. Simulated risk
-is withheld when BMI or baseline weight change is not calculable.
-
-The third Fearon branch uses only explicitly documented sarcopenia=`yes` with
-weight loss `>2%`. Sarcopenia is never inferred from BMI, ECOG, stage,
-appetite, cancer type, or weight. It changes the criteria label only; no
-simulated risk coefficient has been invented. Its acceptable assessment method
-and the provisional use of baseline evidence in horizon labels await clinical
-review.
-
-## Limitations
-
-This is an explainable simulation, not a trained or evaluated prediction
-model. It has no calibration, discrimination, causal, treatment, diagnostic,
-or prognostic claims. Workbook proposals remain adjustable and the provisional
-pre-cachexia definition, Fearon operationalisation, distributions,
-relationships, horizon rules, and presentation await documented clinical
-review.
-
-The automated suite tests arithmetic, temporal leakage, horizon boundaries,
-unknown handling, reproducibility, configuration parity, browser calculations,
-and workbook structure/formulas. It does **not** perform clinical or
-statistical hypothesis testing: there is no real cohort, prespecified clinical
-hypothesis, validated endpoint, or comparator suitable for inferential claims.
+This is not a trained or evaluated model. There is no real cohort, agreed
+eligibility definition, validated endpoint, reference standard, or evidence
+supporting clinical performance. Open clinical and UX decisions remain
+explicitly pending in the review package.

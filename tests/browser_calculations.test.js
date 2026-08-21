@@ -47,7 +47,9 @@ function input(overrides = {}) {
     ecog: "2",
     appetite: "yes",
     sarcopenia: "no",
+    sex: "female",
     cancerType: "lung",
+    cancerSubtype: "NSCLC",
     weights: [
       { date: "2025-07-31", weightKg: 80, index: 0 },
       { date: "2026-01-31", weightKg: 72, index: 1 }
@@ -85,29 +87,41 @@ test("missing history remains not calculable", () => {
   }));
   assert.equal(result.loss, null);
   assert.equal(result.trajectory, "unknown");
-  assert.match(calculator.classify(input(), result).fearon, /^unknown/);
-  const risk = calculator.risk(input(), result, "three_month");
-  assert.equal(risk.probability, null);
-  assert.equal(risk.band, "unknown");
+  assert.match(
+    calculator.classify(input(), result).cachexiaCriteria,
+    /^unknown/
+  );
+  const category = calculator.category(input(), result, "three_month");
+  assert.equal(category.category, null);
+  assert.deepEqual(
+    category.withholdingReasons,
+    ["baseline_weight_change_unavailable"]
+  );
 });
 
 test("Fearon and provisional pre-cachexia thresholds remain distinct", () => {
   const limited = calculator.calculateDerived(input({
     weights: [
       { date: "2025-07-31", weightKg: 80, index: 0 },
-      { date: "2026-01-31", weightKg: 77.6, index: 1 }
+      { date: "2026-01-31", weightKg: 78.8, index: 1 }
     ]
   }));
   const limitedLabels = calculator.classify(input(), limited);
-  assert.match(limitedLabels.fearon, /^no/);
-  assert.match(limitedLabels.pre, /^yes/);
+  assert.match(limitedLabels.cachexiaCriteria, /^no/);
+  assert.match(limitedLabels.precachexiaCandidate, /^yes/);
 
   const cachexia = calculator.calculateDerived(input());
-  assert.match(calculator.classify(input(), cachexia).fearon, /^yes/);
-  assert.match(calculator.classify(input(), cachexia).pre, /^no/);
+  assert.match(
+    calculator.classify(input(), cachexia).cachexiaCriteria,
+    /^yes/
+  );
+  assert.match(
+    calculator.classify(input(), cachexia).precachexiaCandidate,
+    /^no/
+  );
 });
 
-test("documented sarcopenia implements the third Fearon branch", () => {
+test("disabled sarcopenia branch conservatively preserves unknown", () => {
   const derived = calculator.calculateDerived(input({
     weights: [
       { date: "2025-07-31", weightKg: 80, index: 0 },
@@ -123,23 +137,67 @@ test("documented sarcopenia implements the third Fearon branch", () => {
   const unknownSarcopenia = calculator.classify(
     input({ sarcopenia: "unknown", appetite: "no" }), derived
   );
-  assert.match(noSarcopenia.fearon, /^no/);
-  assert.match(sarcopenia.fearon, /^yes/);
-  assert.equal(
-    unknownSarcopenia.fearon,
-    "unknown — sarcopenia evidence unavailable"
-  );
+  assert.match(noSarcopenia.cachexiaCriteria, /^unknown/);
+  assert.match(noSarcopenia.precachexiaCandidate, /^unknown/);
+  assert.deepEqual(sarcopenia, noSarcopenia);
+  assert.deepEqual(unknownSarcopenia, noSarcopenia);
 });
 
-test("three- and six-month risk outputs are independent and explained", () => {
+test("three- and six-month category outputs are ordinal and explained", () => {
   const derived = calculator.calculateDerived(input());
-  const risk3 = calculator.risk(input(), derived, "three_month");
-  const risk6 = calculator.risk(input(), derived, "six_month");
-  assert.notEqual(risk3.probability, risk6.probability);
-  assert.ok(risk3.probability >= 0 && risk3.probability <= 1);
-  assert.ok(risk6.probability >= 0 && risk6.probability <= 1);
-  assert.ok(risk3.factors.length > 0);
-  assert.ok(risk6.factors.length > 0);
+  const category3 = calculator.category(input(), derived, "three_month");
+  const category6 = calculator.category(input(), derived, "six_month");
+  assert.ok(["low", "moderate", "high"].includes(category3.category));
+  assert.ok(["low", "moderate", "high"].includes(category6.category));
+  assert.equal(category3.outputType, "illustrative_simulation_category");
+  assert.equal(category6.basis, "baseline_predictors_only");
+  assert.equal(
+    category3.target_outcome,
+    "not_defined_pending_clinical_review"
+  );
+  assert.ok(category3.explanations.length > 0);
+  assert.ok(category6.explanations.length > 0);
+  assert.equal(Object.hasOwn(category3, "probability"), false);
+  assert.equal(Object.hasOwn(category3, "score"), false);
+});
+
+for (const [name, overrides, derivedOverrides, reason] of [
+  ["stage", { stage: "unknown" }, {}, "cancer_stage_unknown"],
+  ["ECOG", { ecog: "unknown" }, {}, "ecog_unknown"],
+  ["appetite", { appetite: "unknown" }, {}, "reduced_appetite_unknown"],
+  ["BMI", {}, { bmi: null }, "bmi_unavailable"],
+  [
+    "baseline weight change",
+    {},
+    { loss: null },
+    "baseline_weight_change_unavailable"
+  ]
+]) {
+  test(`withholds category when ${name} is unknown`, () => {
+    const caseInput = input(overrides);
+    const derived = {
+      ...calculator.calculateDerived(caseInput),
+      ...derivedOverrides
+    };
+    const result = calculator.category(caseInput, derived, "three_month");
+    assert.equal(result.category, null);
+    assert.ok(result.withholdingReasons.includes(reason));
+  });
+}
+
+test("sex and lung subtype are descriptive and unused in categories", () => {
+  const derived = calculator.calculateDerived(input());
+  const baseline = calculator.category(input(), derived, "three_month");
+  const changed = calculator.category(
+    input({ sex: "unknown", cancerSubtype: "SCLC" }),
+    derived,
+    "three_month"
+  );
+  assert.deepEqual(changed, baseline);
+  assert.deepEqual(
+    baseline.unusedFields,
+    ["sex", "cancer_subtype", "sarcopenia"]
+  );
 });
 
 test("month-end calendar arithmetic is deterministic", () => {
@@ -172,20 +230,22 @@ test("browser classifications match the supplied decision table", () => {
     const derived = calculator.calculateDerived(caseInput);
     const result = calculator.classify(caseInput, derived);
     assert.equal(
-      result.fearon.startsWith(clinicalCase.expected_cachexia),
+      result.cachexiaCriteria.startsWith(clinicalCase.expected_cachexia),
       true,
       `${clinicalCase.id}: cachexia`
     );
     assert.equal(
-      result.pre.startsWith(clinicalCase.expected_precachexia),
+      result.precachexiaCandidate.startsWith(
+        clinicalCase.expected_precachexia
+      ),
       true,
       `${clinicalCase.id}: provisional early-risk pattern`
     );
   }
 });
 
-test("browser risk arithmetic matches the documented simulation case", () => {
-  const clinicalCase = clinicalCases.risk_case;
+test("browser categories match the shared documented simulation case", () => {
+  const clinicalCase = clinicalCases.category_case;
   const caseInput = input({
     age: clinicalCase.patient.age,
     stage: clinicalCase.patient.cancer_stage,
@@ -198,10 +258,11 @@ test("browser risk arithmetic matches the documented simulation case", () => {
     loss: clinicalCase.predictors.weight_loss_percent
   };
   for (const horizon of ["three_month", "six_month"]) {
-    const result = calculator.risk(caseInput, derived, horizon);
+    const result = calculator.category(caseInput, derived, horizon);
     const expected = clinicalCase.expected[horizon];
-    assert.ok(Math.abs(result.probability - expected.probability) < 1e-12);
-    assert.equal(result.band, expected.band);
+    assert.equal(result.category, expected.category);
+    assert.equal(Object.hasOwn(result, "probability"), false);
+    assert.equal(Object.hasOwn(result, "score"), false);
   }
 });
 
@@ -220,12 +281,14 @@ test("browser classifications match all 324 review-matrix cases", () => {
       }
     );
     assert.equal(
-      result.fearon.startsWith(clinicalCase.expected_cachexia),
+      result.cachexiaCriteria.startsWith(clinicalCase.expected_cachexia),
       true,
       `${clinicalCase.case_id}: cachexia`
     );
     assert.equal(
-      result.pre.startsWith(clinicalCase.expected_early_risk),
+      result.precachexiaCandidate.startsWith(
+        clinicalCase.expected_early_risk
+      ),
       true,
       `${clinicalCase.case_id}: provisional early-risk pattern`
     );

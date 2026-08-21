@@ -38,17 +38,29 @@ def main() -> None:
             for patient in patients
         ),
         "appetite": Counter(patient["reduced_appetite"] for patient in patients),
-        "risk_3m_band": Counter(
-            patient["simulated_risk_3m"]["band"] for patient in patients
+        "baseline_cachexia_criteria_status": Counter(
+            patient["baseline_criteria_status"]["cachexia_criteria_status"]
+            for patient in patients
         ),
-        "risk_6m_band": Counter(
-            patient["simulated_risk_6m"]["band"] for patient in patients
+        "baseline_provisional_early_risk_candidate_status": Counter(
+            patient["baseline_criteria_status"]["precachexia_candidate_status"]
+            for patient in patients
         ),
-        "outcome_3m_cachexia": Counter(
-            patient["outcome_3m"]["cachexia"] for patient in patients
+        "illustrative_simulation_category_3m": Counter(
+            patient["illustrative_simulation_3m"]["category"] or "withheld"
+            for patient in patients
         ),
-        "outcome_6m_cachexia": Counter(
-            patient["outcome_6m"]["cachexia"] for patient in patients
+        "illustrative_simulation_category_6m": Counter(
+            patient["illustrative_simulation_6m"]["category"] or "withheld"
+            for patient in patients
+        ),
+        "outcome_3m_threshold_based_cachexia_status": Counter(
+            patient["outcome_3m"]["threshold_based_cachexia_status"]
+            for patient in patients
+        ),
+        "outcome_6m_threshold_based_cachexia_status": Counter(
+            patient["outcome_6m"]["threshold_based_cachexia_status"]
+            for patient in patients
         ),
         "edge_cases": Counter(
             patient["edge_case"] or "none" for patient in patients

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Synthetic Cachexia Risk POC</title>
+  <title>Synthetic Cachexia Simulation POC</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,9 +12,14 @@
     <h1>Cachexia and pre-cachexia simulation prototype</h1>
     <div class="warning" role="alert">
       <strong>Not for clinical use.</strong> Patients and outputs are synthetic.
-      Risk relationships are simulation assumptions, not clinically validated
+      Category relationships are simulation assumptions, not clinically validated
       effects. Do not use this prototype for diagnosis, prognosis, treatment,
       patient care, or any medical decision.
+    </div>
+    <div class="notice">
+      Eligibility and inclusion criteria are not yet defined. Current cancer-type
+      labels are synthetic stratifiers for an adult solid-tumour POC pending
+      clinical review.
     </div>
   </header>
 
@@ -27,6 +32,7 @@
         <label>Age (18–95) *<input id="age" type="number" min="18" max="95" value="65"></label>
         <label>Sex *
           <select id="sex"><option>female</option><option>male</option><option>unknown</option></select>
+          <span class="field-help">Collected for cohort description; unused in the current simulation category.</span>
         </label>
         <label>Cancer type *
           <select id="cancer-type">
@@ -35,28 +41,33 @@
             <option>head and neck</option><option>breast</option><option>prostate</option>
             <option>other solid tumour</option>
           </select>
+          <span class="field-help">Synthetic stratifier pending clinical review.</span>
         </label>
-        <label>Lung cancer subtype
+        <label id="lung-subtype-field">Lung subtype
           <select id="cancer-subtype">
             <option>SCLC</option><option selected>NSCLC</option><option>unknown</option>
           </select>
+          <span class="field-help">Descriptive and unused in the current simulation category.</span>
         </label>
         <label>Stage *
           <select id="stage"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option>unknown</option></select>
         </label>
-        <label>Height (cm)<input id="height" type="number" min="140" max="200" step="0.1" value="170"></label>
+        <label>Height (cm)<input id="height" type="number" min="140" max="200" step="0.1" value="170">
+          <span class="field-help">Optional if unknown; required to calculate BMI and display simulation categories.</span>
+        </label>
         <label>ECOG *
           <select id="ecog"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="unknown">unknown</option></select>
         </label>
         <label>Reduced appetite *
           <select id="appetite"><option>yes</option><option selected>no</option><option>unknown</option></select>
         </label>
-        <label>Documented sarcopenia evidence *
+        <label>Sarcopenia (future-use)
           <select id="sarcopenia">
             <option value="yes">yes — independently documented</option>
             <option value="no">no — assessed and absent</option>
             <option value="unknown" selected>unknown — not assessed or not documented</option>
           </select>
+          <span class="field-help">Pending clinical definition and never inferred. The baseline value does not decide the disabled branch or future outcomes.</span>
         </label>
       </div>
 
@@ -65,36 +76,38 @@
         <button id="add-weight" type="button" class="secondary">Add measurement</button>
       </div>
       <div id="weights"></div>
-      <button id="calculate" type="button">Calculate simulated outputs</button>
+      <button id="calculate" type="button">Calculate illustrative outputs</button>
       <div id="errors" class="errors" role="alert" aria-live="polite"></div>
     </section>
 
     <section class="card" aria-labelledby="derived-heading">
-      <h2 id="derived-heading">Baseline-derived variables</h2>
+      <h2 id="derived-heading">Baseline-derived criteria status</h2>
       <div id="derived" class="metrics" aria-live="polite"></div>
       <div class="classifications">
-        <div><span>Implemented cachexia criteria met?</span><strong id="fearon">Not calculated</strong></div>
-        <div><span>Provisional early-risk pattern met?</span><strong id="precachexia">Not calculated</strong></div>
+        <div><span>Current cachexia criteria status</span><strong id="fearon">Not calculated</strong></div>
+        <div><span>Current provisional pre-cachexia candidate</span><strong id="precachexia">Not calculated</strong></div>
       </div>
-      <p class="hint">Implemented cachexia criteria: &gt;5% weight loss, &gt;2% loss with BMI &lt;20 kg/m², or &gt;2% loss with explicitly documented sarcopenia. For sarcopenia, “no” means assessed and absent; “unknown” means not assessed or not documented. Sarcopenia is never inferred and affects the criteria label only; no simulated risk coefficient has been assigned. Provisional early-risk pattern: cachexia criteria not met, &gt;1% to ≤5% loss, and reduced appetite=yes. This project proposal requires clinical review.</p>
+      <p class="hint">Baseline-derived status uses retrospective weight evidence up to six months: &gt;5% loss, or &gt;2% loss with BMI &lt;20 kg/m². For loss &gt;2% to ≤5% with BMI ≥20, status is unknown because the sarcopenia branch is disabled pending a clinical definition. The provisional candidate rule requires cachexia criteria excluded, &gt;1% to ≤5% loss, and baseline reduced appetite=yes. The &gt;1% lower bound has no consensus basis and is an editable simulation parameter; ≤5% is consensus-aligned. Binary appetite is a POC simplification.</p>
     </section>
 
-    <section class="risk-grid" aria-label="Simulated risk estimates">
+    <section class="risk-grid" aria-label="Illustrative simulation categories">
       <article class="card risk-card">
         <p class="eyebrow">3-month horizon</p>
-        <div id="risk-3m" class="risk-value">—</div>
-        <p id="band-3m"></p>
+        <h2>3-month illustrative simulation category</h2>
+        <p class="hint">Based on baseline predictors only. Target outcome is not defined pending clinical review.</p>
+        <div id="category-3m" class="risk-value">—</div>
+        <p id="basis-3m"></p>
         <ul id="factors-3m"></ul>
       </article>
       <article class="card risk-card">
         <p class="eyebrow">6-month horizon</p>
-        <div id="risk-6m" class="risk-value">—</div>
-        <p id="band-6m"></p>
+        <h2>6-month illustrative simulation category</h2>
+        <p class="hint">Based on baseline predictors only. Target outcome is not defined pending clinical review.</p>
+        <div id="category-6m" class="risk-value">—</div>
+        <p id="basis-6m"></p>
         <ul id="factors-6m"></ul>
       </article>
     </section>
-
-    <p class="footnote">The risk percentages are interpretable deterministic transformations of the displayed inputs. They are not calibrated probabilities.</p>
 
   </main>
   <script src="simulation-config.js"></script>

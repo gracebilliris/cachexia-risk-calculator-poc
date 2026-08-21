@@ -49,7 +49,7 @@ def warning(sheet, row: int) -> None:
     sheet.merge_cells(start_row=row, start_column=1, end_row=row + 1, end_column=8)
     cell = sheet.cell(row, 1)
     cell.value = (
-        "NOT FOR CLINICAL USE. All patients and outputs are synthetic. Risk "
+        "NOT FOR CLINICAL USE. All patients and outputs are synthetic. Category "
         "relationships are simulation assumptions, not clinically validated "
         "effects. Do not use for diagnosis, prognosis, treatment, patient "
         "care, or medical decisions."
@@ -92,14 +92,14 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
         ("FearonBMI", config["definitions"]["fearon_bmi_exclusive"], "Implemented criterion boundary"),
         ("PreLower", config["definitions"]["precachexia_lower_weight_loss_percent_exclusive"], "PROVISIONAL — review required"),
         ("PreUpper", config["definitions"]["precachexia_upper_weight_loss_percent_inclusive"], "PROVISIONAL — review required"),
-        ("AgeThreshold", config["risk_outputs"]["age_threshold_exclusive"], "Simulation assumption"),
-        ("BandLow", config["risk_outputs"]["band_thresholds"]["low_upper_exclusive"], "Simulation assumption"),
-        ("BandHigh", config["risk_outputs"]["band_thresholds"]["high_lower_inclusive"], "Simulation assumption"),
+        ("AgeThreshold", config["illustrative_category_model"]["age_threshold_exclusive"], "Simulation assumption"),
+        ("CategoryLowUpper", config["illustrative_category_model"]["internal_score_thresholds"]["low_upper_exclusive"], "Internal category boundary"),
+        ("CategoryHighLower", config["illustrative_category_model"]["internal_score_thresholds"]["high_lower_inclusive"], "Internal category boundary"),
         ("WeightMin", config["cohort"]["historical_weight_kg"]["minimum"], "Input validation bound"),
         ("WeightMax", config["cohort"]["historical_weight_kg"]["maximum"], "Input validation bound"),
     ]
-    for horizon, prefix in (("three_month", "Risk3"), ("six_month", "Risk6")):
-        values = config["risk_outputs"][horizon]
+    for horizon, prefix in (("three_month", "Category3"), ("six_month", "Category6")):
+        values = config["illustrative_category_model"][horizon]
         scalar_rows.extend(
             [
                 (f"{prefix}Intercept", values["intercept"], "Simulation assumption"),
@@ -124,27 +124,30 @@ def build_assumptions(workbook: Workbook, config: dict) -> None:
     cancer_end = 7 + len(cancer)
 
     sheet["H7"], sheet["I7"], sheet["J7"] = "Stage", "3m term", "6m term"
-    stages = list(config["risk_outputs"]["three_month"]["stage"])
+    stages = list(config["illustrative_category_model"]["three_month"]["stage"])
     for row, key in enumerate(stages, 8):
         sheet.cell(row, 8, key)
-        sheet.cell(row, 9, config["risk_outputs"]["three_month"]["stage"][key])
-        sheet.cell(row, 10, config["risk_outputs"]["six_month"]["stage"][key])
+        sheet.cell(row, 9, config["illustrative_category_model"]["three_month"]["stage"][key])
+        sheet.cell(row, 10, config["illustrative_category_model"]["six_month"]["stage"][key])
     stage_end = 7 + len(stages)
 
     sheet["L7"], sheet["M7"], sheet["N7"] = "ECOG", "3m term", "6m term"
-    ecogs = list(config["risk_outputs"]["three_month"]["ecog"])
+    ecogs = list(config["illustrative_category_model"]["three_month"]["ecog"])
     for row, key in enumerate(ecogs, 8):
         sheet.cell(row, 12, key)
-        sheet.cell(row, 13, config["risk_outputs"]["three_month"]["ecog"][key])
-        sheet.cell(row, 14, config["risk_outputs"]["six_month"]["ecog"][key])
+        sheet.cell(row, 13, config["illustrative_category_model"]["three_month"]["ecog"][key])
+        sheet.cell(row, 14, config["illustrative_category_model"]["six_month"]["ecog"][key])
     ecog_end = 7 + len(ecogs)
 
     sheet["P7"], sheet["Q7"], sheet["R7"] = "Appetite", "3m term", "6m term"
-    appetites = list(config["risk_outputs"]["three_month"]["appetite"])
+    appetites = list(config["illustrative_category_model"]["three_month"]["appetite"])
     for row, key in enumerate(appetites, 8):
         sheet.cell(row, 16, key)
-        sheet.cell(row, 17, config["risk_outputs"]["three_month"]["appetite"][key])
-        sheet.cell(row, 18, config["risk_outputs"]["six_month"]["appetite"][key])
+        sheet.cell(row, 17, config["illustrative_category_model"]["three_month"]["appetite"][key])
+        sheet.cell(row, 18, config["illustrative_category_model"]["six_month"]["appetite"][key])
+    for row, subtype in enumerate(("SCLC", "NSCLC", "unknown"), 8):
+        sheet.cell(row, 20, subtype)
+    sheet["U8"] = "not applicable"
     appetite_end = 7 + len(appetites)
 
     for column in range(1, 19):
@@ -161,17 +164,24 @@ def build_input(workbook: Workbook, config: dict) -> None:
         "Change blue cells, then review automatically recalculated outputs on Results.",
     )
     warning(sheet, 4)
+    sheet.merge_cells("A6:L6")
+    sheet["A6"] = (
+        "Eligibility and inclusion criteria are not yet defined. Cancer-type "
+        "labels are synthetic stratifiers for an adult solid-tumour POC "
+        "pending clinical review."
+    )
+    sheet["A6"].alignment = Alignment(wrap_text=True)
     labels = [
         ("Prediction date", date(2026, 1, 31)),
         ("Age (years)", 65),
-        ("Sex", "female"),
-        ("Cancer type", "lung"),
-        ("Cancer subtype", "NSCLC"),
+        ("Sex (descriptive; unused in category)", "female"),
+        ("Cancer type (synthetic stratifier)", "lung"),
+        ("Lung subtype (descriptive; unused)", "NSCLC"),
         ("Cancer stage", "III"),
-        ("Height (cm; blank = unknown)", 170),
+        ("Height (cm; optional, required for BMI/category)", 170),
         ("ECOG", "2"),
         ("Reduced appetite", "no"),
-        ("Documented sarcopenia evidence", "unknown"),
+        ("Sarcopenia (future-use; unused in v1)", "unknown"),
     ]
     for row, (label, value) in enumerate(labels, 4):
         target_row = row + 4
@@ -187,6 +197,21 @@ def build_input(workbook: Workbook, config: dict) -> None:
     add_list_validation(
         sheet, "B11", list(config["cohort"]["cancer_type_probabilities"])
     )
+    subtype = DataValidation(
+        type="list",
+        formula1=(
+            '=INDIRECT(IF($B$11="lung","Assumptions!$T$8:$T$10",'
+            '"Assumptions!$U$8:$U$8"))'
+        ),
+        allow_blank=False,
+    )
+    subtype.error = (
+        "Choose SCLC, NSCLC, or unknown for lung; otherwise choose not applicable."
+    )
+    subtype.errorTitle = "Invalid subtype"
+    subtype.showErrorMessage = True
+    sheet.add_data_validation(subtype)
+    subtype.add(sheet["B12"])
     add_list_validation(sheet, "B13", ["I", "II", "III", "IV", "unknown"])
     add_list_validation(sheet, "B15", ["0", "1", "2", "3", "4", "unknown"])
     add_list_validation(sheet, "B16", ["yes", "no", "unknown"])
@@ -289,7 +314,7 @@ def build_input(workbook: Workbook, config: dict) -> None:
     sheet.column_dimensions["C"].hidden = True
     sheet.column_dimensions["D"].hidden = True
     sheet.merge_cells("G8:L8")
-    sheet["G8"] = "Automatic synthetic results"
+    sheet["G8"] = "Baseline-derived status and illustrative categories"
     sheet["G8"].font = Font(size=15, bold=True, color=WHITE)
     sheet["G8"].fill = PatternFill("solid", fgColor=TEAL)
     output_rows = [
@@ -299,8 +324,8 @@ def build_input(workbook: Workbook, config: dict) -> None:
         (12, "Interval", "='Results'!B14", '0 "days"'),
         (13, "Weight-loss rate", "='Results'!B15", '0.00 "kg/month"'),
         (14, "Trajectory", "='Results'!B17", None),
-        (16, "Implemented cachexia criteria met?", "='Results'!B19", None),
-        (17, "Provisional early-risk pattern met?", "='Results'!B20", None),
+        (16, "Current cachexia criteria status", "='Results'!B19", None),
+        (17, "Current provisional pre-cachexia candidate", "='Results'!B20", None),
     ]
     for row, label, formula, number_format in output_rows:
         sheet.cell(row, 7, label)
@@ -309,28 +334,35 @@ def build_input(workbook: Workbook, config: dict) -> None:
         sheet.cell(row, 8).fill = PatternFill("solid", fgColor=PALE_TEAL)
         if number_format:
             sheet.cell(row, 8).number_format = number_format
-    sheet["J9"], sheet["K9"] = "3-month illustrative output", "='Results'!B25"
-    sheet["J10"], sheet["K10"] = "Band", "='Results'!B26"
+    sheet["J9"], sheet["K9"] = "3-month illustrative simulation category", "='Results'!B25"
+    sheet["J10"], sheet["K10"] = "Basis / status", "='Results'!B26"
     sheet["J11"], sheet["K11"] = "Explanation", "='Results'!B27"
-    sheet["J13"], sheet["K13"] = "6-month illustrative output", "='Results'!D25"
-    sheet["J14"], sheet["K14"] = "Band", "='Results'!D26"
+    sheet["J12"], sheet["K12"] = (
+        "Target outcome",
+        "Target outcome is not defined pending clinical review.",
+    )
+    sheet["J13"], sheet["K13"] = "6-month illustrative simulation category", "='Results'!D25"
+    sheet["J14"], sheet["K14"] = "Basis / status", "='Results'!D26"
     sheet["J15"], sheet["K15"] = "Explanation", "='Results'!D27"
-    for cell in ("K9", "K13"):
-        sheet[cell].number_format = "0.0%"
-    for row in (9, 10, 11, 13, 14, 15):
+    sheet["J16"], sheet["K16"] = (
+        "Target outcome",
+        "Target outcome is not defined pending clinical review.",
+    )
+    for row in (9, 10, 11, 12, 13, 14, 15, 16):
         sheet.cell(row, 10).font = Font(bold=True)
         sheet.cell(row, 11).fill = PatternFill("solid", fgColor=PALE_TEAL)
         sheet.cell(row, 11).alignment = Alignment(wrap_text=True, vertical="top")
     sheet.merge_cells("G20:L23")
     sheet["G20"] = (
         "Rules shown in plain language\n"
-        "Implemented cachexia criteria: >5% weight loss, >2% weight loss "
-        "with BMI <20 kg/m², or >2% loss with documented sarcopenia. "
-        "For sarcopenia, no=assessed and absent; unknown=not documented. "
-        "It is never inferred and has no simulated risk coefficient.\n"
-        "Provisional early-risk pattern: cachexia criteria not met, >1% and "
-        "<=5% weight loss, and reduced appetite=yes. This project proposal "
-        "requires clinical review."
+        "Baseline-derived cachexia criteria status: >5% retrospective weight "
+        "loss, or >2% loss with BMI <20 kg/m². For loss >2% and <=5% with "
+        "BMI >=20, status is unknown because the sarcopenia branch is disabled "
+        "pending a clinical definition.\n"
+        "Provisional pre-cachexia candidate: cachexia criteria not met, >1% "
+        "and <=5% loss, and baseline reduced appetite=yes. The >1% lower "
+        "bound has no consensus basis and is editable; <=5% is consensus-aligned. "
+        "Binary appetite is a POC simplification."
     )
     sheet["G20"].alignment = Alignment(wrap_text=True, vertical="top")
     sheet["G20"].fill = PatternFill("solid", fgColor=PALE_ORANGE)
@@ -359,8 +391,8 @@ def build_results(workbook: Workbook, config: dict) -> None:
         15: "Weight-loss rate (kg/month)",
         16: "Rate (percentage points/month)",
         17: "Trajectory",
-        19: "Implemented cachexia criteria met?",
-        20: "Provisional early-risk pattern met?",
+        19: "Current cachexia criteria status",
+        20: "Current provisional pre-cachexia candidate",
     }
     for row, label in labels.items():
         sheet.cell(row, 1, label)
@@ -406,7 +438,7 @@ def build_results(workbook: Workbook, config: dict) -> None:
         sheet["B19"] = (
             '=IF(B13="","unknown",IF(B13>\'Assumptions\'!$B$10,"yes",'
             'IF(B13<=\'Assumptions\'!$B$11,"no",IF(B12="","unknown",'
-            'IF(B12<\'Assumptions\'!$B$12,"yes","no")))))'
+            'IF(B12<\'Assumptions\'!$B$12,"yes","unknown")))))'
         )
     sheet["B20"] = (
         '=IF(B19="unknown","unknown",IF(B19="yes","no",'
@@ -414,9 +446,9 @@ def build_results(workbook: Workbook, config: dict) -> None:
         'IF(\'Calculator\'!B16="yes","yes",IF(\'Calculator\'!B16="no","no","unknown")))))'
     )
 
-    sheet["A23"], sheet["B23"], sheet["D23"] = "Simulated horizon", "3 months", "6 months"
+    sheet["A23"], sheet["B23"], sheet["D23"] = "Illustrative simulation horizon", "3 months", "6 months"
     sheet["A24"], sheet["A25"], sheet["A26"], sheet["A27"] = (
-        "Simulation score", "Displayed estimate", "Risk band", "Factor explanation"
+        "Output type", "Category", "Basis / status", "Explanation"
     )
     common3 = (
         "'Assumptions'!$B$20+IF('Calculator'!B9>'Assumptions'!$B$15,'Assumptions'!$B$21,0)"
@@ -435,15 +467,19 @@ def build_results(workbook: Workbook, config: dict) -> None:
         "+(VLOOKUP('Calculator'!B11,'Assumptions'!$E$8:$F$17,2,FALSE)-1)*'Assumptions'!$B$29"
     )
     sheet["B24"], sheet["D24"] = (
-        f'=IF(OR(B12="",B13=""),"",{common3})',
-        f'=IF(OR(B12="",B13=""),"",{common6})',
+        "illustrative simulation category",
+        "illustrative simulation category",
+    )
+    withheld_condition = (
+        "OR('Calculator'!B13=\"unknown\",'Calculator'!B15=\"unknown\","
+        "'Calculator'!B16=\"unknown\",B12=\"\",B13=\"\")"
     )
     sheet["B25"], sheet["D25"] = (
-        '=IF(B24="","",1/(1+EXP(-B24)))',
-        '=IF(D24="","",1/(1+EXP(-D24)))',
+        f'=IF({withheld_condition},"withheld",IF({common3}<\'Assumptions\'!$B$16,"low",IF({common3}>=\'Assumptions\'!$B$17,"high","moderate")))',
+        f'=IF({withheld_condition},"withheld",IF({common6}<\'Assumptions\'!$B$16,"low",IF({common6}>=\'Assumptions\'!$B$17,"high","moderate")))',
     )
-    sheet["B26"] = '=IF(B25="","unknown",IF(B25<\'Assumptions\'!$B$16,"low",IF(B25>=\'Assumptions\'!$B$17,"high","medium")))'
-    sheet["D26"] = '=IF(D25="","unknown",IF(D25<\'Assumptions\'!$B$16,"low",IF(D25>=\'Assumptions\'!$B$17,"high","medium")))'
+    sheet["B26"] = '=IF(B25="withheld","Illustrative simulation category; withheld missing required baseline predictors. Target outcome is not defined pending clinical review.","Illustrative simulation category; baseline predictors only; research-only. Target outcome is not defined pending clinical review.")'
+    sheet["D26"] = '=IF(D25="withheld","Illustrative simulation category; withheld missing required baseline predictors. Target outcome is not defined pending clinical review.","Illustrative simulation category; baseline predictors only; research-only. Target outcome is not defined pending clinical review.")'
     factor_formula = (
         'TRIM(IF(\'Calculator\'!B9>\'Assumptions\'!$B$15,"age >55; ","")&'
         'IF(B13>0,"baseline loss "&TEXT(B13,"0.0")&"%; ","")&'
@@ -452,15 +488,23 @@ def build_results(workbook: Workbook, config: dict) -> None:
         '"; appetite="&\'Calculator\'!B16&"; "&\'Calculator\'!B11)'
     )
     withheld = (
-        '=IF(OR(B12="",B13=""),'
-        '"Estimate withheld: BMI and baseline weight change are required.",'
+        f'=IF({withheld_condition},'
+        '"Illustrative simulation category withheld: "&'
+        'IF(\'Calculator\'!B13="unknown","cancer stage is unknown; ","")&'
+        'IF(\'Calculator\'!B15="unknown","baseline ECOG is unknown; ","")&'
+        'IF(\'Calculator\'!B16="unknown","baseline reduced appetite is unknown; ","")&'
+        'IF(B12="","BMI is unavailable because height or baseline weight is unavailable; ","")&'
+        'IF(B13="","baseline weight change is unavailable because eligible prior history is insufficient; ",""),'
         f'{factor_formula})'
     )
     sheet["B27"], sheet["D27"] = withheld, withheld
     sheet["A29"] = "Interpretation"
     sheet["B29"] = (
-        "These are deterministic simulation outputs, not calibrated probabilities. "
-        "Changing six-month assumptions does not change the three-month formula."
+        "These are ordinal illustrative simulation categories based on baseline "
+        "predictors only. Target outcome is not defined pending clinical review. "
+        "Differences between horizon categories are simulation assumptions, not "
+        "different clinically defined estimands. Changing six-month assumptions "
+        "does not change the three-month formula."
     )
     sheet.merge_cells("B29:H30")
     sheet["B29"].alignment = Alignment(wrap_text=True, vertical="top")
@@ -471,8 +515,6 @@ def build_results(workbook: Workbook, config: dict) -> None:
             sheet.cell(row, column).fill = PatternFill("solid", fgColor=PALE_TEAL)
     for cell in ("B12", "B13", "B15", "B16"):
         sheet[cell].number_format = "0.00"
-    for cell in ("B25", "D25"):
-        sheet[cell].number_format = "0.0%"
     for cell in ("B8", "B10"):
         sheet[cell].number_format = "yyyy-mm-dd"
     sheet.column_dimensions["A"].width = 40
@@ -494,9 +536,15 @@ def build_cohort(workbook: Workbook, patients: list[dict]) -> None:
     headers = [
         "patient_id", "prediction_date", "age", "sex", "cancer_type",
         "cancer_stage", "height_cm", "ecog", "reduced_appetite", "sarcopenia",
-        "baseline_bmi", "baseline_loss_percent", "outcome_3m_cachexia",
-        "outcome_3m_precachexia", "risk_3m", "outcome_6m_cachexia",
-        "outcome_6m_precachexia", "risk_6m", "edge_case",
+        "baseline_bmi", "baseline_loss_percent", "baseline_cachexia_status",
+        "baseline_precachexia_status", "outcome_3m_threshold_status",
+        "outcome_3m_fearon_classification", "outcome_3m_interval_days",
+        "outcome_3m_precachexia", "outcome_3m_basis", "category_3m",
+        "category_3m_basis", "category_3m_status", "category_3m_target_outcome",
+        "outcome_6m_threshold_status", "outcome_6m_fearon_classification",
+        "outcome_6m_interval_days", "outcome_6m_precachexia",
+        "outcome_6m_basis", "category_6m", "category_6m_basis",
+        "category_6m_status", "category_6m_target_outcome", "edge_case",
     ]
     for column, header in enumerate(headers, 1):
         sheet.cell(7, column, header)
@@ -507,23 +555,36 @@ def build_cohort(workbook: Workbook, patients: list[dict]) -> None:
             patient["sex"], patient["cancer_type"], patient["cancer_stage"],
             patient["height_cm"], "unknown" if patient["ecog"] is None else patient["ecog"],
             patient["reduced_appetite"], patient["sarcopenia"], predictors["bmi"],
-            predictors["weight_loss_percent"], patient["outcome_3m"]["cachexia"],
-            patient["outcome_3m"]["precachexia_candidate"],
-            patient["simulated_risk_3m"]["probability"],
-            patient["outcome_6m"]["cachexia"],
-            patient["outcome_6m"]["precachexia_candidate"],
-            patient["simulated_risk_6m"]["probability"], patient["edge_case"],
+            predictors["weight_loss_percent"],
+            patient["baseline_criteria_status"]["cachexia_criteria_status"],
+            patient["baseline_criteria_status"]["precachexia_candidate_status"],
+            patient["outcome_3m"]["threshold_based_cachexia_status"],
+            patient["outcome_3m"]["fearon_classification"],
+            patient["outcome_3m"]["outcome_interval_days"],
+            patient["outcome_3m"]["precachexia_candidate_status"],
+            patient["outcome_3m"]["outcome_basis"],
+            patient["illustrative_simulation_3m"]["category"] or "withheld",
+            patient["illustrative_simulation_3m"]["basis"],
+            patient["illustrative_simulation_3m"]["status"],
+            patient["illustrative_simulation_3m"]["target_outcome"],
+            patient["outcome_6m"]["threshold_based_cachexia_status"],
+            patient["outcome_6m"]["fearon_classification"],
+            patient["outcome_6m"]["outcome_interval_days"],
+            patient["outcome_6m"]["precachexia_candidate_status"],
+            patient["outcome_6m"]["outcome_basis"],
+            patient["illustrative_simulation_6m"]["category"] or "withheld",
+            patient["illustrative_simulation_6m"]["basis"],
+            patient["illustrative_simulation_6m"]["status"],
+            patient["illustrative_simulation_6m"]["target_outcome"],
+            patient["edge_case"],
         ]
         for column, value in enumerate(values, 1):
             sheet.cell(row, column, value)
     last_row = 7 + len(patients)
-    for column in range(1, 20):
+    for column in range(1, len(headers) + 1):
         sheet.column_dimensions[get_column_letter(column)].width = 18
     sheet.column_dimensions["A"].width = 24
     sheet.freeze_panes = "A8"
-    for row in range(8, last_row + 1):
-        sheet.cell(row, 15).number_format = "0.0%"
-        sheet.cell(row, 18).number_format = "0.0%"
 
 
 def build_dictionary(workbook: Workbook) -> None:
@@ -534,8 +595,9 @@ def build_dictionary(workbook: Workbook) -> None:
         ("patient_id", "text", "SYN-* synthetic identifier"),
         ("prediction_date", "date", "Explicit predictor cutoff"),
         ("age", "years", "18–95"),
-        ("sex", "category", "female / male / unknown"),
-        ("cancer_type", "category", "Configured solid tumour categories"),
+        ("sex", "category", "female / male / unknown; descriptive and unused in category"),
+        ("cancer_type", "category", "Synthetic adult solid-tumour stratifier pending review"),
+        ("cancer_subtype", "category", "Lung description or not applicable; unused in category"),
         ("cancer_stage", "category", "I / II / III / IV / unknown"),
         ("height_cm", "cm", "140–200 or blank/unknown"),
         ("weights", "kg + date", "25–160 kg; multiple dated rows"),
@@ -544,11 +606,15 @@ def build_dictionary(workbook: Workbook) -> None:
         (
             "sarcopenia",
             "tri-state",
-            "documented yes / no / unknown; used in the >2% Fearon branch and never inferred",
+            "future-use yes / no / unknown; pending definition, never inferred, unused in v1",
         ),
-        ("outcome_3m", "tri-state labels", "Inclusive 3-calendar-month horizon"),
-        ("outcome_6m", "tri-state labels", "Inclusive 6-calendar-month horizon"),
-        ("risk outputs", "0–100% display", "Simulation only; not calibrated"),
+        ("follow_up_appetite_observations", "dated tri-state", "Future outcome evidence only; baseline appetite is not carried forward"),
+        ("baseline_criteria_status", "tri-state labels", "Baseline-derived current criteria status"),
+        ("outcome_3m", "qualified tri-state labels", "Research-only threshold outcome; direction and window differ from Fearon 2011"),
+        ("outcome_6m", "qualified tri-state labels", "Prospective research endpoint only; not a Fearon classification or diagnosis despite matching the six-month window length"),
+        ("outcome_interval_days", "days", "Actual baseline-weight-date to outcome-weight-date interval"),
+        ("fearon_classification", "boolean", "Always false for 3m and 6m prospective outcomes"),
+        ("illustrative_simulation_3m/6m", "ordinal category", "low / moderate / high or withheld; baseline predictors only; target outcome not defined pending clinical review"),
     ]
     sheet.append([])
     sheet.append([])
@@ -578,6 +644,9 @@ def build_review(workbook: Workbook) -> None:
         ("CLIN-004", "Confirm Fearon implementation and unknown behavior"),
         ("CLIN-005", "Confirm outcome selection and inclusive boundaries"),
         ("CLIN-006", "Confirm sarcopenia representation"),
+        ("CLIN-007", "Define eligibility and inclusion criteria"),
+        ("CLIN-008", "Confirm dated follow-up appetite evidence and binary simplification"),
+        ("CLIN-009", "Define the target outcome or estimand for illustrative categories"),
         ("UX-001", "Identify clinically misleading wording or presentation"),
     ]
     for row, (identifier, question) in enumerate(questions, 8):
@@ -603,14 +672,14 @@ def build_readme(workbook: Workbook) -> None:
     sheet.title = "START HERE"
     title(
         sheet,
-        "Synthetic cachexia risk workbook",
+        "Synthetic cachexia simulation workbook",
         "Interactive, macro-free clinical review prototype.",
     )
     warning(sheet, 4)
     instructions = [
         ("1", "Open Calculator and change only blue input cells."),
         ("2", "Enter an explicit prediction date and dated weight history."),
-        ("3", "Open Results to inspect derived variables, transparent labels, and separate simulated horizons."),
+        ("3", "Open Results to inspect baseline-derived status and separate illustrative simulation categories."),
         ("4", "Review Assumptions before interpreting any output; every relationship is provisional."),
         ("5", "Use Clinical Review to record decisions and requested changes."),
     ]
@@ -628,14 +697,16 @@ def build_readme(workbook: Workbook) -> None:
     )
     sheet["A21"] = "Implemented cachexia criteria"
     sheet["B21"] = (
-        "Cachexia if weight loss is >5%, if loss is >2% with BMI <20 kg/m², "
-        "or if loss is >2% with explicitly documented sarcopenia. "
-        "Sarcopenia is never inferred from other fields."
+        "Baseline-derived current criteria status uses >5% retrospective loss "
+        "or >2% loss with BMI <20 kg/m². For >2% and <=5% loss with BMI >=20, "
+        "status remains unknown while the sarcopenia branch is disabled pending "
+        "a clinical definition."
     )
     sheet["A23"] = "Provisional early-risk pattern"
     sheet["B23"] = (
-        "After cachexia is excluded: weight loss >1% and <=5% plus reduced "
-        "appetite=yes. Pending clinical review."
+        "After cachexia criteria are excluded: weight loss >1% and <=5% plus "
+        "baseline reduced appetite=yes. The >1% bound has no consensus basis; "
+        "<=5% is consensus-aligned; binary appetite is a POC simplification."
     )
     sheet.column_dimensions["A"].width = 20
     sheet.column_dimensions["B"].width = 95

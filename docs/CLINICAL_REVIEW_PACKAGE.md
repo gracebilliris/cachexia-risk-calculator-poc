@@ -1,72 +1,86 @@
 # Clinical review package
 
-**Review status: pending — no clinical feedback or approval has been received
-or recorded.**
+**Review status: pending. No clinical approval is represented.**
 
-This package concerns a synthetic, research-only POC. Risk estimates are
-simulation assumptions and must not be interpreted as clinical probabilities
-or used for medical decisions.
+This package concerns a synthetic, research-only POC. Clinical-facing outputs
+are ordinal illustrative simulation categories, not clinical conclusions.
+Workbook artifacts remain in `excel/` for repository/local review and are not
+published on GitHub Pages.
 
-The executable review cases and requirement mapping are recorded in
-`CLINICAL_LOGIC_TEST_MATRIX.md`. The complete 324-case review workbook is
+The executable review cases are documented in
+`CLINICAL_LOGIC_TEST_MATRIX.md`. The exhaustive workbook is
 `../excel/clinical_logic_review_matrix.v1.xlsx`.
 
-## Requested review
+## Reconciled implementation position
 
-Please assess:
+- Fearon 2011 is retrospective over the past six months.
+- Baseline-derived current criteria status is separated from future outcomes.
+- The 3-month baseline-to-horizon label is a research-only threshold outcome
+  that differs from Fearon in direction and window length.
+- Although the 6-month label matches the six-month window length, it looks
+  forward from baseline and is not a Fearon classification; it is a
+  prospective research endpoint only, not a diagnosis.
+- Future candidate labels use dated synthetic follow-up appetite observations;
+  baseline appetite is not carried forward.
+- Sarcopenia remains tri-state but future-use and pending definition. Baseline
+  sarcopenia is never future evidence. When loss is >2% and <=5% and BMI is
+  >=20, the disabled branch conservatively leaves status unknown.
+- Clinical-facing model output is only `low|moderate|high`, or withheld with
+  exact reasons.
+- Target outcome is not defined pending clinical review. Horizon category
+  differences are simulation assumptions only, and the categories remain
+  illustrative.
+- Sex and lung subtype are descriptive and unused in the category.
 
-1. Whether the synthetic profiles and aggregate distributions are plausible
-   enough for POC demonstrations, not whether they represent validated
-   population prevalence.
-2. Whether the supplied illustrative cancer and stage multipliers, their
-   multiplicative interaction, and provisional ECOG/appetite associations
-   introduce misleading or implausible combinations.
-3. **Provisional early-risk pattern** (internal configuration name:
-   Option B): cachexia criteria excluded, loss >1% and <=5%, and reduced
-   appetite=yes. The clinician-facing prototypes show the full rule rather
-   than the internal name. Confirm, reject, or revise it.
-4. The Fearon implementation, strict boundaries, use of horizon BMI, and
-   unknown handling in `CLINICAL_RULES.md`.
-5. Separate example three- and six-month labels and baseline-only simulated
-   risk outputs.
-6. BMI 20, weight loss 2%/5%, missing history, weight gain, unknown ECOG,
-   unknown appetite, and unknown sarcopenia cases.
-7. Whether any wording or visual presentation could be mistaken for a
-   clinically validated calculator.
+## Provisional pre-cachexia candidate
 
-## Representative generated profiles
+The current candidate rule is cachexia criteria excluded, loss >1% and <=5%,
+and reduced appetite=`yes`.
 
-Generated with seed `20260820`, config `1.0.0`. `C/P` means
-cachexia/provisional pre-cachexia candidate. Edge labels describe deliberately
-constructed **baseline** patterns; future labels follow generated longitudinal
-weights and need not match the baseline edge label.
+- The >1% lower bound has no consensus basis and is an editable simulation
+  parameter.
+- The <=5% upper bound is consensus-aligned with Muscaritoli et al. (2010).
+- Binary appetite is a POC simplification and does not implement the complete
+  anorexia/metabolic-change concept.
 
-| Synthetic ID | Labelled baseline case | Age/sex | Cancer/stage | ECOG | Appetite | Baseline BMI | Baseline loss | 3m C/P | 6m C/P | 3m simulated risk | 6m simulated risk |
-|---|---|---|---|---|---|---:|---:|---|---|---|---|
-| SYN-20260820-0001 | unknown fields | 87/male | gastric/IV | unknown | unknown | 41.0 | unknown | no/unknown | no/unknown | withheld/unknown | withheld/unknown |
-| SYN-20260820-0002 | insufficient history | 85/male | oesophageal/III | 1 | no | 28.2 | unknown | no/no | no/no | withheld/unknown | withheld/unknown |
-| SYN-20260820-0003 | weight gain | 82/male | head and neck/III | 1 | unknown | 33.5 | -3.1% | no/no | no/unknown | 37.8% medium | 52.5% medium |
-| SYN-20260820-0004 | stability | 52/male | gastric/II | 1 | no | 25.4 | 0.0% | no/no | no/no | 26.9% low | 38.9% medium |
-| SYN-20260820-0005 | limited loss + appetite | 73/female | head and neck/I | 2 | yes | 17.4 | 3.0% | no/no | no/no | 68.8% high | 83.2% high |
-| SYN-20260820-0006 | >5% baseline loss | 76/male | prostate/IV | 2 | no | 21.3 | 6.0% | no/no | no/no | 59.4% medium | 76.0% high |
-| SYN-20260820-0007 | BMI 20/loss 2 boundary | 80/male | pancreatic/III | 2 | no | 20.0 | 2.0% | yes/no | yes/no | 75.2% high | 86.4% high |
-| SYN-20260820-0008 | loss 5 boundary | 56/male | pancreatic/II | 2 | no | 32.2 | 5.0% | no/no | yes/no | 61.1% high | 76.9% high |
+## Decisions requested
 
-The complete cohort is in `data/synthetic_patients.v1.json`; aggregate counts
-are in `data/distribution_summary.v1.json`.
+| ID | Open question | Status |
+|---|---|---|
+| CLIN-001 | Confirm or revise synthetic predictor ranges/distributions | pending |
+| CLIN-002 | Confirm stage/ECOG/appetite and cancer-stratifier simulation relationships | pending |
+| CLIN-003 | Confirm, reject, or revise the provisional >1% to <=5% candidate interval and missing behavior | pending |
+| CLIN-004 | Confirm retrospective baseline criteria implementation and strict >5%, >2%, BMI<20 boundaries | pending |
+| CLIN-005 | Confirm 3-month/6-month measurement selection and qualified endpoint framing | pending |
+| CLIN-006 | Define acceptable sarcopenia evidence before any future branch is enabled | pending |
+| CLIN-007 | Define eligibility and inclusion criteria for the intended population | pending |
+| CLIN-008 | Confirm dated follow-up appetite evidence and the binary appetite simplification | pending |
+| CLIN-009 | Define the target outcome or estimand for the illustrative categories | pending |
+| UX-001 | Identify wording or presentation that could imply clinical use | pending |
 
-## Decision log to complete
+Additional workbook questions ask whether ordinal categories should remain,
+whether synthetic tumour terms are acceptable, and what future real-data
+design would be required. Absence of a recorded decision is not approval.
 
-| ID | Decision requested | Owner(s) | Current status |
-|---|---|---|---|
-| CLIN-001 | Confirm or revise predictor ranges/distributions | Clinical review | pending |
-| CLIN-002 | Confirm stage/ECOG/appetite simulation relationships | Clinical review | pending |
-| CLIN-003 | Confirm/reject/revise the provisional early-risk pattern (cachexia criteria not met, >1% and <=5% loss, appetite=yes) and its missing behavior | Clinical review | pending |
-| CLIN-004 | Confirm Fearon operationalisation and negative/unknown truth table | Clinical review | pending |
-| CLIN-005 | Confirm outcome measurement-selection and inclusive boundaries | Clinical review | pending |
-| CLIN-006 | Define acceptable documented sarcopenia evidence and confirm whether baseline evidence may be carried into horizon labels or dated muscle measures are required | Clinical review | pending |
-| UX-001 | Identify clinically misleading language or presentation | Clinical review | pending |
+## Review focus
 
-Record decisions using `review_decisions.schema.json`; include rationale,
-effective date, reviewer, and exact config/code changes requested. Absence of a
-recorded decision is not approval.
+1. Baseline status versus future endpoint separation.
+2. Strict threshold behavior at 1%, 2%, 5%, and BMI 20.
+3. Withholding for unknown stage, ECOG, appetite, BMI, and baseline loss.
+4. Dated follow-up appetite provenance and no baseline carry-forward.
+5. Conservative unknown status for the disabled sarcopenia branch and no
+   baseline sarcopenia carry-forward.
+6. Neutral population notice and descriptive-only sex/subtype wording.
+7. Ordinal category explanations and avoidance of numeric clinical-facing
+   model output.
+8. Definition of the target outcome or estimand before category interpretation.
+
+## Citation basis
+
+- Fearon K, et al. *Lancet Oncology*. 2011;12(5):489-495.
+  <https://doi.org/10.1016/S1470-2045(10)70218-7>
+- Muscaritoli M, et al. *Clinical Nutrition*. 2010;29(2):154-159.
+  <https://doi.org/10.1016/j.clnu.2009.12.004>
+
+Record structured decisions with `review_decisions.schema.json`, including
+rationale, effective date, and exact requested changes.

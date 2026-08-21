@@ -41,20 +41,28 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
     def test_mock_ui_has_prominent_safety_notice_and_live_outputs(self):
         sheet = self.workbook["Mock UI"]
         self.assertIn("NOT FOR CLINICAL USE", sheet["A3"].value)
-        self.assertEqual(sheet["G7"].value, "3  Automatic synthetic outputs")
-        self.assertEqual(sheet["G16"].value, "Implemented cachexia criteria met?")
-        self.assertEqual(sheet["G17"].value, "Provisional early-risk pattern met?")
+        self.assertEqual(sheet["G7"].value, "3  Automatic illustrative outputs")
+        self.assertEqual(sheet["G16"].value, "Current cachexia criteria status")
+        self.assertEqual(
+            sheet["G17"].value,
+            "Current provisional pre-cachexia candidate",
+        )
         self.assertNotIn("Option B", sheet["G29"].value)
         self.assertEqual(sheet["H9"].value, "=Engine!B9")
         self.assertEqual(sheet["G21"].value, "=Engine!B25")
         self.assertEqual(sheet["K21"].value, "=Engine!D25")
+        self.assertEqual(
+            sheet["G24"].value,
+            "Target outcome is not defined pending clinical review.",
+        )
 
     def test_inputs_have_visible_guidance_and_dynamic_subtype_validation(self):
         sheet = self.workbook["Mock UI"]
         for row in range(9, 19):
             self.assertTrue(sheet[f"D{row}"].value, f"Missing guidance at row {row}")
-        self.assertIn("confirmed cancer type", sheet["D12"].value)
-        self.assertIn("SCLC, NSCLC or unknown", sheet["D13"].value)
+        self.assertIn("Synthetic stratifier", sheet["D12"].value)
+        self.assertIn("descriptive and unused", sheet["D13"].value)
+        self.assertIn("Optional", sheet["D15"].value)
         validations = list(sheet.data_validations.dataValidation)
         subtype = next(
             validation
@@ -74,19 +82,34 @@ class ExcelVbaPrototypeTests(unittest.TestCase):
 
     def test_three_and_six_month_risk_formulas_are_separate(self):
         engine = self.workbook["Engine"]
-        self.assertIn("Assumptions!$B$20", engine["B24"].value)
-        self.assertNotIn("Assumptions!$B$25", engine["B24"].value)
-        self.assertIn("Assumptions!$B$25", engine["D24"].value)
-        self.assertNotIn("Assumptions!$B$20", engine["D24"].value)
+        self.assertIn("Assumptions!$B$20", engine["B25"].value)
+        self.assertNotIn("Assumptions!$B$25", engine["B25"].value)
+        self.assertIn("Assumptions!$B$25", engine["D25"].value)
+        self.assertNotIn("Assumptions!$B$20", engine["D25"].value)
 
-    def test_cachexia_formula_uses_documented_sarcopenia(self):
+    def test_sarcopenia_is_future_use_and_disabled_in_v1_formula(self):
         formula = self.workbook["Engine"]["B19"].value
-        self.assertIn("'Mock UI'!C18=\"yes\"", formula)
-        self.assertIn("'Mock UI'!C18=\"no\"", formula)
+        self.assertNotIn("'Mock UI'!C18", formula)
+        self.assertIn('"yes","unknown"', formula)
         self.assertEqual(
             self.workbook["Mock UI"]["B18"].value,
-            "Documented sarcopenia evidence",
+            "Sarcopenia (future-use)",
         )
+
+    def test_category_formulas_withhold_all_required_unknowns(self):
+        engine = self.workbook["Engine"]
+        formula = engine["B25"].value
+        for token in (
+            "'Mock UI'!C14=\"unknown\"",
+            "'Mock UI'!C16=\"unknown\"",
+            "'Mock UI'!C17=\"unknown\"",
+            'B12=""',
+            'B13=""',
+        ):
+            self.assertIn(token, formula)
+        self.assertIn('"moderate"', formula)
+        self.assertNotIn("EXP(", formula)
+        self.assertEqual(self.workbook["Mock UI"]["G23"].value, "Basis / status")
 
     def test_form_buttons_are_present_and_wired_to_macros(self):
         with ZipFile(WORKBOOK) as archive:

@@ -16,13 +16,13 @@ Public Sub UpdateInputGuidance()
     With ui
         .Range("D9").Value = "Required date. Records after this date cannot be predictors."
         .Range("D10").Value = "Required whole number: 18 to 95 years."
-        .Range("D11").Value = "Valid: female, male or unknown."
-        .Range("D12").Value = "Required confirmed cancer type from the dropdown."
+        .Range("D11").Value = "Descriptive only; unused in the current simulation category."
+        .Range("D12").Value = "Synthetic stratifier pending clinical review."
         .Range("D14").Value = "Valid: I, II, III, IV or unknown."
-        .Range("D15").Value = "Required: 140 to 200 cm."
+        .Range("D15").Value = "Optional; required for BMI and categories. Valid: 140 to 200 cm."
         .Range("D16").Value = "Valid: 0, 1, 2, 3, 4 or unknown."
         .Range("D17").Value = "Valid: yes, no or unknown/not documented."
-        .Range("D18").Value = "yes=documented; no=assessed and absent; unknown=not assessed/documented."
+        .Range("D18").Value = "Future-use, pending definition, never inferred, and unused in v1."
     End With
 
     UpdateSubtypeGuidance
@@ -33,7 +33,7 @@ Public Sub UpdateSubtypeGuidance()
     Set ui = ThisWorkbook.Worksheets(UI_SHEET)
 
     If LCase$(Trim$(CStr(ui.Range("C12").Value))) = "lung" Then
-        ui.Range("D13").Value = "Required for lung: SCLC, NSCLC or unknown."
+        ui.Range("D13").Value = "For lung only: descriptive and unused in the category."
     Else
         ui.Range("D13").Value = "Must be not applicable unless cancer type is lung."
     End If
@@ -67,11 +67,13 @@ Public Sub ConfigureLungSubtypeField()
     End With
 
     If cancerType = "lung" Then
+        ui.Rows(13).Hidden = False
         If subtype <> "sclc" And subtype <> "nsclc" And subtype <> "unknown" Then
             ui.Range("C13").Value = "unknown"
         End If
     Else
         ui.Range("C13").Value = "not applicable"
+        ui.Rows(13).Hidden = True
     End If
 
     UpdateSubtypeGuidance
@@ -98,10 +100,16 @@ Public Sub CalculateRisk()
         Exit Sub
     End If
 
-    If Not IsNumeric(ui.Range("C15").Value) Or ui.Range("C15").Value < 140 Or ui.Range("C15").Value > 200 Then
-        MsgBox "Enter a height from 140 to 200 cm.", vbExclamation, "Invalid height"
-        ui.Range("C15").Select
-        Exit Sub
+    If Len(Trim$(CStr(ui.Range("C15").Value))) > 0 Then
+        If Not IsNumeric(ui.Range("C15").Value) Then
+            MsgBox "Enter a height from 140 to 200 cm or leave it blank. A blank height withholds the illustrative simulation categories.", vbExclamation, "Invalid height"
+            ui.Range("C15").Select
+            Exit Sub
+        ElseIf ui.Range("C15").Value < 140 Or ui.Range("C15").Value > 200 Then
+            MsgBox "Enter a height from 140 to 200 cm or leave it blank. A blank height withholds the illustrative simulation categories.", vbExclamation, "Invalid height"
+            ui.Range("C15").Select
+            Exit Sub
+        End If
     End If
 
     Application.CalculateFull
@@ -111,8 +119,9 @@ Public Sub CalculateRisk()
         Exit Sub
     End If
 
-    MsgBox "Synthetic outputs recalculated." & vbCrLf & vbCrLf & _
-        "These results are simulation assumptions and must not be used for clinical decisions.", _
+    MsgBox "Illustrative simulation categories recalculated." & vbCrLf & vbCrLf & _
+        "Target outcome is not defined pending clinical review." & vbCrLf & _
+        "These research-only outputs must not be used for clinical decisions.", _
         vbInformation, "Research-only result"
 End Sub
 

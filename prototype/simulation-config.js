@@ -34,6 +34,7 @@ window.SIMULATION_CONFIG = Object.freeze({
       "4": 0.0285,
       "unknown": 0.05
     },
+    "follow_up_appetite_unknown_probability": 0.1,
     "future_horizon_months": [
       3,
       6
@@ -98,14 +99,20 @@ window.SIMULATION_CONFIG = Object.freeze({
   "definitions": {
     "days_per_month": 30.4375,
     "fearon_bmi_exclusive": 20.0,
-    "fearon_sarcopenia_branch_enabled": true,
+    "fearon_sarcopenia_branch_enabled": false,
     "fearon_weight_loss_conditional_exclusive": 2.0,
     "fearon_weight_loss_primary_exclusive": 5.0,
     "horizon_boundary": "inclusive calendar date",
+    "precachexia_appetite_representation": "binary_poc_simplification",
+    "precachexia_lower_bound_basis": "editable_simulation_parameter_without_consensus_basis",
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
     "precachexia_rule_status": "provisional_option_b_pending_clinical_review",
+    "precachexia_upper_bound_basis": "consensus_aligned",
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
-    "risk_missing_predictor_policy": "withhold",
+    "sarcopenia_status": "future_use_pending_clinical_definition",
+    "simulation_category_missing_predictor_policy": "withhold",
+    "six_month_outcome_status": "prospective_research_endpoint_not_fearon_classification_or_diagnosis",
+    "three_month_outcome_status": "research_only_threshold_based_outcome_not_fearon_classification",
     "trajectory_epsilon_percent": 0.5
   },
   "edge_cases": {
@@ -117,19 +124,27 @@ window.SIMULATION_CONFIG = Object.freeze({
     "weight_loss_lower_boundary_percent": 2.0,
     "weight_loss_upper_boundary_percent": 5.0
   },
-  "metadata": {
-    "clinical_review_status": "pending",
-    "config_version": "1.0.0",
-    "purpose": "Synthetic research-only proof of concept",
-    "source_sheet": "Prototype 1_agreed predictors",
-    "source_workbook": "Data Extraction_literature review_20260728.xlsx",
-    "warning": "Every distribution, coefficient, probability, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect."
-  },
-  "risk_outputs": {
+  "illustrative_category_model": {
     "age_threshold_exclusive": 55,
-    "band_thresholds": {
-      "high_lower_inclusive": 0.6,
-      "low_upper_exclusive": 0.3
+    "internal_score_thresholds": {
+      "high_lower_inclusive": 0.4054651081081642,
+      "low_upper_exclusive": -0.8472978603872036
+    },
+    "output_contract": {
+      "basis": "baseline_predictors_only",
+      "categories": [
+        "low",
+        "moderate",
+        "high"
+      ],
+      "output_type": "illustrative_simulation_category",
+      "status": "research_only_not_clinically_validated",
+      "target_outcome": "not_defined_pending_clinical_review",
+      "unused_fields": [
+        "sex",
+        "cancer_subtype",
+        "sarcopenia"
+      ]
     },
     "six_month": {
       "age_over_55": 0.3,
@@ -185,6 +200,20 @@ window.SIMULATION_CONFIG = Object.freeze({
         "unknown": 0.0
       }
     }
+  },
+  "metadata": {
+    "clinical_review_status": "pending",
+    "config_version": "1.1.0",
+    "purpose": "Synthetic research-only proof of concept",
+    "schema_version": "1.1.0",
+    "source_sheet": "Prototype 1_agreed predictors",
+    "source_workbook": "Data Extraction_literature review_20260728.xlsx",
+    "warning": "Every distribution, coefficient, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect."
+  },
+  "population_scope": {
+    "agreed_exclusions": [],
+    "eligibility_status": "not_defined_pending_clinical_review",
+    "poc_context": "adult_solid_tumour_synthetic_stratifiers"
   },
   "simulation_relationships": {
     "appetite_yes_latent_multiplier": 0.8,

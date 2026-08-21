@@ -1,11 +1,17 @@
 {
   "metadata": {
-    "config_version": "1.0.0",
+    "config_version": "1.1.0",
+    "schema_version": "1.1.0",
     "purpose": "Synthetic research-only proof of concept",
-    "warning": "Every distribution, coefficient, probability, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect.",
+    "warning": "Every distribution, coefficient, multiplier and threshold in this file is a simulation assumption, not a validated clinical effect.",
     "source_workbook": "Data Extraction_literature review_20260728.xlsx",
     "source_sheet": "Prototype 1_agreed predictors",
     "clinical_review_status": "pending"
+  },
+  "population_scope": {
+    "eligibility_status": "not_defined_pending_clinical_review",
+    "poc_context": "adult_solid_tumour_synthetic_stratifiers",
+    "agreed_exclusions": []
   },
   "cohort": {
     "prediction_date_start": "2026-01-15",
@@ -38,6 +44,7 @@
     "sarcopenia_probabilities": {"yes": 0.15, "no": 0.55, "unknown": 0.3},
     "insufficient_history_probability": 0.12,
     "appetite_unknown_probability": 0.1,
+    "follow_up_appetite_unknown_probability": 0.1,
     "history_month_offsets": [-6, -3],
     "future_horizon_months": [3, 6],
     "deliberate_edge_case_count": 8
@@ -80,7 +87,7 @@
     "latent_score_minimum": -2.0,
     "latent_score_maximum": 3.0
   },
-  "risk_outputs": {
+  "illustrative_category_model": {
     "age_threshold_exclusive": 55,
     "three_month": {
       "intercept": -2.0,
@@ -102,7 +109,18 @@
       "low_bmi_under_20": 0.5,
       "cancer_type_multiplier": 1.0
     },
-    "band_thresholds": {"low_upper_exclusive": 0.3, "high_lower_inclusive": 0.6}
+    "internal_score_thresholds": {
+      "low_upper_exclusive": -0.8472978603872036,
+      "high_lower_inclusive": 0.4054651081081642
+    },
+    "output_contract": {
+      "categories": ["low", "moderate", "high"],
+      "basis": "baseline_predictors_only",
+      "output_type": "illustrative_simulation_category",
+      "target_outcome": "not_defined_pending_clinical_review",
+      "status": "research_only_not_clinically_validated",
+      "unused_fields": ["sex", "cancer_subtype", "sarcopenia"]
+    }
   },
   "definitions": {
     "days_per_month": 30.4375,
@@ -113,8 +131,14 @@
     "precachexia_lower_weight_loss_percent_exclusive": 1.0,
     "precachexia_upper_weight_loss_percent_inclusive": 5.0,
     "precachexia_rule_status": "provisional_option_b_pending_clinical_review",
-    "fearon_sarcopenia_branch_enabled": true,
-    "risk_missing_predictor_policy": "withhold",
+    "precachexia_lower_bound_basis": "editable_simulation_parameter_without_consensus_basis",
+    "precachexia_upper_bound_basis": "consensus_aligned",
+    "precachexia_appetite_representation": "binary_poc_simplification",
+    "fearon_sarcopenia_branch_enabled": false,
+    "sarcopenia_status": "future_use_pending_clinical_definition",
+    "simulation_category_missing_predictor_policy": "withhold",
+    "three_month_outcome_status": "research_only_threshold_based_outcome_not_fearon_classification",
+    "six_month_outcome_status": "prospective_research_endpoint_not_fearon_classification_or_diagnosis",
     "horizon_boundary": "inclusive calendar date"
   }
 }

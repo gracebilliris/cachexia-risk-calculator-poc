@@ -2,65 +2,75 @@
   "warning": "Synthetic simulation output; not clinically validated or for medical use.",
   "count": 120,
   "seed": 20260820,
-  "config_version": "1.0.0",
+  "config_version": "1.1.0",
   "sex": {
-    "male": 56,
-    "female": 60,
-    "unknown": 4
+    "male": 61,
+    "female": 57,
+    "unknown": 2
   },
   "cancer_type": {
-    "gastric": 10,
-    "oesophageal": 10,
+    "gastric": 13,
     "head and neck": 12,
+    "breast": 11,
     "prostate": 7,
-    "pancreatic": 21,
-    "lung": 23,
-    "hepatobiliary": 8,
-    "breast": 10,
-    "colorectal": 14,
-    "other solid tumour": 5
+    "oesophageal": 9,
+    "lung": 21,
+    "hepatobiliary": 10,
+    "colorectal": 12,
+    "pancreatic": 14,
+    "other solid tumour": 11
   },
   "stage": {
-    "IV": 43,
-    "III": 39,
-    "II": 21,
-    "I": 13,
-    "unknown": 4
+    "IV": 40,
+    "III": 35,
+    "I": 16,
+    "II": 28,
+    "unknown": 1
   },
   "ecog": {
     "unknown": 8,
-    "1": 47,
-    "2": 37,
+    "2": 39,
+    "1": 41,
     "3": 11,
-    "0": 13,
-    "4": 4
+    "4": 5,
+    "0": 16
   },
   "appetite": {
-    "unknown": 11,
-    "no": 57,
-    "yes": 52
+    "unknown": 10,
+    "no": 55,
+    "yes": 55
   },
-  "risk_3m_band": {
-    "unknown": 12,
-    "medium": 48,
-    "low": 19,
-    "high": 41
+  "baseline_cachexia_criteria_status": {
+    "unknown": 62,
+    "no": 51,
+    "yes": 7
   },
-  "risk_6m_band": {
-    "unknown": 12,
-    "medium": 37,
-    "high": 69,
-    "low": 2
+  "baseline_provisional_early_risk_candidate_status": {
+    "unknown": 63,
+    "no": 49,
+    "yes": 8
   },
-  "outcome_3m_cachexia": {
-    "no": 81,
-    "unknown": 17,
-    "yes": 22
+  "illustrative_simulation_category_3m": {
+    "withheld": 30,
+    "low": 13,
+    "moderate": 42,
+    "high": 35
   },
-  "outcome_6m_cachexia": {
-    "no": 41,
-    "unknown": 14,
-    "yes": 65
+  "illustrative_simulation_category_6m": {
+    "withheld": 30,
+    "moderate": 37,
+    "high": 50,
+    "low": 3
+  },
+  "outcome_3m_threshold_based_cachexia_status": {
+    "unknown": 42,
+    "no": 66,
+    "yes": 12
+  },
+  "outcome_6m_threshold_based_cachexia_status": {
+    "unknown": 44,
+    "no": 29,
+    "yes": 47
   },
   "edge_cases": {
     "unknown_fields": 1,

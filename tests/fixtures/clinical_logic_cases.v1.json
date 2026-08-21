@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "purpose": "Software-conformance cases derived from the supplied clinical notes and recorded project decisions.",
     "warning": "Passing these cases does not establish clinical validity, accuracy, calibration, or fitness for patient care.",
     "clinical_approval": "pending clinical review"
@@ -27,8 +27,8 @@
       "height_cm": 170.0,
       "sarcopenia": "no",
       "appetite": "yes",
-      "expected_cachexia": "no",
-      "expected_precachexia": "yes"
+      "expected_cachexia": "unknown",
+      "expected_precachexia": "unknown"
     },
     {
       "id": "exact-five-sarcopenia-unknown",
@@ -44,15 +44,15 @@
     },
     {
       "id": "exact-five-documented-sarcopenia",
-      "source": "Fearon sarcopenia branch supplied in the clinical handoff",
-      "status": "subsequent_project_decision_pending_review",
+      "source": "Sarcopenia branch disabled pending a clinical definition",
+      "status": "project_operationalisation_pending_review",
       "baseline_weight_kg": 80.0,
       "outcome_weight_kg": 76.0,
       "height_cm": 170.0,
       "sarcopenia": "yes",
       "appetite": "yes",
-      "expected_cachexia": "yes",
-      "expected_precachexia": "no"
+      "expected_cachexia": "unknown",
+      "expected_precachexia": "unknown"
     },
     {
       "id": "conditional-low-bmi",
@@ -99,8 +99,8 @@
       "height_cm": 180.0,
       "sarcopenia": "no",
       "appetite": "no",
-      "expected_cachexia": "no",
-      "expected_precachexia": "no"
+      "expected_cachexia": "unknown",
+      "expected_precachexia": "unknown"
     },
     {
       "id": "limited-loss-appetite-unknown",
@@ -111,12 +111,12 @@
       "height_cm": 180.0,
       "sarcopenia": "no",
       "appetite": "unknown",
-      "expected_cachexia": "no",
+      "expected_cachexia": "unknown",
       "expected_precachexia": "unknown"
     }
   ],
-  "risk_case": {
-    "id": "supplied-illustrative-risk-terms",
+  "category_case": {
+    "id": "supplied-illustrative-category-terms",
     "source": "Illustrative multipliers and centralized simulation coefficients",
     "status": "simulation_assumption_not_clinically_validated",
     "patient": {
@@ -132,14 +132,10 @@
     },
     "expected": {
       "three_month": {
-        "score": 0.8,
-        "probability": 0.6899744811276125,
-        "band": "high"
+        "category": "high"
       },
       "six_month": {
-        "score": 1.6,
-        "probability": 0.8320183851339245,
-        "band": "high"
+        "category": "high"
       }
     }
   },

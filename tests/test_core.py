@@ -130,6 +130,42 @@ class CoreCalculationTests(unittest.TestCase):
         with self.assertRaisesRegex(PatientValidationError, "yes, no, or unknown"):
             validate_patient(patient(reduced_appetite=""))
 
+    def test_follow_up_appetite_requires_exact_synthetic_source(self):
+        observation = {
+            "date": "2026-04-30",
+            "reduced_appetite": "yes",
+        }
+        with self.assertRaisesRegex(PatientValidationError, "requires.*source"):
+            validate_patient(
+                patient(follow_up_appetite_observations=[observation])
+            )
+        observation["source"] = "baseline_carry_forward"
+        with self.assertRaisesRegex(
+            PatientValidationError,
+            "synthetic_follow_up_observation",
+        ):
+            validate_patient(
+                patient(follow_up_appetite_observations=[observation])
+            )
+
+    def test_cancer_subtype_is_required_and_must_match_cancer_type(self):
+        missing = patient()
+        del missing["cancer_subtype"]
+        with self.assertRaisesRegex(PatientValidationError, "cancer_subtype"):
+            validate_patient(missing)
+        with self.assertRaisesRegex(PatientValidationError, "Lung cancer_subtype"):
+            validate_patient(patient(cancer_subtype="not applicable"))
+        with self.assertRaisesRegex(
+            PatientValidationError,
+            "Non-lung cancer_subtype",
+        ):
+            validate_patient(
+                patient(cancer_type="colorectal", cancer_subtype="unknown")
+            )
+        validate_patient(
+            patient(cancer_type="colorectal", cancer_subtype="not applicable")
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

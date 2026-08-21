@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 import sys
-import tempfile
 from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
@@ -32,18 +31,19 @@ CONFIG_PATH = ROOT / "config" / "simulation_assumptions.v1.json"
 VBA_SOURCE = ROOT / "vba" / "CachexiaUI.bas"
 VBA_SHEET_SOURCE = ROOT / "vba" / "MockUISheet.cls"
 VBA_WORKBOOK_SOURCE = ROOT / "vba" / "ThisWorkbook.cls"
+BUILD_DIR = ROOT / ".workbook-build"
 
 INPUT_GUIDANCE = {
     9: "Required date. Records after this date cannot be predictors.",
     10: "Required whole number: 18 to 95 years.",
-    11: "Valid: female, male or unknown.",
-    12: "Required confirmed cancer type from the dropdown.",
-    13: "Required for lung: SCLC, NSCLC or unknown.",
+    11: "Descriptive only; unused in the current simulation category.",
+    12: "Synthetic stratifier pending clinical review.",
+    13: "For lung only: descriptive and unused in the category.",
     14: "Valid: I, II, III, IV or unknown.",
-    15: "Required: 140 to 200 cm.",
+    15: "Optional; required for BMI and categories. Valid: 140 to 200 cm.",
     16: "Valid: 0, 1, 2, 3, 4 or unknown.",
     17: "Valid: yes, no or unknown/not documented.",
-    18: "yes=documented; no=assessed and absent; unknown=not assessed/documented.",
+    18: "Future-use, pending definition, never inferred, and unused in v1.",
 }
 
 NAVY = "#17324D"
@@ -67,8 +67,11 @@ def create_vba_project(destination: Path) -> None:
     workbook_source = VBA_WORKBOOK_SOURCE.read_text(encoding="utf-8").replace(
         "\n", "\r\n"
     )
-    with tempfile.TemporaryDirectory() as temporary_directory:
-        template = Path(temporary_directory) / "macro_template.xlsm"
+    BUILD_DIR.mkdir(exist_ok=True)
+    template = BUILD_DIR / "macro_template.xlsm"
+    if template.exists():
+        template.unlink()
+    try:
         with ExcelFile.create_new(template) as workbook:
             project = workbook.vba_project()
             project.rename_module("Module1", "CachexiaUI")
@@ -78,6 +81,9 @@ def create_vba_project(destination: Path) -> None:
             workbook.save()
         with ZipFile(template) as archive:
             destination.write_bytes(archive.read("xl/vbaProject.bin"))
+    finally:
+        if template.exists():
+            template.unlink()
 
 
 def add_list_validation(sheet, cell: str, values: list[str]) -> None:
@@ -99,7 +105,7 @@ def write_safety_notice(sheet, formats: dict) -> None:
     sheet.merge_range(
         "A3:L5",
         "NOT FOR CLINICAL USE. All patients and outputs are synthetic. "
-        "Risk relationships are simulation assumptions, not clinically "
+        "Category relationships are simulation assumptions, not clinically "
         "validated effects. Do not use for diagnosis, prognosis, treatment, "
         "patient care, or medical decisions.",
         formats["warning"],
@@ -123,7 +129,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     sheet.set_column("K:L", 17)
     sheet.set_column("M:N", None, None, {"hidden": True})
 
-    sheet.merge_range("A1:L1", "Synthetic cachexia risk mock UI", formats["title"])
+    sheet.merge_range("A1:L1", "Synthetic cachexia simulation mock UI", formats["title"])
     sheet.merge_range(
         "A2:L2",
         "Enter a synthetic profile, use a sample button, and review separate "
@@ -131,19 +137,26 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         formats["subtitle"],
     )
     write_safety_notice(sheet, formats)
+    sheet.merge_range(
+        "A6:L6",
+        "Eligibility and inclusion criteria are not yet defined. Cancer-type "
+        "labels are synthetic stratifiers for an adult solid-tumour POC "
+        "pending clinical review.",
+        formats["notice"],
+    )
 
     sheet.merge_range("A7:C7", "1  Synthetic patient inputs", formats["section"])
     input_rows = [
         (9, "Prediction date", datetime(2026, 1, 31), "date"),
         (10, "Age (years)", 65, "integer"),
-        (11, "Sex", "female", "list"),
-        (12, "Cancer type", "lung", "list"),
-        (13, "Cancer subtype", "NSCLC", "text"),
+        (11, "Sex (descriptive)", "female", "list"),
+        (12, "Cancer type (synthetic stratifier)", "lung", "list"),
+        (13, "Lung subtype (descriptive)", "NSCLC", "text"),
         (14, "Cancer stage", "III", "list"),
-        (15, "Height (cm)", 170, "decimal"),
+        (15, "Height (cm; optional)", 170, "decimal"),
         (16, "Baseline ECOG", "2", "list"),
         (17, "Reduced appetite", "no", "list"),
-        (18, "Documented sarcopenia evidence", "unknown", "list"),
+        (18, "Sarcopenia (future-use)", "unknown", "list"),
     ]
     for row, label, value, value_type in input_rows:
         sheet.write(row - 1, 1, label, formats["label"])
@@ -212,6 +225,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
             "criteria": "between",
             "minimum": 140,
             "maximum": 200,
+            "ignore_blank": True,
             "error_title": "Invalid height",
             "error_message": "Enter a height from 140 to 200 cm.",
             "error_type": "stop",
@@ -277,7 +291,7 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         },
     )
 
-    sheet.merge_range("G7:L7", "3  Automatic synthetic outputs", formats["section"])
+    sheet.merge_range("G7:L7", "3  Automatic illustrative outputs", formats["section"])
     output_rows = [
         (9, "Baseline/current weight", "=Engine!B9", formats["result_kg"]),
         (10, "BMI", "=Engine!B12", formats["result_number"]),
@@ -285,25 +299,30 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
         (12, "Interval", "=Engine!B14", formats["result_days"]),
         (13, "Weight-loss rate", "=Engine!B15", formats["result_rate"]),
         (14, "Trajectory", "=Engine!B17", formats["result_text"]),
-        (16, "Implemented cachexia criteria met?", "=Engine!B19", formats["result_text"]),
-        (17, "Provisional early-risk pattern met?", "=Engine!B20", formats["result_text"]),
+        (16, "Current cachexia criteria status", "=Engine!B19", formats["result_text"]),
+        (17, "Current provisional pre-cachexia candidate", "=Engine!B20", formats["result_text"]),
     ]
     for row, label, formula, result_format in output_rows:
         sheet.write(row - 1, 6, label, formats["label"])
         sheet.merge_range(row - 1, 7, row - 1, 8, "", result_format)
         sheet.write_formula(row - 1, 7, formula, result_format)
 
-    sheet.merge_range("G20:I20", "3-month illustrative output", formats["card_title"])
-    sheet.merge_range("K20:L20", "6-month illustrative output", formats["card_title"])
-    sheet.merge_range("G21:I22", "", formats["risk_card"])
-    sheet.write_formula("G21", "=Engine!B25", formats["risk_card"])
-    sheet.merge_range("K21:L22", "", formats["risk_card"])
-    sheet.write_formula("K21", "=Engine!D25", formats["risk_card"])
-    sheet.write("G23", "Risk band", formats["label"])
+    sheet.merge_range("G20:I20", "3-month illustrative simulation category", formats["card_title"])
+    sheet.merge_range("K20:L20", "6-month illustrative simulation category", formats["card_title"])
+    sheet.merge_range("G21:I22", "", formats["category_card"])
+    sheet.write_formula("G21", "=Engine!B25", formats["category_card"])
+    sheet.merge_range("K21:L22", "", formats["category_card"])
+    sheet.write_formula("K21", "=Engine!D25", formats["category_card"])
+    sheet.write("G23", "Basis / status", formats["label"])
     sheet.merge_range("H23:I23", "", formats["result_text"])
     sheet.write_formula("H23", "=Engine!B26", formats["result_text"])
-    sheet.write("K23", "Risk band", formats["label"])
+    sheet.write("K23", "Basis / status", formats["label"])
     sheet.write_formula("L23", "=Engine!D26", formats["result_text"])
+    sheet.merge_range(
+        "G24:L24",
+        "Target outcome is not defined pending clinical review.",
+        formats["notice"],
+    )
     sheet.merge_range("G25:L27", "", formats["explanation"])
     sheet.write_formula(
         "G25",
@@ -314,21 +333,22 @@ def build_mock_ui(workbook, config: dict, formats: dict) -> None:
     sheet.merge_range(
         "G29:L32",
         "Rules shown in plain language\n"
-        "Implemented cachexia criteria: >5% weight loss, >2% weight loss "
-        "with BMI <20 kg/m², or >2% loss with documented sarcopenia. "
-        "For sarcopenia, no=assessed and absent; unknown=not documented. "
-        "It is never inferred and has no simulated risk coefficient.\n"
-        "Provisional early-risk pattern: cachexia criteria not met, >1% and "
-        "<=5% weight loss, and reduced appetite=yes. This project proposal "
-        "requires clinical review.",
+        "Baseline-derived cachexia criteria status: >5% retrospective weight "
+        "loss, or >2% loss with BMI <20 kg/m². For loss >2% and <=5% with "
+        "BMI >=20, status is unknown because the sarcopenia branch is disabled "
+        "pending a clinical definition.\n"
+        "Provisional pre-cachexia candidate: cachexia criteria not met, >1% "
+        "and <=5% loss, and baseline reduced appetite=yes. The >1% lower "
+        "bound has no consensus basis and is editable; <=5% is consensus-aligned. "
+        "Binary appetite is a POC simplification.",
         formats["definition"],
     )
 
     button_options = [
         ("B36", "Calculate / validate", "CalculateRisk", 170),
         ("D36", "Reset form", "ResetForm", 120),
-        ("B39", "Load low-risk example", "LoadLowRiskExample", 170),
-        ("D39", "Load high-risk example", "LoadHighRiskExample", 170),
+        ("B39", "Load low-category example", "LoadLowRiskExample", 170),
+        ("D39", "Load high-category example", "LoadHighRiskExample", 170),
         ("G36", "Open clinical review", "OpenClinicalReview", 170),
     ]
     for cell, caption, macro, width in button_options:
@@ -363,8 +383,8 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         15: "Weight-loss rate (kg/month)",
         16: "Rate (percentage points/month)",
         17: "Trajectory",
-        19: "Implemented cachexia criteria met?",
-        20: "Provisional early-risk pattern met?",
+        19: "Current cachexia criteria status",
+        20: "Current provisional pre-cachexia candidate",
     }
     for row, label in labels.items():
         sheet.write(row - 1, 0, label)
@@ -388,7 +408,7 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         cachexia_formula = (
             '=IF(B13="","unknown",IF(B13>Assumptions!$B$10,"yes",'
             'IF(B13<=Assumptions!$B$11,"no",IF(B12="","unknown",'
-            'IF(B12<Assumptions!$B$12,"yes","no")))))'
+            'IF(B12<Assumptions!$B$12,"yes","unknown")))))'
         )
     formulas = {
         "B8": f'=IF(MAX({baseline_candidates})=0,"",MAX({baseline_candidates}))',
@@ -422,7 +442,7 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
     for cell, formula in formulas.items():
         sheet.write_formula(cell, formula)
 
-    sheet.write("A23", "Simulated horizon")
+    sheet.write("A23", "Illustrative simulation horizon")
     sheet.write("B23", "3 months")
     sheet.write("D23", "6 months")
     common3 = (
@@ -443,19 +463,41 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         "+IF(AND(B12<>\"\",B12<Assumptions!$B$12),Assumptions!$B$28,0)"
         "+(VLOOKUP('Mock UI'!C12,Assumptions!$E$8:$F$17,2,FALSE)-1)*Assumptions!$B$29"
     )
-    sheet.write_formula("B24", f'=IF(OR(B12="",B13=""),"",{common3})')
-    sheet.write_formula("D24", f'=IF(OR(B12="",B13=""),"",{common6})')
-    sheet.write_formula("B25", '=IF(B24="","",1/(1+EXP(-B24)))')
-    sheet.write_formula("D25", '=IF(D24="","",1/(1+EXP(-D24)))')
+    sheet.write("A24", "Output type")
+    sheet.write("A25", "Category")
+    sheet.write("A26", "Basis / status")
+    sheet.write("A27", "Explanation")
+    sheet.write("B24", "illustrative simulation category")
+    sheet.write("D24", "illustrative simulation category")
+    withheld_condition = (
+        "OR('Mock UI'!C14=\"unknown\",'Mock UI'!C16=\"unknown\","
+        "'Mock UI'!C17=\"unknown\",B12=\"\",B13=\"\")"
+    )
+    sheet.write_formula(
+        "B25",
+        f'=IF({withheld_condition},"withheld",IF({common3}<Assumptions!$B$16,'
+        f'"low",IF({common3}>=Assumptions!$B$17,"high","moderate")))',
+    )
+    sheet.write_formula(
+        "D25",
+        f'=IF({withheld_condition},"withheld",IF({common6}<Assumptions!$B$16,'
+        f'"low",IF({common6}>=Assumptions!$B$17,"high","moderate")))',
+    )
     sheet.write_formula(
         "B26",
-        '=IF(B25="","unknown",IF(B25<Assumptions!$B$16,"low",'
-        'IF(B25>=Assumptions!$B$17,"high","medium")))',
+        '=IF(B25="withheld","Illustrative simulation category; withheld missing '
+        'required baseline predictors. Target outcome is not defined pending '
+        'clinical review.","Illustrative simulation category; baseline '
+        'predictors only; research-only. Target outcome is not defined pending '
+        'clinical review.")',
     )
     sheet.write_formula(
         "D26",
-        '=IF(D25="","unknown",IF(D25<Assumptions!$B$16,"low",'
-        'IF(D25>=Assumptions!$B$17,"high","medium")))',
+        '=IF(D25="withheld","Illustrative simulation category; withheld missing '
+        'required baseline predictors. Target outcome is not defined pending '
+        'clinical review.","Illustrative simulation category; baseline '
+        'predictors only; research-only. Target outcome is not defined pending '
+        'clinical review.")',
     )
     factor_formula = (
         'TRIM(IF(\'Mock UI\'!C10>Assumptions!$B$15,"age >55; ","")&'
@@ -465,8 +507,13 @@ def build_engine(workbook, config: dict, formats: dict) -> None:
         '"; appetite="&\'Mock UI\'!C17&"; "&\'Mock UI\'!C12)'
     )
     withheld = (
-        '=IF(OR(B12="",B13=""),'
-        '"Estimate withheld: BMI and baseline weight change are required.",'
+        f'=IF({withheld_condition},'
+        '"Illustrative simulation category withheld: "&'
+        'IF(\'Mock UI\'!C14="unknown","cancer stage is unknown; ","")&'
+        'IF(\'Mock UI\'!C16="unknown","baseline ECOG is unknown; ","")&'
+        'IF(\'Mock UI\'!C17="unknown","baseline reduced appetite is unknown; ","")&'
+        'IF(B12="","BMI is unavailable because height or baseline weight is unavailable; ","")&'
+        'IF(B13="","baseline weight change is unavailable because eligible prior history is insufficient; ",""),'
         f"{factor_formula})"
     )
     sheet.write_formula("B27", withheld)
@@ -485,14 +532,14 @@ def build_assumptions(workbook, config: dict) -> None:
         ("FearonBMI", definitions["fearon_bmi_exclusive"]),
         ("PreLower", definitions["precachexia_lower_weight_loss_percent_exclusive"]),
         ("PreUpper", definitions["precachexia_upper_weight_loss_percent_inclusive"]),
-        ("AgeThreshold", config["risk_outputs"]["age_threshold_exclusive"]),
-        ("BandLow", config["risk_outputs"]["band_thresholds"]["low_upper_exclusive"]),
-        ("BandHigh", config["risk_outputs"]["band_thresholds"]["high_lower_inclusive"]),
+        ("AgeThreshold", config["illustrative_category_model"]["age_threshold_exclusive"]),
+        ("CategoryLowUpper", config["illustrative_category_model"]["internal_score_thresholds"]["low_upper_exclusive"]),
+        ("CategoryHighLower", config["illustrative_category_model"]["internal_score_thresholds"]["high_lower_inclusive"]),
         ("WeightMin", config["cohort"]["historical_weight_kg"]["minimum"]),
         ("WeightMax", config["cohort"]["historical_weight_kg"]["maximum"]),
     ]
-    for horizon, prefix in (("three_month", "Risk3"), ("six_month", "Risk6")):
-        values = config["risk_outputs"][horizon]
+    for horizon, prefix in (("three_month", "Category3"), ("six_month", "Category6")):
+        values = config["illustrative_category_model"][horizon]
         scalar_rows.extend(
             [
                 (f"{prefix}Intercept", values["intercept"]),
@@ -510,21 +557,21 @@ def build_assumptions(workbook, config: dict) -> None:
     for row, (key, value) in enumerate(cancer.items(), 8):
         sheet.write(row - 1, 4, key)
         sheet.write(row - 1, 5, value)
-    stages = list(config["risk_outputs"]["three_month"]["stage"])
+    stages = list(config["illustrative_category_model"]["three_month"]["stage"])
     for row, key in enumerate(stages, 8):
         sheet.write(row - 1, 7, key)
-        sheet.write(row - 1, 8, config["risk_outputs"]["three_month"]["stage"][key])
-        sheet.write(row - 1, 9, config["risk_outputs"]["six_month"]["stage"][key])
-    ecogs = list(config["risk_outputs"]["three_month"]["ecog"])
+        sheet.write(row - 1, 8, config["illustrative_category_model"]["three_month"]["stage"][key])
+        sheet.write(row - 1, 9, config["illustrative_category_model"]["six_month"]["stage"][key])
+    ecogs = list(config["illustrative_category_model"]["three_month"]["ecog"])
     for row, key in enumerate(ecogs, 8):
         sheet.write(row - 1, 11, key)
-        sheet.write(row - 1, 12, config["risk_outputs"]["three_month"]["ecog"][key])
-        sheet.write(row - 1, 13, config["risk_outputs"]["six_month"]["ecog"][key])
-    appetites = list(config["risk_outputs"]["three_month"]["appetite"])
+        sheet.write(row - 1, 12, config["illustrative_category_model"]["three_month"]["ecog"][key])
+        sheet.write(row - 1, 13, config["illustrative_category_model"]["six_month"]["ecog"][key])
+    appetites = list(config["illustrative_category_model"]["three_month"]["appetite"])
     for row, key in enumerate(appetites, 8):
         sheet.write(row - 1, 15, key)
-        sheet.write(row - 1, 16, config["risk_outputs"]["three_month"]["appetite"][key])
-        sheet.write(row - 1, 17, config["risk_outputs"]["six_month"]["appetite"][key])
+        sheet.write(row - 1, 16, config["illustrative_category_model"]["three_month"]["appetite"][key])
+        sheet.write(row - 1, 17, config["illustrative_category_model"]["six_month"]["appetite"][key])
     for row, subtype in enumerate(("SCLC", "NSCLC", "unknown"), 8):
         sheet.write(row - 1, 19, subtype)
     sheet.write("U8", "not applicable")
@@ -561,6 +608,9 @@ def build_clinical_review(workbook, formats: dict) -> None:
         ("CLIN-004", "Confirm Fearon implementation and unknown behavior"),
         ("CLIN-005", "Confirm outcome selection and inclusive boundaries"),
         ("CLIN-006", "Confirm sarcopenia representation"),
+        ("CLIN-007", "Define eligibility and inclusion criteria"),
+        ("CLIN-008", "Confirm dated follow-up appetite evidence and binary simplification"),
+        ("CLIN-009", "Define the target outcome or estimand for illustrative categories"),
         ("UX-001", "Identify clinically misleading wording or presentation"),
     ]
     for row, (identifier, question) in enumerate(questions, 7):
@@ -601,6 +651,9 @@ def make_formats(workbook) -> dict:
         "warning": workbook.add_format(
             {"bold": True, "font_color": "#7A2F12", "bg_color": PALE_ORANGE, "border": border, "text_wrap": True, "valign": "vcenter"}
         ),
+        "notice": workbook.add_format(
+            {"font_color": DARK_GREY, "bg_color": WHITE, "border": border, "text_wrap": True, "valign": "vcenter"}
+        ),
         "section": workbook.add_format(
             {"bold": True, "font_size": 13, "font_color": WHITE, "bg_color": TEAL, "align": "left", "valign": "vcenter"}
         ),
@@ -616,7 +669,7 @@ def make_formats(workbook) -> dict:
         "result_rate": workbook.add_format({"bg_color": LIGHT_TEAL, "border": border, "bold": True, "num_format": '0.00 "kg/month"', "align": "center"}),
         "result_text": workbook.add_format({"bg_color": LIGHT_TEAL, "border": border, "bold": True, "align": "center", "valign": "vcenter"}),
         "card_title": workbook.add_format({"bold": True, "font_color": WHITE, "bg_color": NAVY, "align": "center"}),
-        "risk_card": workbook.add_format({"bold": True, "font_size": 20, "font_color": TEAL, "bg_color": LIGHT_TEAL, "border": border, "num_format": "0.0%", "align": "center", "valign": "vcenter"}),
+        "category_card": workbook.add_format({"bold": True, "font_size": 20, "font_color": TEAL, "bg_color": LIGHT_TEAL, "border": border, "align": "center", "valign": "vcenter"}),
         "explanation": workbook.add_format({"bg_color": GREY, "border": border, "text_wrap": True, "valign": "top"}),
         "definition": workbook.add_format({"bg_color": PALE_ORANGE, "border": border, "text_wrap": True, "valign": "top"}),
         "macro_note": workbook.add_format({"italic": True, "font_color": DARK_GREY, "bg_color": GREY, "border": border, "text_wrap": True, "valign": "vcenter"}),
@@ -637,8 +690,11 @@ def make_formats(workbook) -> dict:
 def main() -> None:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory() as temporary_directory:
-        vba_project = Path(temporary_directory) / "vbaProject.bin"
+    BUILD_DIR.mkdir(exist_ok=True)
+    vba_project = BUILD_DIR / "vbaProject.bin"
+    if vba_project.exists():
+        vba_project.unlink()
+    try:
         create_vba_project(vba_project)
         workbook = xlsxwriter.Workbook(OUTPUT)
         workbook.add_vba_project(vba_project)
@@ -647,7 +703,7 @@ def main() -> None:
         workbook.define_name("NonLungSubtypeValues", "=Assumptions!$U$8:$U$8")
         workbook.set_properties(
             {
-                "title": "Synthetic cachexia risk mock UI",
+                "title": "Synthetic cachexia simulation mock UI",
                 "subject": "Research-only synthetic proof of concept",
                 "comments": "Not clinically validated. Do not use for medical decisions.",
             }
@@ -659,6 +715,13 @@ def main() -> None:
         build_assumptions(workbook, config)
         build_clinical_review(workbook, formats)
         workbook.close()
+    finally:
+        if vba_project.exists():
+            vba_project.unlink()
+        try:
+            BUILD_DIR.rmdir()
+        except OSError:
+            pass
     print(f"Built {OUTPUT.relative_to(ROOT)}")
 
 

@@ -16,10 +16,11 @@
       throw new Error("A labelled simulation configuration is required.");
     }
     const definitions = config.definitions;
+    const categoryModel = config.illustrative_category_model;
     const assumptions = Object.freeze({
       monthDays: definitions.days_per_month,
       trajectoryEpsilonPercent: definitions.trajectory_epsilon_percent,
-      ageThresholdExclusive: config.risk_outputs.age_threshold_exclusive,
+      ageThresholdExclusive: categoryModel.age_threshold_exclusive,
       sarcopeniaBranchEnabled: definitions.fearon_sarcopenia_branch_enabled,
       fearon: {
         primaryLossExclusive: definitions.fearon_weight_loss_primary_exclusive,
@@ -30,9 +31,9 @@
         lowerExclusive: definitions.precachexia_lower_weight_loss_percent_exclusive,
         upperInclusive: definitions.precachexia_upper_weight_loss_percent_inclusive
       },
-      band: config.risk_outputs.band_thresholds,
+      categoryThresholds: categoryModel.internal_score_thresholds,
       cancerMultipliers: config.simulation_relationships.cancer_risk_multipliers,
-      risk: config.risk_outputs
+      categoryModel
     });
 
     function dateAtUtc(value) {
@@ -104,14 +105,14 @@
     function classify(input, derived) {
       if (!derived.baseline || derived.loss === null) {
         return {
-          fearon: "unknown — insufficient eligible weight history",
-          pre: "unknown — insufficient eligible weight history"
+          cachexiaCriteria: "unknown — insufficient eligible weight history",
+          precachexiaCandidate: "unknown — insufficient eligible weight history"
         };
       }
       const rule = assumptions.fearon;
       let fearon;
       if (derived.loss > rule.primaryLossExclusive) {
-        fearon = "yes — weight loss >5%";
+        fearon = "yes — retrospective weight loss >5%";
       } else if (derived.loss <= rule.conditionalLossExclusive) {
         fearon = "no — supported branches require >2% loss";
       } else if (derived.bmi !== null && derived.bmi < rule.bmiExclusive) {
@@ -124,12 +125,14 @@
       } else if (
         derived.bmi !== null
         && derived.bmi >= rule.bmiExclusive
-        && (
-          !assumptions.sarcopeniaBranchEnabled
-          || input.sarcopenia === "no"
-        )
       ) {
-        fearon = "no — BMI and sarcopenia branches refuted";
+        if (!assumptions.sarcopeniaBranchEnabled) {
+          fearon = "unknown — not evaluable in v1 because the BMI branch is not met and the sarcopenia branch is disabled pending a clinical definition";
+        } else if (input.sarcopenia === "no") {
+          fearon = "no — BMI and sarcopenia branches refuted";
+        } else {
+          fearon = "unknown — sarcopenia evidence unavailable";
+        }
       } else {
         const unavailable = [];
         if (derived.bmi === null) unavailable.push("BMI");
@@ -138,6 +141,11 @@
           && input.sarcopenia === "unknown"
         ) {
           unavailable.push("sarcopenia evidence");
+        }
+        if (!assumptions.sarcopeniaBranchEnabled) {
+          unavailable.push(
+            "sarcopenia branch disabled pending a clinical definition"
+          );
         }
         fearon = `unknown — ${unavailable.join(" and ")} unavailable`;
       }
@@ -154,79 +162,127 @@
       )) {
         pre = "no — outside provisional loss interval";
       } else if (input.appetite === "yes") {
-        pre = "yes — provisional limited loss + appetite rule";
+        pre = "yes — provisional limited loss + baseline appetite rule";
       } else if (input.appetite === "no") {
         pre = "no — appetite explicitly absent";
       } else {
         pre = "unknown — appetite unknown";
       }
-      return { fearon, pre };
+      return {
+        cachexiaCriteria: fearon,
+        precachexiaCandidate: pre
+      };
     }
 
-    function risk(input, derived, horizon) {
-      const terms = assumptions.risk[horizon];
-      if (!terms) throw new Error(`Unsupported risk horizon: ${horizon}`);
+    function category(input, derived, horizon) {
+      const terms = assumptions.categoryModel[horizon];
+      if (!terms) throw new Error(`Unsupported simulation horizon: ${horizon}`);
+      const horizonMonths = horizon === "three_month" ? 3 : 6;
+      const missing = [];
+      const explanations = [];
+      if (input.stage === "unknown") {
+        missing.push("cancer_stage_unknown");
+        explanations.push("Cancer stage is unknown.");
+      }
+      if (input.ecog === "unknown") {
+        missing.push("ecog_unknown");
+        explanations.push("Baseline ECOG is unknown.");
+      }
+      if (input.appetite === "unknown") {
+        missing.push("reduced_appetite_unknown");
+        explanations.push("Baseline reduced appetite is unknown.");
+      }
+      if (derived.bmi === null) {
+        missing.push("bmi_unavailable");
+        explanations.push(
+          "BMI is unavailable because height or baseline weight is unavailable."
+        );
+      }
+      if (derived.loss === null) {
+        missing.push("baseline_weight_change_unavailable");
+        explanations.push(
+          "Baseline weight change is unavailable because eligible prior weight history is insufficient."
+        );
+      }
+      const contract = assumptions.categoryModel.output_contract;
+      const common = {
+        horizonMonths,
+        outputType: contract.output_type,
+        basis: contract.basis,
+        target_outcome: contract.target_outcome,
+        unusedFields: contract.unused_fields
+      };
       if (
-        config.definitions.risk_missing_predictor_policy === "withhold"
-        && (derived.bmi === null || derived.loss === null)
+        config.definitions.simulation_category_missing_predictor_policy
+          === "withhold"
+        && missing.length
       ) {
         return {
-          probability: null,
-          band: "unknown",
-          factors: [
-            "Estimate withheld: BMI and baseline weight change are required."
+          ...common,
+          category: null,
+          status: "withheld_missing_required_baseline_predictors",
+          withholdingReasons: missing,
+          explanations: [
+            `${horizonMonths}-month illustrative simulation category withheld.`,
+            ...explanations
           ]
         };
       }
-      let score = terms.intercept;
+      let internalValue = terms.intercept;
       const factors = [];
       if (input.age > assumptions.ageThresholdExclusive) {
-        score += terms.age_over_55;
+        internalValue += terms.age_over_55;
         factors.push("Age >55 simulation term");
       }
-      score += terms.stage[input.stage];
+      internalValue += terms.stage[input.stage];
       if (terms.stage[input.stage]) {
         factors.push(`Stage ${input.stage} simulation term`);
       }
-      score += terms.ecog[input.ecog];
+      internalValue += terms.ecog[input.ecog];
       if (terms.ecog[input.ecog]) {
         factors.push(`ECOG ${input.ecog} simulation term`);
       }
-      score += terms.appetite[input.appetite];
+      internalValue += terms.appetite[input.appetite];
       if (terms.appetite[input.appetite]) {
         factors.push(`Appetite=${input.appetite} simulation term`);
       }
       if (derived.loss !== null && derived.loss > 0) {
-        score += derived.loss * terms.baseline_weight_loss_per_percent;
+        internalValue += derived.loss * terms.baseline_weight_loss_per_percent;
         factors.push(`Baseline loss ${derived.loss.toFixed(1)}% simulation term`);
       }
       if (
         derived.bmi !== null
         && derived.bmi < assumptions.fearon.bmiExclusive
       ) {
-        score += terms.low_bmi_under_20;
+        internalValue += terms.low_bmi_under_20;
         factors.push("BMI <20 simulation term");
       }
       const cancer = (assumptions.cancerMultipliers[input.cancerType] - 1)
         * terms.cancer_type_multiplier;
-      score += cancer;
+      internalValue += cancer;
       if (cancer) factors.push(`${input.cancerType} simulation term`);
-      const probability = 1 / (1 + Math.exp(-score));
-      const band = probability < assumptions.band.low_upper_exclusive
+      const simulationCategory = (
+        internalValue < assumptions.categoryThresholds.low_upper_exclusive
         ? "low"
-        : probability >= assumptions.band.high_lower_inclusive
+        : internalValue >= assumptions.categoryThresholds.high_lower_inclusive
           ? "high"
-          : "medium";
+          : "moderate"
+      );
       return {
-        probability,
-        band,
-        factors: factors.length
-          ? factors
-          : ["Intercept-only simulation estimate"]
+        ...common,
+        category: simulationCategory,
+        status: contract.status,
+        withholdingReasons: [],
+        explanations: [
+          `${horizonMonths}-month illustrative simulation category based on baseline predictors only.`,
+          ...(factors.length
+            ? factors
+            : ["No non-intercept simulation terms were active."])
+        ]
       };
     }
 
-    return { addMonths, calculateDerived, classify, risk };
+    return { addMonths, calculateDerived, classify, category };
   }
 
   return { cancerSubtypeOptions, createCalculator };

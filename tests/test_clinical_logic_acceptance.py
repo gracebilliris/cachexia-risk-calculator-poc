@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import json
-import math
 import unittest
 from pathlib import Path
 
 from cachexia_poc.config import load_simulation_config
-from cachexia_poc.generator import _risk_output
+from cachexia_poc.generator import _illustrative_category_output
 from cachexia_poc.outcomes import evaluate_horizon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +33,7 @@ class ClinicalLogicAcceptanceTests(unittest.TestCase):
                 },
             )
         self.assertEqual(
-            self.fixture["risk_case"]["status"],
+            self.fixture["category_case"]["status"],
             "simulation_assumption_not_clinically_validated",
         )
 
@@ -47,12 +46,19 @@ class ClinicalLogicAcceptanceTests(unittest.TestCase):
                     "age": 60,
                     "sex": "female",
                     "cancer_type": "colorectal",
-                    "cancer_subtype": None,
+                    "cancer_subtype": "not applicable",
                     "cancer_stage": "III",
                     "height_cm": case["height_cm"],
                     "ecog": 2,
                     "reduced_appetite": case["appetite"],
                     "sarcopenia": case["sarcopenia"],
+                    "follow_up_appetite_observations": [
+                        {
+                            "date": "2026-04-30",
+                            "reduced_appetite": case["appetite"],
+                            "source": "synthetic_follow_up_observation",
+                        }
+                    ],
                     "weights": [
                         {
                             "date": "2026-01-31",
@@ -65,35 +71,36 @@ class ClinicalLogicAcceptanceTests(unittest.TestCase):
                     ],
                 }
                 result = evaluate_horizon(patient, 3)
-                self.assertEqual(result["cachexia"], case["expected_cachexia"])
                 self.assertEqual(
-                    result["precachexia_candidate"],
+                    result["threshold_based_cachexia_status"],
+                    case["expected_cachexia"],
+                )
+                self.assertEqual(
+                    result["precachexia_candidate_status"],
                     case["expected_precachexia"],
                 )
 
-    def test_python_risk_output_matches_documented_arithmetic(self):
-        case = self.fixture["risk_case"]
+    def test_python_category_output_matches_documented_categories(self):
+        case = self.fixture["category_case"]
         for horizon in ("three_month", "six_month"):
             with self.subTest(horizon=horizon):
-                result = _risk_output(
+                result = _illustrative_category_output(
                     case["patient"],
                     case["predictors"],
                     horizon,
                     self.config,
                 )
                 expected = case["expected"][horizon]
-                self.assertTrue(
-                    math.isclose(result["score"], expected["score"], abs_tol=1e-12)
+                self.assertEqual(result["category"], expected["category"])
+                self.assertEqual(
+                    result["output_type"], "illustrative_simulation_category"
                 )
-                self.assertTrue(
-                    math.isclose(
-                        result["probability"],
-                        expected["probability"],
-                        abs_tol=1e-12,
-                    )
+                self.assertEqual(
+                    result["target_outcome"],
+                    "not_defined_pending_clinical_review",
                 )
-                self.assertEqual(result["band"], expected["band"])
-                self.assertIn("not clinically validated", result["warning"])
+                self.assertNotIn("score", result)
+                self.assertNotIn("probability", result)
 
     def test_configuration_matches_recorded_supplied_assumptions(self):
         expected = self.fixture["configuration_expectations"]

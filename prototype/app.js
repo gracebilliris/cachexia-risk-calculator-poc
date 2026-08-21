@@ -10,6 +10,7 @@ const weightContainer = $("weights");
 
 function syncCancerSubtype() {
   const subtype = $("cancer-subtype");
+  const field = $("lung-subtype-field");
   const previous = subtype.value;
   const isLung = $("cancer-type").value === "lung";
   const values = window.CachexiaCalculations.cancerSubtypeOptions(
@@ -24,6 +25,8 @@ function syncCancerSubtype() {
   subtype.value = values.includes(previous)
     ? previous
     : (isLung ? "unknown" : "not applicable");
+  subtype.disabled = !isLung;
+  field.hidden = !isLung;
 }
 
 function addWeightRow(dateValue = "", weightValue = "") {
@@ -63,6 +66,7 @@ function readInput() {
     errors, predictionDate, age, height, weights,
     stage: $("stage").value, ecog: $("ecog").value,
     appetite: $("appetite").value, sarcopenia: $("sarcopenia").value,
+    sex: $("sex").value,
     cancerType: $("cancer-type").value,
     cancerSubtype: $("cancer-subtype").value
   };
@@ -72,14 +76,16 @@ function showMetric(label, value) {
   return `<div class="metric"><span>${label}</span><strong>${value}</strong></div>`;
 }
 
-function showRisk(result, suffix) {
-  $(`risk-${suffix}`).textContent = result.probability === null
+function showCategory(result, suffix) {
+  $(`category-${suffix}`).textContent = result.category === null
     ? "withheld"
-    : `${(result.probability * 100).toFixed(1)}%`;
-  $(`band-${suffix}`).textContent = result.probability === null
-    ? "UNKNOWN — required baseline predictors are unavailable"
-    : `${result.band.toUpperCase()} simulated band — not a calibrated probability`;
-  $(`factors-${suffix}`).innerHTML = result.factors.map((factor) => `<li>${factor}</li>`).join("");
+    : result.category;
+  $(`basis-${suffix}`).textContent = result.category === null
+    ? "Illustrative simulation category withheld because required baseline predictors are unavailable. Target outcome is not defined pending clinical review."
+    : "Illustrative simulation category — research-only, based on baseline predictors only. Target outcome is not defined pending clinical review.";
+  $(`factors-${suffix}`).innerHTML = result.explanations
+    .map((explanation) => `<li>${explanation}</li>`)
+    .join("");
 }
 
 function clearOutputs() {
@@ -87,8 +93,8 @@ function clearOutputs() {
   $("fearon").textContent = "Not calculated";
   $("precachexia").textContent = "Not calculated";
   for (const suffix of ["3m", "6m"]) {
-    $(`risk-${suffix}`).textContent = "—";
-    $(`band-${suffix}`).textContent = "Not calculated";
+    $(`category-${suffix}`).textContent = "—";
+    $(`basis-${suffix}`).textContent = "Not calculated";
     $(`factors-${suffix}`).innerHTML = "";
   }
 }
@@ -114,10 +120,10 @@ function calculate() {
     showMetric("Percentage rate", derived.percentRate === null ? "not calculable" : `${format(derived.percentRate)} pp/month`) +
     showMetric("Trajectory", derived.trajectory);
   const labels = calculator.classify(input, derived);
-  $("fearon").textContent = labels.fearon;
-  $("precachexia").textContent = labels.pre;
-  showRisk(calculator.risk(input, derived, "three_month"), "3m");
-  showRisk(calculator.risk(input, derived, "six_month"), "6m");
+  $("fearon").textContent = labels.cachexiaCriteria;
+  $("precachexia").textContent = labels.precachexiaCandidate;
+  showCategory(calculator.category(input, derived, "three_month"), "3m");
+  showCategory(calculator.category(input, derived, "six_month"), "6m");
 }
 
 $("add-weight").addEventListener("click", () => addWeightRow());

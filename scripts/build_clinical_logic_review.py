@@ -93,15 +93,15 @@ def reference_cachexia(
         and sarcopenia == "yes"
     ):
         return "yes", "Weight loss is >2% and sarcopenia is documented."
-    if (
-        bmi is not None
-        and bmi >= definitions["fearon_bmi_exclusive"]
-        and (
-            not definitions["fearon_sarcopenia_branch_enabled"]
-            or sarcopenia == "no"
-        )
-    ):
-        return "no", "BMI and sarcopenia conditional branches are refuted."
+    if bmi is not None and bmi >= definitions["fearon_bmi_exclusive"]:
+        if not definitions["fearon_sarcopenia_branch_enabled"]:
+            return (
+                "unknown",
+                "Not evaluable in v1 because the BMI branch is not met and "
+                "the sarcopenia branch is disabled pending a clinical definition.",
+            )
+        if sarcopenia == "no":
+            return "no", "BMI and sarcopenia conditional branches are refuted."
     unavailable = []
     if bmi is None:
         unavailable.append("BMI")
@@ -110,7 +110,11 @@ def reference_cachexia(
         and sarcopenia == "unknown"
     ):
         unavailable.append("sarcopenia")
-    return "unknown", "Not evaluable because " + " and ".join(unavailable) + " are unknown."
+    if not definitions["fearon_sarcopenia_branch_enabled"]:
+        unavailable.append(
+            "the sarcopenia branch is disabled pending a clinical definition"
+        )
+    return "unknown", "Not evaluable because " + " and ".join(unavailable) + "."
 
 
 def reference_early_risk(
@@ -185,7 +189,7 @@ def generate_matrix(config: dict[str, Any]) -> list[dict[str, Any]]:
 def write_json(config: dict[str, Any], cases: list[dict[str, Any]]) -> None:
     payload = {
         "metadata": {
-            "version": "1.0.0",
+            "version": "1.1.0",
             "purpose": "Exhaustive software-conformance and clinician-review matrix",
             "warning": (
                 "Synthetic rule combinations only. Agreement does not establish "
@@ -254,13 +258,17 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
         ("Suggested review sequence", "Key Scenarios presents 12 representative examples, followed by the main clinical questions in Review Decisions."),
         ("Recording scenario feedback", "Each scenario includes a review-status dropdown and a field for comments or suggested revisions."),
         ("Optional detailed reference", "Full Logic Matrix contains all 324 combinations for focused checking of boundaries and unknown values; row-by-row review is not expected."),
-        ("Cachexia rule", "Yes when loss is >5%; or loss is >2% with BMI <20; or loss is >2% with explicitly documented sarcopenia."),
-        ("Provisional early-risk rule", "Yes only when cachexia is excluded, loss is >1% and <=5%, and reduced appetite is yes."),
+        ("Baseline-derived cachexia criteria status", "Yes when retrospective loss is >5%, or loss is >2% with BMI <20. When loss is >2% and <=5%, BMI is >=20, and the sarcopenia branch is disabled pending a clinical definition, status is unknown rather than no."),
+        ("Provisional pre-cachexia candidate", "Yes only when cachexia criteria are excluded, loss is >1% and <=5%, and baseline reduced appetite is yes."),
         ("Result values", "Yes = criteria met; no = criteria not met; unknown = available information cannot confirm or exclude the criteria."),
         ("Meaning of unknown", "Unknown is not treated as no. A result remains unknown when the available information cannot confirm or exclude the rule."),
-        ("Meaning of sarcopenia", "Yes = independently documented; no = assessed and absent; unknown = not assessed or not documented. It is never inferred."),
+        ("Meaning of sarcopenia", "Future-use tri-state field pending clinical definition. It is never inferred; the disabled branch can leave criteria unknown, but the recorded baseline value does not decide the v1 criteria or categories."),
         ("Important assumption", "These test cases treat measured weight loss as involuntary because there is no separate involuntary-loss field."),
-        ("Risk percentages", "Risk Assumptions contains illustrative simulation terms only. They are not calibrated probabilities or validated clinical effects."),
+        ("Illustrative categories", "Category Assumptions contains internal simulation terms only. Clinical-facing outputs are ordinal low, moderate, or high, or withheld. Target outcome is not defined pending clinical review."),
+        ("Early-rule limitations", "The >1% lower bound has no consensus basis and is editable; <=5% is consensus-aligned; binary appetite is a POC simplification."),
+        ("Population status", "Eligibility and inclusion criteria are not defined. Cancer labels are synthetic adult solid-tumour stratifiers pending review."),
+        ("Fearon citation", "Fearon et al. 2011, Lancet Oncology 12(5):489-495, DOI 10.1016/S1470-2045(10)70218-7. The >5% branch is retrospective over the past 6 months."),
+        ("Pre-cachexia citation", "Muscaritoli et al. 2010, Clinical Nutrition 29(2):154-159, DOI 10.1016/j.clnu.2009.12.004. <=5% is consensus-aligned; this POC's >1% lower bound is not."),
         ("Current status", "All rules remain pending clinical review. Recorded feedback documents the review outcome but does not validate the prototype."),
     ]
     sheet["A8"], sheet["B8"] = "Topic", "Current interpretation"
@@ -270,13 +278,15 @@ def build_start_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
     for row, (topic, text) in enumerate(instructions, 9):
         sheet.cell(row, 1, topic)
         sheet.cell(row, 2, text)
-    sheet["A21"] = "Full-matrix output summary"
-    sheet["A22"], sheet["B22"], sheet["C22"] = (
-        "Cachexia",
-        "Early-risk pattern",
-        "Case count",
-    )
-    for row, ((cachexia, early_risk), count) in enumerate(sorted(counts.items()), 23):
+    summary_heading_row = 10 + len(instructions)
+    summary_header_row = summary_heading_row + 1
+    sheet.cell(summary_heading_row, 1, "Full-matrix output summary")
+    sheet.cell(summary_header_row, 1, "Cachexia")
+    sheet.cell(summary_header_row, 2, "Early-risk pattern")
+    sheet.cell(summary_header_row, 3, "Case count")
+    for row, ((cachexia, early_risk), count) in enumerate(
+        sorted(counts.items()), summary_header_row + 1
+    ):
         sheet.cell(row, 1, cachexia)
         sheet.cell(row, 2, early_risk)
         sheet.cell(row, 3, count)
@@ -348,8 +358,8 @@ def build_key_scenarios_sheet(
         ("Exactly 1% loss", "pre_lower_exact_1", "above_20", "no", "yes"),
         ("Exactly 2% loss", "fearon_conditional_exact_2", "below_20", "yes", "yes"),
         ("Loss over 2% with low BMI", "conditional_3", "below_20", "no", "no"),
-        ("Loss over 2% with sarcopenia", "conditional_3", "above_20", "yes", "no"),
-        ("Loss over 2%; sarcopenia unknown", "conditional_3", "above_20", "unknown", "no"),
+        ("Loss over 2%; future-use sarcopenia yes", "conditional_3", "above_20", "yes", "no"),
+        ("Loss over 2%; future-use sarcopenia unknown", "conditional_3", "above_20", "unknown", "no"),
         ("Exactly 5% loss with reduced appetite", "primary_exact_5", "above_20", "no", "yes"),
         ("Loss over 5%", "primary_over_5", "above_20", "no", "no"),
         ("Weight loss unavailable", "unavailable", "above_20", "no", "yes"),
@@ -370,9 +380,9 @@ def build_key_scenarios_sheet(
         "BMI",
         "Sarcopenia",
         "Reduced appetite",
-        "Cachexia result",
+        "Baseline cachexia criteria status",
         "Reason for result",
-        "Early-risk result",
+        "Provisional candidate status",
         "Reason for result",
         "Review status",
         "Clinical comments or suggested revisions",
@@ -428,9 +438,9 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
         "BMI",
         "Sarcopenia",
         "Reduced appetite",
-        "Cachexia result",
+        "Baseline cachexia criteria status",
         "Reason for result",
-        "Early-risk result",
+        "Provisional candidate status",
         "Reason for result",
         "Boundary/missing?",
         "Review status",
@@ -476,12 +486,12 @@ def build_matrix_sheet(workbook: Workbook, cases: list[dict[str, Any]]) -> None:
             )
 
 
-def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
-    sheet = workbook.create_sheet("Risk Assumptions")
+def build_category_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
+    sheet = workbook.create_sheet("Category Assumptions")
     add_title(
         sheet,
-        "Illustrative risk-score terms",
-        "Simulation assumptions only; these values are not validated clinical effects.",
+        "Illustrative simulation category assumptions",
+        "Internal arithmetic assumptions only; clinical-facing outputs are ordinal categories.",
     )
     add_warning(sheet)
     headers = ["Horizon", "Term", "Category", "Value", "Status"]
@@ -490,8 +500,22 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
         cell.font = Font(bold=True, color=WHITE)
         cell.fill = PatternFill("solid", fgColor=TEAL)
     row = 8
+    model = config["illustrative_category_model"]
+    target_outcome = model["output_contract"]["target_outcome"]
     for horizon in ("three_month", "six_month"):
-        terms = config["risk_outputs"][horizon]
+        sheet.append(
+            [
+                horizon,
+                "target_outcome",
+                target_outcome,
+                None,
+                "Target outcome is not defined pending clinical review; "
+                "the category is illustrative only.",
+            ]
+        )
+        row += 1
+    for horizon in ("three_month", "six_month"):
+        terms = model[horizon]
         scalar_terms = {
             "intercept": terms["intercept"],
             "age_over_55": terms["age_over_55"],
@@ -508,7 +532,7 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
                     term,
                     "all",
                     value,
-                    "simulation assumption; not clinically validated",
+                    "internal simulation assumption; not clinically validated",
                 ]
             )
             row += 1
@@ -520,10 +544,29 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
                         term,
                         category,
                         value,
-                        "simulation assumption; not clinically validated",
+                        "internal simulation assumption; not clinically validated",
                     ]
                 )
                 row += 1
+    sheet.append([])
+    sheet.append(
+        [
+            "Shared",
+            "category boundary",
+            "low upper exclusive",
+            model["internal_score_thresholds"]["low_upper_exclusive"],
+            "internal simulation assumption; not a clinical threshold",
+        ]
+    )
+    sheet.append(
+        [
+            "Shared",
+            "category boundary",
+            "high lower inclusive",
+            model["internal_score_thresholds"]["high_lower_inclusive"],
+            "internal simulation assumption; not a clinical threshold",
+        ]
+    )
     sheet.append([])
     sheet.append(
         ["Shared", "cancer risk multiplier", "Cancer type", "Value", "Status"]
@@ -537,7 +580,7 @@ def build_risk_terms_sheet(workbook: Workbook, config: dict[str, Any]) -> None:
                 "cancer risk multiplier",
                 cancer_type,
                 value,
-                "supplied illustrative assumption; not a relative risk",
+                "supplied illustrative assumption; not a clinical effect",
             ]
         )
     sheet.freeze_panes = "A8"
@@ -572,13 +615,16 @@ def build_decisions_sheet(workbook: Workbook) -> None:
     topics = [
         ("MATRIX-001", "Should the primary cachexia threshold require loss greater than 5%, excluding exactly 5%?", "Weight loss >5%"),
         ("MATRIX-002", "Should the low-BMI branch require both loss greater than 2% and BMI below 20?", "Weight loss >2% and BMI <20"),
-        ("MATRIX-003", "Should documented sarcopenia identify cachexia when weight loss is greater than 2%?", "Weight loss >2% and documented sarcopenia"),
+        ("MATRIX-003", "What future evidence and definition should be required before enabling a sarcopenia branch?", "Future-use tri-state field; branch disabled in v1"),
         ("MATRIX-004", "Should a classification remain unknown when available evidence cannot confirm or exclude a criterion?", "Unknown is kept distinct from no"),
-        ("MATRIX-005", "Is the proposed early-risk weight-loss interval appropriate?", "Weight loss >1% and <=5%, after cachexia is excluded"),
-        ("MATRIX-006", "Should reduced appetite be required for the proposed early-risk pattern?", "Reduced appetite = yes"),
-        ("MATRIX-007", "What evidence should count as documented sarcopenia, and can baseline evidence be carried into future outcome labels?", "Explicit yes/no/unknown evidence; provisional baseline carry-forward"),
+        ("MATRIX-005", "Is an editable >1% lower bound acceptable despite having no consensus basis?", "Weight loss >1%; no consensus basis"),
+        ("MATRIX-006", "Is the consensus-aligned <=5% upper bound and binary appetite simplification acceptable for the provisional candidate rule?", "<=5% and baseline reduced appetite=yes"),
+        ("MATRIX-007", "What evidence should count as documented sarcopenia before any future branch is enabled?", "Explicit future-use yes/no/unknown; never inferred; unused in v1"),
         ("MATRIX-008", "Should involuntary weight loss be recorded separately rather than assumed for synthetic rule cases?", "Measured loss is treated as involuntary in rule-testing scenarios"),
-        ("MATRIX-009", "Should the illustrative risk percentages remain in the demonstrator?", "Configured simulation coefficients and multipliers; not clinically validated"),
+        ("MATRIX-009", "What target outcome or estimand should the clinical team define before ordinal categories can be interpreted?", "Target outcome is not defined pending clinical review; low/moderate/high categories are illustrative only"),
+        ("MATRIX-010", "What eligibility and inclusion criteria define the intended population?", "Not yet defined; synthetic adult solid-tumour stratifiers only"),
+        ("MATRIX-011", "Are dated follow-up appetite observations appropriate evidence for future provisional labels?", "Baseline appetite is never carried forward"),
+        ("MATRIX-012", "Are the 3-month threshold outcome and prospective 6-month research endpoint framed clearly enough?", "Neither is a Fearon classification; the 6m endpoint matches the window length but looks forward and is not a diagnosis"),
     ]
     for row, values in enumerate(topics, 8):
         sheet.cell(row, 1, values[0])
@@ -669,7 +715,7 @@ def main() -> None:
     build_key_scenarios_sheet(workbook, cases)
     build_decisions_sheet(workbook)
     build_matrix_sheet(workbook, cases)
-    build_risk_terms_sheet(workbook, config)
+    build_category_terms_sheet(workbook, config)
     style_workbook(workbook)
     workbook.active = 0
     workbook.save(WORKBOOK_OUTPUT)

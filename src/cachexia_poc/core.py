@@ -15,6 +15,8 @@ ALLOWED_SEX = {"female", "male", "unknown"}
 ALLOWED_STAGE = {"I", "II", "III", "IV", "unknown"}
 ALLOWED_TRI_STATE = {"yes", "no", "unknown"}
 ALLOWED_ECOG = {0, 1, 2, 3, 4, None}
+ALLOWED_CANCER_TYPE = set(_COHORT["cancer_type_probabilities"])
+ALLOWED_LUNG_SUBTYPE = {"SCLC", "NSCLC", "unknown"}
 MONTH_DAYS = float(_DEFINITIONS["days_per_month"])
 
 
@@ -79,6 +81,7 @@ def validate_patient(patient: dict[str, Any]) -> None:
         "age",
         "sex",
         "cancer_type",
+        "cancer_subtype",
         "cancer_stage",
         "height_cm",
         "weights",
@@ -105,6 +108,19 @@ def validate_patient(patient: dict[str, Any]) -> None:
         )
     if patient["sex"] not in ALLOWED_SEX:
         raise PatientValidationError(f"sex must be one of {sorted(ALLOWED_SEX)}.")
+    if patient["cancer_type"] not in ALLOWED_CANCER_TYPE:
+        raise PatientValidationError(
+            f"cancer_type must be one of {sorted(ALLOWED_CANCER_TYPE)}."
+        )
+    if patient["cancer_type"] == "lung":
+        if patient["cancer_subtype"] not in ALLOWED_LUNG_SUBTYPE:
+            raise PatientValidationError(
+                "Lung cancer_subtype must be SCLC, NSCLC, or unknown."
+            )
+    elif patient["cancer_subtype"] != "not applicable":
+        raise PatientValidationError(
+            "Non-lung cancer_subtype must be exactly 'not applicable'."
+        )
     if patient["cancer_stage"] not in ALLOWED_STAGE:
         raise PatientValidationError(f"cancer_stage must be one of {sorted(ALLOWED_STAGE)}.")
     height = patient["height_cm"]
@@ -127,6 +143,35 @@ def validate_patient(patient: dict[str, Any]) -> None:
     for name in ("reduced_appetite", "sarcopenia"):
         if patient[name] not in ALLOWED_TRI_STATE:
             raise PatientValidationError(f"{name} must be yes, no, or unknown.")
+    follow_up_appetite = patient.get("follow_up_appetite_observations", [])
+    if not isinstance(follow_up_appetite, list):
+        raise PatientValidationError(
+            "follow_up_appetite_observations must be a list when provided."
+        )
+    for observation in follow_up_appetite:
+        if not isinstance(observation, dict):
+            raise PatientValidationError(
+                "Each follow-up appetite observation must be an object."
+            )
+        if (
+            "date" not in observation
+            or "reduced_appetite" not in observation
+            or "source" not in observation
+        ):
+            raise PatientValidationError(
+                "Each follow-up appetite observation requires date, "
+                "reduced_appetite, and source."
+            )
+        parse_date(observation["date"])
+        if observation["reduced_appetite"] not in ALLOWED_TRI_STATE:
+            raise PatientValidationError(
+                "Follow-up reduced_appetite must be yes, no, or unknown."
+            )
+        if observation["source"] != "synthetic_follow_up_observation":
+            raise PatientValidationError(
+                "Follow-up appetite source must be exactly "
+                "'synthetic_follow_up_observation'."
+            )
     if not isinstance(patient["weights"], list):
         raise PatientValidationError("weights must be a list.")
     _normalise_weights(patient["weights"])

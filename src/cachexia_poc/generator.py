@@ -12,7 +12,7 @@ from typing import Any, Iterable
 
 from .config import DEFAULT_CONFIG_PATH, load_simulation_config
 from .core import calculate_predictors
-from .outcomes import add_calendar_months, evaluate_horizon
+from .outcomes import add_calendar_months, evaluate_baseline_status, evaluate_horizon
 
 def load_config(config_path: str | Path | None = None) -> dict[str, Any]:
     """Backward-compatible public alias for the centralized config loader."""
@@ -44,79 +44,114 @@ def _sigmoid(value: float) -> float:
     return 1.0 / (1.0 + math.exp(-value))
 
 
-def _risk_output(
+def _illustrative_category_output(
     patient: dict[str, Any],
     predictors: dict[str, Any],
     horizon_key: str,
     config: dict[str, Any],
 ) -> dict[str, Any]:
-    assumptions = config["risk_outputs"][horizon_key]
-    if (
-        config["definitions"]["risk_missing_predictor_policy"] == "withhold"
-        and (
-            predictors["weight_loss_percent"] is None
-            or predictors["bmi"] is None
+    model = config["illustrative_category_model"]
+    assumptions = model[horizon_key]
+    horizon_months = 3 if horizon_key == "three_month" else 6
+    missing: list[str] = []
+    explanations: list[str] = []
+    if patient["cancer_stage"] == "unknown":
+        missing.append("cancer_stage_unknown")
+        explanations.append("Cancer stage is unknown.")
+    if patient["ecog"] is None:
+        missing.append("ecog_unknown")
+        explanations.append("Baseline ECOG is unknown.")
+    if patient["reduced_appetite"] == "unknown":
+        missing.append("reduced_appetite_unknown")
+        explanations.append("Baseline reduced appetite is unknown.")
+    if predictors["bmi"] is None:
+        missing.append("bmi_unavailable")
+        explanations.append(
+            "BMI is unavailable because height or baseline weight is unavailable."
         )
+    if predictors["weight_loss_percent"] is None:
+        missing.append("baseline_weight_change_unavailable")
+        explanations.append(
+            "Baseline weight change is unavailable because eligible prior "
+            "weight history is insufficient."
+        )
+    contract = model["output_contract"]
+    common = {
+        "horizon_months": horizon_months,
+        "output_type": contract["output_type"],
+        "basis": contract["basis"],
+        "target_outcome": contract["target_outcome"],
+        "unused_fields": contract["unused_fields"],
+    }
+    if (
+        config["definitions"]["simulation_category_missing_predictor_policy"]
+        == "withhold"
+        and missing
     ):
         return {
-            "probability": None,
-            "band": "unknown",
-            "score": None,
-            "explanation": [
-                "Estimate withheld: BMI and baseline weight change are required."
-            ],
-            "warning": "Simulation assumption; not clinically validated.",
+            **common,
+            "category": None,
+            "status": "withheld_missing_required_baseline_predictors",
+            "withholding_reasons": missing,
+            "explanations": [
+                f"{horizon_months}-month illustrative simulation category withheld."
+            ]
+            + explanations,
         }
-    score = float(assumptions["intercept"])
+    internal_value = float(assumptions["intercept"])
     factors: list[str] = []
-    if patient["age"] > config["risk_outputs"]["age_threshold_exclusive"]:
-        score += assumptions["age_over_55"]
+    if patient["age"] > model["age_threshold_exclusive"]:
+        internal_value += assumptions["age_over_55"]
         factors.append("age >55 simulation term")
     stage_term = assumptions["stage"][patient["cancer_stage"]]
-    score += stage_term
+    internal_value += stage_term
     if stage_term:
         factors.append(f"stage {patient['cancer_stage']} simulation term")
     ecog_key = "unknown" if patient["ecog"] is None else str(patient["ecog"])
     ecog_term = assumptions["ecog"][ecog_key]
-    score += ecog_term
+    internal_value += ecog_term
     if ecog_term:
         factors.append(f"ECOG {ecog_key} simulation term")
     appetite_term = assumptions["appetite"][patient["reduced_appetite"]]
-    score += appetite_term
+    internal_value += appetite_term
     if appetite_term:
         factors.append(f"appetite={patient['reduced_appetite']} simulation term")
     loss = predictors["weight_loss_percent"]
     if loss is not None and loss > 0:
-        score += loss * assumptions["baseline_weight_loss_per_percent"]
+        internal_value += loss * assumptions["baseline_weight_loss_per_percent"]
         factors.append(f"baseline weight loss {loss:.1f}% simulation term")
     bmi = predictors["bmi"]
-    if bmi is not None and bmi < 20:
-        score += assumptions["low_bmi_under_20"]
-        factors.append("BMI <20 simulation term")
+    bmi_threshold = config["definitions"]["fearon_bmi_exclusive"]
+    if bmi is not None and bmi < bmi_threshold:
+        internal_value += assumptions["low_bmi_under_20"]
+        factors.append(f"BMI <{bmi_threshold:g} simulation term")
     cancer_multiplier = config["simulation_relationships"][
         "cancer_risk_multipliers"
     ][patient["cancer_type"]]
     cancer_term = (
         cancer_multiplier - 1.0
     ) * assumptions["cancer_type_multiplier"]
-    score += cancer_term
+    internal_value += cancer_term
     if cancer_term:
         factors.append(f"{patient['cancer_type']} simulation term")
-    probability = _sigmoid(score)
-    bands = config["risk_outputs"]["band_thresholds"]
-    band = (
+    thresholds = model["internal_score_thresholds"]
+    category = (
         "low"
-        if probability < bands["low_upper_exclusive"]
+        if internal_value < thresholds["low_upper_exclusive"]
         else "high"
-        if probability >= bands["high_lower_inclusive"]
-        else "medium"
+        if internal_value >= thresholds["high_lower_inclusive"]
+        else "moderate"
     )
     return {
-        "probability": probability,
-        "band": band,
-        "score": score,
-        "explanation": factors or ["intercept-only simulation estimate"],
-        "warning": "Simulation assumption; not clinically validated.",
+        **common,
+        "category": category,
+        "status": contract["status"],
+        "withholding_reasons": [],
+        "explanations": [
+            f"{horizon_months}-month illustrative simulation category based "
+            "on baseline predictors only."
+        ]
+        + (factors or ["No non-intercept simulation terms were active."]),
     }
 
 
@@ -277,7 +312,7 @@ def generate_patients(
         subtype = (
             _weighted_choice(rng, cohort["lung_subtype_probabilities"])
             if cancer_type == "lung"
-            else None
+            else "not applicable"
         )
         patient: dict[str, Any] = {
             "patient_id": f"SYN-{seed:06d}-{index + 1:04d}",
@@ -291,6 +326,7 @@ def generate_patients(
             "ecog": ecog,
             "reduced_appetite": appetite,
             "sarcopenia": sarcopenia,
+            "follow_up_appetite_observations": [],
             "weights": [],
             "edge_case": None,
             "provenance": {
@@ -298,6 +334,12 @@ def generate_patients(
                 "generator": "cachexia_poc.generator",
                 "seed": seed,
                 "config_version": config["metadata"]["config_version"],
+                "schema_version": config["metadata"]["schema_version"],
+                "schema_migration": (
+                    "v1.1 adds dated follow-up appetite evidence, separates "
+                    "baseline status from future outcomes, and replaces numeric "
+                    "outputs with ordinal illustrative categories."
+                ),
                 "clinical_validation": "none",
                 "precachexia_rule_status": config["definitions"][
                     "precachexia_rule_status"
@@ -335,6 +377,28 @@ def generate_patients(
                 {"date": prediction_date.isoformat(), "weight_kg": baseline_weight}
             )
         patient["edge_case"] = edge_case
+        for horizon in cohort["future_horizon_months"]:
+            if rng.random() < cohort["follow_up_appetite_unknown_probability"]:
+                follow_up_appetite = "unknown"
+            else:
+                follow_up_appetite_probability = _sigmoid(
+                    relationships["appetite_yes_logit_intercept"]
+                    + latent * relationships["appetite_yes_latent_multiplier"]
+                )
+                follow_up_appetite = (
+                    "yes"
+                    if rng.random() < follow_up_appetite_probability
+                    else "no"
+                )
+            patient["follow_up_appetite_observations"].append(
+                {
+                    "date": add_calendar_months(
+                        prediction_date, horizon
+                    ).isoformat(),
+                    "reduced_appetite": follow_up_appetite,
+                    "source": "synthetic_follow_up_observation",
+                }
+            )
         baseline_weight = float(weights[-1]["weight_kg"])
         monthly_future_loss = (
             relationships["future_monthly_loss_percent_intercept"]
@@ -370,12 +434,15 @@ def generate_patients(
                 "precachexia_upper_weight_loss_percent_inclusive"
             ],
         }
+        patient["baseline_criteria_status"] = evaluate_baseline_status(
+            patient, predictors, pre_config
+        )
         patient["outcome_3m"] = evaluate_horizon(patient, 3, pre_config)
         patient["outcome_6m"] = evaluate_horizon(patient, 6, pre_config)
-        patient["simulated_risk_3m"] = _risk_output(
+        patient["illustrative_simulation_3m"] = _illustrative_category_output(
             patient, predictors, "three_month", config
         )
-        patient["simulated_risk_6m"] = _risk_output(
+        patient["illustrative_simulation_6m"] = _illustrative_category_output(
             patient, predictors, "six_month", config
         )
         patients.append(patient)
@@ -408,24 +475,75 @@ def write_csv(
                 "ecog": "unknown" if patient["ecog"] is None else patient["ecog"],
                 "reduced_appetite": patient["reduced_appetite"],
                 "sarcopenia": patient["sarcopenia"],
+                "follow_up_appetite_observations_json": json.dumps(
+                    patient["follow_up_appetite_observations"],
+                    separators=(",", ":"),
+                ),
                 "weights_json": json.dumps(patient["weights"], separators=(",", ":")),
                 "baseline_bmi": patient["baseline_predictors"]["bmi"],
                 "baseline_weight_loss_percent": patient["baseline_predictors"][
                     "weight_loss_percent"
                 ],
-                "outcome_3m_cachexia": patient["outcome_3m"]["cachexia"],
-                "outcome_3m_precachexia_candidate": patient["outcome_3m"][
-                    "precachexia_candidate"
+                "baseline_cachexia_criteria_status": patient[
+                    "baseline_criteria_status"
+                ]["cachexia_criteria_status"],
+                "baseline_precachexia_candidate_status": patient[
+                    "baseline_criteria_status"
+                ]["precachexia_candidate_status"],
+                "outcome_3m_threshold_based_cachexia_status": patient[
+                    "outcome_3m"
+                ]["threshold_based_cachexia_status"],
+                "outcome_3m_fearon_classification": patient["outcome_3m"][
+                    "fearon_classification"
                 ],
-                "outcome_6m_cachexia": patient["outcome_6m"]["cachexia"],
-                "outcome_6m_precachexia_candidate": patient["outcome_6m"][
-                    "precachexia_candidate"
+                "outcome_3m_interval_days": patient["outcome_3m"][
+                    "outcome_interval_days"
                 ],
-                "simulated_risk_3m": patient["simulated_risk_3m"]["probability"],
-                "simulated_risk_6m": patient["simulated_risk_6m"]["probability"],
+                "outcome_3m_precachexia_candidate_status": patient["outcome_3m"][
+                    "precachexia_candidate_status"
+                ],
+                "outcome_3m_basis": patient["outcome_3m"]["outcome_basis"],
+                "outcome_6m_threshold_based_cachexia_status": patient[
+                    "outcome_6m"
+                ]["threshold_based_cachexia_status"],
+                "outcome_6m_fearon_classification": patient["outcome_6m"][
+                    "fearon_classification"
+                ],
+                "outcome_6m_interval_days": patient["outcome_6m"][
+                    "outcome_interval_days"
+                ],
+                "outcome_6m_precachexia_candidate_status": patient["outcome_6m"][
+                    "precachexia_candidate_status"
+                ],
+                "outcome_6m_basis": patient["outcome_6m"]["outcome_basis"],
+                "illustrative_simulation_category_3m": patient[
+                    "illustrative_simulation_3m"
+                ]["category"],
+                "illustrative_simulation_category_3m_basis": patient[
+                    "illustrative_simulation_3m"
+                ]["basis"],
+                "illustrative_simulation_category_3m_status": patient[
+                    "illustrative_simulation_3m"
+                ]["status"],
+                "illustrative_simulation_category_3m_target_outcome": patient[
+                    "illustrative_simulation_3m"
+                ]["target_outcome"],
+                "illustrative_simulation_category_6m": patient[
+                    "illustrative_simulation_6m"
+                ]["category"],
+                "illustrative_simulation_category_6m_basis": patient[
+                    "illustrative_simulation_6m"
+                ]["basis"],
+                "illustrative_simulation_category_6m_status": patient[
+                    "illustrative_simulation_6m"
+                ]["status"],
+                "illustrative_simulation_category_6m_target_outcome": patient[
+                    "illustrative_simulation_6m"
+                ]["target_outcome"],
                 "edge_case": patient["edge_case"],
                 "synthetic": True,
                 "config_version": patient["provenance"]["config_version"],
+                "schema_version": patient["provenance"]["schema_version"],
             }
         )
     if not rows:

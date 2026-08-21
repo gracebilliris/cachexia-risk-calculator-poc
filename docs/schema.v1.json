@@ -1,8 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/cachexia-poc/schema.v1.json",
-  "title": "Synthetic cachexia POC patient v1",
-  "description": "Research-only synthetic data. Unknown values are explicit and never equivalent to negative.",
+  "title": "Synthetic cachexia POC patient v1.1",
+  "description": "Research-only synthetic data. Baseline-derived status, future threshold outcomes, and baseline-only illustrative categories with an undefined target outcome are explicitly separated.",
+  "$comment": "Migration from v1.0: add dated follow_up_appetite_observations; add baseline_criteria_status; rename future cachexia labels as qualified threshold-based outcomes; add fearon_classification=false and actual outcome_interval_days; replace exported numeric outputs with ordinal illustrative_simulation_3m/6m objects whose target outcome is pending clinical review; make sarcopenia future-use and disabled pending a clinical definition.",
   "type": "object",
   "required": [
     "patient_id",
@@ -17,21 +18,58 @@
     "ecog",
     "reduced_appetite",
     "sarcopenia",
+    "follow_up_appetite_observations",
+    "baseline_predictors",
+    "baseline_criteria_status",
     "outcome_3m",
     "outcome_6m",
+    "illustrative_simulation_3m",
+    "illustrative_simulation_6m",
     "provenance"
   ],
   "properties": {
-    "patient_id": {"type": "string", "pattern": "^SYN-", "description": "Synthetic identifier only."},
-    "prediction_date": {"type": "string", "format": "date"},
-    "age": {"type": "integer", "minimum": 18, "maximum": 95, "unit": "years"},
-    "sex": {"enum": ["female", "male", "unknown"]},
-    "cancer_type": {
-      "enum": ["lung", "colorectal", "oesophageal", "gastric", "pancreatic", "hepatobiliary", "head and neck", "breast", "prostate", "other solid tumour"]
+    "patient_id": {
+      "type": "string",
+      "pattern": "^SYN-",
+      "description": "Synthetic identifier only."
     },
-    "cancer_subtype": {"type": ["string", "null"], "description": "SCLC/NSCLC for lung; null otherwise."},
+    "prediction_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Baseline predictor cutoff."
+    },
+    "age": {"type": "integer", "minimum": 18, "maximum": 95, "unit": "years"},
+    "sex": {
+      "enum": ["female", "male", "unknown"],
+      "description": "Descriptive only; unused in the current illustrative simulation category."
+    },
+    "cancer_type": {
+      "enum": [
+        "lung",
+        "colorectal",
+        "oesophageal",
+        "gastric",
+        "pancreatic",
+        "hepatobiliary",
+        "head and neck",
+        "breast",
+        "prostate",
+        "other solid tumour"
+      ],
+      "description": "Synthetic adult solid-tumour stratifier pending clinical review; not an eligibility definition."
+    },
+    "cancer_subtype": {
+      "enum": ["SCLC", "NSCLC", "unknown", "not applicable"],
+      "description": "Descriptive only; lung values for lung and not applicable otherwise. Unused in the current illustrative simulation category."
+    },
     "cancer_stage": {"enum": ["I", "II", "III", "IV", "unknown"]},
-    "height_cm": {"type": ["number", "null"], "minimum": 140, "maximum": 200, "unit": "cm"},
+    "height_cm": {
+      "type": ["number", "null"],
+      "minimum": 140,
+      "maximum": 200,
+      "unit": "cm",
+      "description": "Optional input; required to calculate BMI and provide an illustrative simulation category."
+    },
     "weights": {
       "type": "array",
       "items": {
@@ -39,47 +77,271 @@
         "required": ["date", "weight_kg"],
         "properties": {
           "date": {"type": "string", "format": "date"},
-          "weight_kg": {"type": "number", "minimum": 25, "maximum": 160, "unit": "kg"}
+          "weight_kg": {
+            "type": "number",
+            "minimum": 25,
+            "maximum": 160,
+            "unit": "kg"
+          }
         },
         "additionalProperties": false
       }
     },
-    "ecog": {"type": ["integer", "null"], "minimum": 0, "maximum": 4, "description": "null means unknown."},
-    "reduced_appetite": {"enum": ["yes", "no", "unknown"]},
-    "sarcopenia": {"enum": ["yes", "no", "unknown"], "description": "Explicitly documented evidence used in the >2% Fearon branch; never inferred from other fields."},
+    "ecog": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 4,
+      "description": "null means unknown; unknown withholds the illustrative simulation category."
+    },
+    "reduced_appetite": {
+      "enum": ["yes", "no", "unknown"],
+      "description": "Baseline predictor only. Never carried into future outcome evidence."
+    },
+    "sarcopenia": {
+      "enum": ["yes", "no", "unknown"],
+      "description": "Future-use tri-state field pending clinical definition; never inferred and unused in v1 criteria and categories."
+    },
+    "follow_up_appetite_observations": {
+      "type": "array",
+      "description": "Dated synthetic follow-up evidence used only by future provisional pre-cachexia labels.",
+      "items": {
+        "type": "object",
+        "required": ["date", "reduced_appetite", "source"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "reduced_appetite": {"enum": ["yes", "no", "unknown"]},
+          "source": {"const": "synthetic_follow_up_observation"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "baseline_predictors": {"type": "object"},
+    "baseline_criteria_status": {"$ref": "#/$defs/baselineStatus"},
     "outcome_3m": {"$ref": "#/$defs/outcome3m"},
     "outcome_6m": {"$ref": "#/$defs/outcome6m"},
+    "illustrative_simulation_3m": {"$ref": "#/$defs/category3m"},
+    "illustrative_simulation_6m": {"$ref": "#/$defs/category6m"},
     "provenance": {
       "type": "object",
-      "required": ["synthetic", "seed", "config_version", "clinical_validation"],
+      "required": [
+        "synthetic",
+        "seed",
+        "config_version",
+        "schema_version",
+        "schema_migration",
+        "clinical_validation"
+      ],
       "properties": {
         "synthetic": {"const": true},
         "seed": {"type": "integer"},
         "config_version": {"type": "string"},
+        "schema_version": {"const": "1.1.0"},
+        "schema_migration": {"type": "string", "minLength": 1},
         "clinical_validation": {"const": "none"}
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"cancer_type": {"const": "lung"}},
+        "required": ["cancer_type"]
+      },
+      "then": {
+        "properties": {
+          "cancer_subtype": {"enum": ["SCLC", "NSCLC", "unknown"]}
+        }
+      },
+      "else": {
+        "properties": {
+          "cancer_subtype": {"const": "not applicable"}
+        }
+      }
+    }
+  ],
   "$defs": {
+    "triState": {"enum": ["yes", "no", "unknown"]},
+    "baselineStatus": {
+      "type": "object",
+      "required": [
+        "basis",
+        "status",
+        "weight_change_window",
+        "cachexia_criteria_status",
+        "precachexia_candidate_status",
+        "explanations"
+      ],
+      "properties": {
+        "basis": {"const": "baseline_derived_current_status"},
+        "status": {"const": "research_only_criteria_status_not_diagnosis"},
+        "weight_change_window": {
+          "const": "retrospective_observed_up_to_six_months"
+        },
+        "cachexia_criteria_status": {"$ref": "#/$defs/triState"},
+        "precachexia_candidate_status": {"$ref": "#/$defs/triState"},
+        "explanations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
     "outcomeBase": {
       "type": "object",
-      "required": ["horizon_months", "horizon_date", "cachexia", "precachexia_candidate"],
+      "required": [
+        "horizon_months",
+        "horizon_date",
+        "outcome_type",
+        "outcome_basis",
+        "status",
+        "fearon_classification",
+        "fearon_2011_comparison",
+        "outcome_interval_days",
+        "follow_up_reduced_appetite",
+        "threshold_based_cachexia_status",
+        "precachexia_candidate_status",
+        "provenance",
+        "explanations"
+      ],
       "properties": {
         "horizon_months": {"enum": [3, 6]},
         "horizon_date": {"type": "string", "format": "date"},
-        "cachexia": {"enum": ["yes", "no", "unknown"]},
-        "precachexia_candidate": {"enum": ["yes", "no", "unknown"]}
+        "outcome_type": {"const": "research_only_threshold_based_outcome"},
+        "outcome_basis": {
+          "enum": [
+            "observed_synthetic_follow_up",
+            "insufficient_synthetic_follow_up_evidence"
+          ]
+        },
+        "status": {
+          "enum": [
+            "research_only_threshold_based_outcome_not_fearon_classification",
+            "prospective_research_endpoint_not_fearon_classification_or_diagnosis"
+          ]
+        },
+        "fearon_classification": {"const": false},
+        "fearon_2011_comparison": {"type": "string"},
+        "baseline_weight_date": {"type": ["string", "null"], "format": "date"},
+        "outcome_weight_date": {"type": ["string", "null"], "format": "date"},
+        "outcome_interval_days": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Actual days from the selected baseline weight date to the selected outcome weight date."
+        },
+        "outcome_weight_kg": {"type": ["number", "null"], "unit": "kg"},
+        "follow_up_reduced_appetite": {"$ref": "#/$defs/triState"},
+        "threshold_based_cachexia_status": {"$ref": "#/$defs/triState"},
+        "precachexia_candidate_status": {"$ref": "#/$defs/triState"},
+        "provenance": {
+          "type": "object",
+          "required": [
+            "basis",
+            "weight_evidence",
+            "appetite_evidence",
+            "sarcopenia_evidence"
+          ],
+          "properties": {
+            "basis": {
+              "enum": [
+                "observed_synthetic_follow_up",
+                "insufficient_synthetic_follow_up_evidence"
+              ]
+            },
+            "weight_evidence": {
+              "enum": ["dated_synthetic_follow_up_observation", "unavailable"]
+            },
+            "appetite_evidence": {
+              "enum": [
+                "dated_synthetic_follow_up_observation",
+                "unavailable_no_baseline_carry_forward"
+              ]
+            },
+            "sarcopenia_evidence": {
+              "const": "future_use_pending_clinical_definition"
+            }
+          }
+        },
+        "explanations": {"type": "array", "items": {"type": "string"}}
       }
     },
     "outcome3m": {
       "allOf": [
         {"$ref": "#/$defs/outcomeBase"},
-        {"type": "object", "properties": {"horizon_months": {"const": 3}}}
+        {
+          "type": "object",
+          "properties": {
+            "horizon_months": {"const": 3},
+            "status": {
+              "const": "research_only_threshold_based_outcome_not_fearon_classification"
+            }
+          }
+        }
       ]
     },
     "outcome6m": {
       "allOf": [
         {"$ref": "#/$defs/outcomeBase"},
+        {
+          "type": "object",
+          "properties": {
+            "horizon_months": {"const": 6},
+            "status": {
+              "const": "prospective_research_endpoint_not_fearon_classification_or_diagnosis"
+            }
+          }
+        }
+      ]
+    },
+    "categoryBase": {
+      "type": "object",
+      "required": [
+        "horizon_months",
+        "output_type",
+        "basis",
+        "target_outcome",
+        "category",
+        "status",
+        "withholding_reasons",
+        "unused_fields",
+        "explanations"
+      ],
+      "properties": {
+        "horizon_months": {"enum": [3, 6]},
+        "output_type": {"const": "illustrative_simulation_category"},
+        "basis": {"const": "baseline_predictors_only"},
+        "target_outcome": {
+          "const": "not_defined_pending_clinical_review"
+        },
+        "category": {"enum": ["low", "moderate", "high", null]},
+        "status": {
+          "enum": [
+            "research_only_not_clinically_validated",
+            "withheld_missing_required_baseline_predictors"
+          ]
+        },
+        "withholding_reasons": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "cancer_stage_unknown",
+              "ecog_unknown",
+              "reduced_appetite_unknown",
+              "bmi_unavailable",
+              "baseline_weight_change_unavailable"
+            ]
+          }
+        },
+        "unused_fields": {
+          "const": ["sex", "cancer_subtype", "sarcopenia"]
+        },
+        "explanations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "category3m": {
+      "allOf": [
+        {"$ref": "#/$defs/categoryBase"},
+        {"type": "object", "properties": {"horizon_months": {"const": 3}}}
+      ]
+    },
+    "category6m": {
+      "allOf": [
+        {"$ref": "#/$defs/categoryBase"},
         {"type": "object", "properties": {"horizon_months": {"const": 6}}}
       ]
     }

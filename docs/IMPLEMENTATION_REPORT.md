@@ -1,137 +1,94 @@
-# Final implementation report
+# Implementation report
 
 ## Status
 
-The synthetic-data proof of concept is implemented. It is not a validated
-clinical prediction model and must not be used for diagnosis, prognosis,
-treatment, patient care, or medical decisions.
+The reconciled stakeholder-review remediation is implemented across Python,
+browser, schema/config, generated data, macro-free Excel, VBA Excel, clinical
+review workbook, tests, and documentation.
 
-## Completed work
+The project remains synthetic, research-only, and not for clinical use.
 
-- Versioned patient schema with explicit prediction date, units, enums,
-  tri-state unknowns, separate pinned three-/six-month outcomes, and
-  provenance.
-- Strict baseline temporal filter and deterministic baseline/prior weight
-  selection.
-- BMI, positive percentage weight loss, exact interval, kg/month,
-  percentage-points/month, and trajectory calculations with explicit
-  non-calculable states.
-- Inclusive calendar three-/six-month outcome boundaries and independent
-  horizon evaluation.
-- Traceable Fearon branches (>5% loss, >2% loss with BMI <20, or >2% loss
-  with explicitly documented sarcopenia); sarcopenia is never inferred.
-- Configurable provisional early-risk pattern (internal configuration name:
-  Option B)
-  (>1% and <=5% loss plus reduced appetite).
-- Reproducible, seed-controlled longitudinal generator using the supplied
-  workbook's proposed ranges where available.
-- Central versioned simulation configuration and generated immutable browser
-  configuration with automated parity coverage.
-- Synthetic JSON and CSV cohort plus aggregate distribution summary.
-- Static browser prototype with validation, unknown handling, separate risk
-  outputs, factor explanations, classification traces, and prominent safety
-  notice.
-- Independent macro-free Excel prototype with validated input cells,
-  transparent formulas, separate simulated horizons, synthetic cohort,
-  assumptions, data dictionary, and structured clinical review sheets.
-- Clinical review package and structured review-decision schema.
+## Implemented changes
 
-## Source material and assumptions
+- Separated retrospective baseline-derived criteria status from future
+  synthetic threshold outcomes.
+- Qualified the 3-month outcome as differing from Fearon 2011 in direction and
+  window length.
+- Qualified the 6-month outcome as not a Fearon classification despite its
+  matching window length; it is a prospective research endpoint only, not a
+  diagnosis.
+- Added `fearon_classification=false` and actual `outcome_interval_days` to
+  both future outcome objects and exports.
+- Added dated synthetic follow-up appetite observations and prohibited
+  baseline appetite carry-forward into future labels.
+- Disabled the sarcopenia branch by default while retaining a tri-state
+  future-use field. The >2% to <=5%, BMI >=20 branch now remains unknown, and
+  baseline sarcopenia is never reused as future evidence.
+- Added outcome basis/status/provenance and schema migration metadata.
+- Replaced clinical-facing/generated numeric model outputs with separate
+  3-month and 6-month `low|moderate|high` illustrative simulation categories.
+- Added `target_outcome=not_defined_pending_clinical_review` to the canonical
+  category contract and all category outputs; horizon differences remain
+  simulation assumptions.
+- Added explicit withholding for unknown stage, ECOG, appetite, BMI, or
+  baseline weight change.
+- Marked sex and lung subtype descriptive and unused in the category.
+- Enforced exact follow-up appetite provenance and required cancer-subtype
+  pairings.
+- Added baseline cachexia and provisional early-risk distributions to the
+  generated summary.
+- Added neutral population wording: eligibility/inclusion criteria are not
+  defined; cancer labels are synthetic adult solid-tumour stratifiers pending
+  review.
+- Preserved strict >5%, >2%, and BMI<20 boundaries and temporal leakage
+  protections.
+- Updated both workbook editions and the anonymous clinical review workbook.
+- Preserved Times New Roman and non-table blank-cell no-fill conventions in the
+  clinical review workbook.
+- Kept workbook artifacts repository/local only; Pages publishes no workbook
+  download.
 
-The workbook sheet `Prototype 1_agreed predictors` supplied proposed ranges
-for age, sex, cancer categories, stage representation, sex-specific height,
-weight, BMI, dated weight history, ECOG, appetite, and separate outcomes.
-Those proposals are implemented as editable synthetic-testing inputs, not
-confirmed clinical requirements.
+## Provisional rule position
 
-All added distributions, probabilities, latent associations, future-weight
-transitions, coefficients, multipliers, risk bands, and candidate
-pre-cachexia thresholds are centralized in
-`config/simulation_assumptions.v1.json`. The file labels every value as a
-simulation assumption without calibration, discrimination, causal, treatment,
-diagnostic, or prognostic meaning.
+The early candidate rule remains explicitly provisional:
 
-The configured tumour and stage values now match the supplied illustrative
-multipliers. Their product is used only to create plausible synthetic
-interaction; it is not a validated relative risk.
+- >1% lower loss bound: editable, with no consensus basis;
+- <=5% upper bound: consensus-aligned;
+- appetite: binary POC simplification.
 
-## Generated cohort
+These and the remaining population, endpoint, sarcopenia, category-estimand,
+and UX decisions remain pending in `CLINICAL_REVIEW_PACKAGE.md` and the review
+workbook.
 
-`data/synthetic_patients.v1.json` and `.csv` contain 120 patients generated
-with seed `20260820` and config `1.0.0`. The sample contains 12/19/48/41
-unknown/low/medium/high three-month simulated bands and 12/2/37/69
-unknown/low/medium/high six-month bands. Unknown risk means the estimate was
-withheld because BMI or baseline weight change was not calculable. The cohort
-includes explicit labelled cases for unknown fields,
-insufficient history, gain, stability, limited loss plus appetite, >5% loss,
-BMI/loss lower boundaries, and 5% loss.
+## Versioned artifacts
 
-These counts demonstrate test coverage and sample variety only; they do not
-estimate prevalence or performance.
+Config/schema version 1.1 introduces dated follow-up appetite evidence,
+baseline/future separation, qualified outcome fields, provenance, and ordinal
+category objects. The 120-record seed-`20260820` JSON, CSV, summary, browser
+config, exhaustive 324-case matrix, and all three workbooks were regenerated
+from canonical sources.
 
-## Validation results
+## Validation
 
-The relocated repository's final run completed:
+- 75 Python tests passed.
+- 17 Node browser-calculation tests passed.
+- Python source/scripts compiled, JavaScript syntax checks passed, and all
+  versioned JSON parsed.
+- All three generated workbooks opened in desktop Microsoft Excel under their
+  expected names without a repair report.
+- Workbook formula/label tests confirmed separate 3-month/6-month category
+  formulas, all five withholding conditions, no clinical-facing numeric model
+  value, disabled sarcopenia logic, subtype handling, and safety wording.
+- Review-workbook tests confirmed anonymity, Times New Roman, and unfilled
+  non-table blank cells.
+- Pages tests confirmed that no workbook is copied or linked for publication.
 
-- 64 Python unit tests covering calculations, validation, missing values,
-  duplicate/equal dates, irregular intervals, reproducibility, edge mix,
-  browser-config parity, schema horizon pinning, post-baseline leakage,
-  inclusive/exclusive boundaries, separate horizons, Fearon thresholds,
-  sarcopenia unknowns, provisional pre-cachexia behavior, and Excel workbook
-  sheets, formulas, validation, safety notice, config parity, VBA package
-  structure, Form Control wiring, and version-controlled macro source.
-- Repository and workbook privacy checks that prevent named reviewers from
-  appearing in current text files or generated workbook contents.
-- 11 direct Node browser-calculation tests covering BMI/loss, temporal leakage,
-  missing history, classification boundaries, separate risk behavior, factor
-  explanations, and calendar-month arithmetic.
-- A versioned clinical-logic decision table executed against both Python and
-  browser implementations, with source/status metadata and a worked
-  three-/six-month score calculation.
-- An exhaustive 324-case classification matrix and clinician review workbook
-  covering every configured weight-loss, BMI, sarcopenia, and appetite state
-  combination.
-- Python bytecode compilation for `src/` and `scripts/`.
-- JavaScript syntax checks for the generated config and prototype application.
-- JSON parsing for all configuration, schema, data, summary, and review files.
-- Deterministic regeneration of the 120-patient cohort.
-- Reproducible generation of the macro-free
-  `excel/cachexia_risk_prototype.v1.4.xlsx` and app-like
-  `excel/cachexia_risk_mock_ui.v1.1.xlsm`.
-- Direct Microsoft Excel opening of the VBA workbook without a repair dialog,
-  execution of its high-risk sample macro and live formula outputs, and
-  runtime confirmation that lung/non-lung selections update subtype values
-  and visible guidance correctly.
-- Public GitHub Pages deployment of the static JavaScript-parity prototype,
-  with both Excel editions rebuilt and published as downloads by the
-  deployment workflow.
+## Clinical basis
 
-An independent final review identified and prompted correction of stale UI
-results after invalid input, duplicated browser assumptions, and insufficient
-schema horizon constraints.
+- Fearon K, et al. *Lancet Oncology*. 2011;12(5):489-495.
+  <https://doi.org/10.1016/S1470-2045(10)70218-7>
+- Muscaritoli M, et al. *Clinical Nutrition*. 2010;29(2):154-159.
+  <https://doi.org/10.1016/j.clnu.2009.12.004>
 
-## Inputs unavailable or awaiting confirmation
-
-The supplied materials do not contain recorded clinical approval or final
-decisions for:
-
-- exact population distributions beyond the workbook's proposed examples;
-- confirmation or revision of the supplied illustrative cancer/stage
-  multipliers and provisional ECOG/appetite relationships;
-- future weight transition behavior and all risk coefficients/bands;
-- confirmation or revision of provisional pre-cachexia Option B and its
-  missing-appetite behavior;
-- the baseline-to-horizon outcome measurement rule and inclusive boundaries;
-- what constitutes documented sarcopenia evidence and whether dated
-  horizon-specific muscle assessments must replace the provisional baseline
-  carry-forward assumption; or
-- whether the interface and explanations could be clinically misleading.
-
-No unavailable input has been represented as approved. Clinical decisions
-remain `pending` in `CLINICAL_REVIEW_PACKAGE.md` and should be
-recorded using `review_decisions.schema.json` before any clinically informed
-revision.
-
-Statistical clinical hypothesis tests have not been performed because the POC
-contains no real cohort, validated endpoint, prespecified inferential
-hypothesis, or comparator. Current testing establishes software behavior only.
+No unsupported population, treatment, diagnostic, or exclusion claim has been
+introduced.
