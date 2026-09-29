@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Research-only online proof of concept for reviewing synthetic cachexia risk-calculator logic and usability.">
+  <title>Cachexia risk calculator — clinician review prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#calculator">Skip to calculator</a>
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Clinician review prototype</p>
+      <h1>Cachexia risk calculator</h1>
+      <p class="lede">Enter a synthetic patient profile, add two dated weights, and review the current classification and illustrative three- and six-month categories.</p>
+      <a class="primary-link" href="#calculator">Start the calculator</a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg viewBox="0 0 560 360" role="presentation">
+        <defs>
+          <linearGradient id="field" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#d8eeeb"/>
+            <stop offset="1" stop-color="#f1d9c9"/>
+          </linearGradient>
+        </defs>
+        <path d="M18 238C105 76 234 44 338 112s124 32 204-48v278H18Z" fill="url(#field)"/>
+        <path d="M42 265c78-126 181-160 276-101s145 51 218-21" fill="none" stroke="#0b6b69" stroke-width="3"/>
+        <path d="M55 295c100-80 190-91 268-43s142 52 207 16" fill="none" stroke="#d07a4a" stroke-width="2"/>
+        <g fill="#17324d">
+          <circle cx="91" cy="222" r="7"/><circle cx="202" cy="145" r="7"/>
+          <circle cx="318" cy="164" r="7"/><circle cx="441" cy="137" r="7"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <div class="safety-bar" role="alert">
+    <strong>Research demonstration only.</strong> Use synthetic patient details only. Do not enter real patient information or use these outputs for clinical decisions.
+  </div>
+
+  <main>
+    <section class="orientation" aria-labelledby="how-heading">
+      <div>
+        <p class="section-kicker">How it works</p>
+        <h2 id="how-heading">Three simple steps</h2>
+      </div>
+      <ol class="steps">
+        <li><span>1</span><div><strong>Enter patient details</strong><p>Use a synthetic profile or load a sample.</p></div></li>
+        <li><span>2</span><div><strong>Add two weights</strong><p>Enter the assessment weight and an earlier weight from the previous six months.</p></div></li>
+        <li><span>3</span><div><strong>Calculate</strong><p>Review the classification and illustrative categories.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="calculator" class="workspace" aria-labelledby="calculator-heading">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Step 1 · Patient details</p>
+          <h2 id="calculator-heading">Enter a synthetic patient</h2>
+          <p>Complete the fields below or begin with a sample. Required fields are marked <span aria-hidden="true">*</span><span class="sr-only">required</span>.</p>
+        </div>
+        <div class="sample-actions" aria-label="Sample profiles">
+          <button id="load-lower" type="button" class="secondary">Try lower-category sample</button>
+          <button id="load-higher" type="button" class="secondary">Try higher-category sample</button>
+          <button id="reset" type="button" class="text-button">Reset</button>
+        </div>
+      </div>
+
+      <div class="input-panel">
+        <h3>Clinical profile</h3>
+        <p class="group-help">Use “Unknown” when information has not been assessed or documented.</p>
+        <div class="input-grid">
+          <label>Assessment date *<input id="prediction-date" type="date" value="2026-01-31"></label>
+          <label>Age (18–95) *<input id="age" type="number" min="18" max="95" value="65"></label>
+          <label>Sex *
+            <select id="sex"><option value="female">Female</option><option value="male">Male</option><option value="unknown">Unknown</option></select>
+            <span class="field-help">Captured as part of the patient profile.</span>
+          </label>
+          <label>Active solid cancer? *
+            <select id="active-cancer"><option value="yes" selected>Yes</option><option value="no">No</option></select>
+          </label>
+          <label>Cancer type *
+            <select id="cancer-type">
+              <option value="lung">Lung</option><option value="colorectal">Colorectal</option><option value="oesophageal">Oesophageal</option>
+              <option value="gastric">Gastric</option><option value="pancreatic">Pancreatic</option><option value="hepatobiliary">Hepatobiliary</option>
+              <option value="head and neck">Head and neck</option><option value="breast">Breast</option><option value="prostate">Prostate</option>
+              <option value="other solid tumour">Other solid tumour</option>
+            </select>
+          </label>
+          <label id="lung-subtype-field">Lung subtype
+            <select id="cancer-subtype"><option>SCLC</option><option selected>NSCLC</option><option value="unknown">Unknown</option></select>
+            <span class="field-help">Shown when lung cancer is selected.</span>
+          </label>
+          <label>Cancer stage *
+            <select id="stage"><option>I</option><option>II</option><option selected>III</option><option>IV</option><option value="unknown">Unknown</option></select>
+          </label>
+          <label>Height (cm) *<input id="height" type="number" min="140" max="200" step="0.1" value="170">
+            <span class="field-help">Used to calculate BMI.</span>
+          </label>
+          <label>Baseline ECOG *
+            <select id="ecog"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="unknown">Unknown</option></select>
+          </label>
+          <label>Reduced appetite? *
+            <select id="appetite"><option value="yes">Yes</option><option value="no" selected>No</option><option value="unknown">Unknown</option></select>
+          </label>
+          <label>Sarcopenia status *
+            <select id="sarcopenia">
+              <option value="yes">Yes — independently documented</option>
+              <option value="no">No — assessed and absent</option>
+              <option value="unknown" selected>Unknown — not assessed or documented</option>
+            </select>
+            <span class="field-help">Captured for review; not yet applied to the current calculation.</span>
+          </label>
+        </div>
+
+        <div class="weight-section">
+          <div class="weight-heading">
+            <div>
+              <p class="section-kicker">Step 2 · Weight history</p>
+              <h3>Add two dated weights</h3>
+              <p>Include the latest weight on or before the assessment date and an earlier weight from the previous six months.</p>
+            </div>
+            <button id="add-weight" type="button" class="secondary">Add measurement</button>
+          </div>
+          <div class="weight-columns" aria-hidden="true"><span>Measurement date</span><span>Weight (kg)</span><span></span></div>
+          <div id="weights"></div>
+        </div>
+
+        <button id="calculate" type="button" class="calculate-button">Calculate results</button>
+        <p id="calculation-status" class="calculation-status" aria-live="polite">The sample results are shown below. Change any input, then select Calculate results.</p>
+        <div id="errors" class="errors" role="alert" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="results-section" aria-labelledby="results-heading">
+      <div class="section-heading">
+        <div><p class="section-kicker">Step 3 · Results</p><h2 id="results-heading" tabindex="-1">Review the results</h2></div>
+        <p class="results-note">Research demonstration only—not a clinical recommendation.</p>
+      </div>
+
+      <article class="classification-summary" aria-live="polite">
+        <div>
+          <p class="section-kicker">Current synthetic classification</p>
+          <p id="clinical-state" class="state-value">Not calculated</p>
+        </div>
+        <p id="clinical-message">Complete the required fields and calculate the results.</p>
+      </article>
+
+      <div class="status-layout">
+        <article class="result-block">
+          <h3>Key measures</h3>
+          <div id="derived" class="metrics" aria-live="polite"></div>
+        </article>
+        <article class="result-block classification-block">
+          <h3>Rule and eligibility summary</h3>
+          <dl class="classifications">
+            <div><dt>Cachexia rule met?</dt><dd id="fearon">Not calculated</dd></div>
+            <div><dt>Pre-cachexia rule met?</dt><dd id="precachexia">Not calculated</dd></div>
+            <div><dt>Future categories available?</dt><dd id="eligibility">Not calculated</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="risk-grid" aria-label="Illustrative simulation categories">
+        <article class="risk-panel">
+          <div><p class="eyebrow">3-month horizon</p><h3>Illustrative category</h3></div>
+          <div id="category-3m" class="risk-value">—</div>
+          <p id="basis-3m" class="category-basis">Not calculated</p>
+          <details><summary>Why is this category shown?</summary><ul id="factors-3m"></ul></details>
+        </article>
+        <article class="risk-panel">
+          <div><p class="eyebrow">6-month horizon</p><h3>Illustrative category</h3></div>
+          <div id="category-6m" class="risk-value">—</div>
+          <p id="basis-6m" class="category-basis">Not calculated</p>
+          <details><summary>Why is this category shown?</summary><ul id="factors-6m"></ul></details>
+        </article>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>Work in progress.</strong> Approved synthetic data and rules v2.</p>
+    <p>No information entered here is stored or transmitted. This prototype has no patient database.</p>
+  </footer>
+  <script src="simulation-config.js"></script>
+  <script src="calculations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
